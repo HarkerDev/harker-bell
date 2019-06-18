@@ -12,6 +12,8 @@
     "material-design-icons-iconfont": "^5.0.1",
     "register-service-worker": "^1.6.2",
     "roboto-fontface": "*",
+    "typeface-pt-sans": "0.0.72",
+    "typeface-roboto": "0.0.54",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuetify": "^2.0.0-beta.0"
@@ -22,8 +24,10 @@
     "@vue/cli-plugin-pwa": "^3.8.0",
     "@vue/cli-service": "^3.8.0",
     "babel-eslint": "^10.0.1",
+    "deepmerge": "^3.2.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "fibers": "^4.0.1",
     "sass": "^1.17.4",
     "sass-loader": "^7.1.0",
     "vue-cli-plugin-vuetify": "git+https://github.com/vuetifyjs/vue-cli-plugin-vuetify.git#dev",
@@ -36,12 +40,51 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/essential",
+      "plugin:vue/strongly-recommended",
       "eslint:recommended"
     ],
-    "rules": {},
     "parserOptions": {
       "parser": "babel-eslint"
+    },
+    "rules": {
+      "vue/attributes-order": "warning",
+      "vue/no-confusing-v-for-v-if": "warning",
+      "vue/no-v-html": "warning",
+      "vue/order-in-components": "warning",
+      "vue/this-in-template": "warning",
+      "vue/array-bracket-spacing": "warning",
+      "vue/arrow-spacing": "warning",
+      "vue/block-spacing": "warning",
+      "vue/brace-style": "warning",
+      "vue/camelcase": "warning",
+      "vue/comma-dangle": "warning",
+      "vue/component-name-in-template-casing": "warning",
+      "vue/eqeqeq": "warning",
+      "vue/key-spacing": "warning",
+      "vue/match-component-file-name": "warning",
+      "vue/no-boolean-default": "warning",
+      "vue/no-restricted-syntax": "warning",
+      "vue/object-curly-spacing": "warning",
+      "vue/require-direct-export": "warning",
+      "vue/script-indent": "warning",
+      "vue/space-infix-ops": "warning",
+      "vue/space-unary-ops": "warning",
+      "vue/v-on-function-call": "warning",
+      "vue/max-attributes-per-line": "off",
+      "vue/html-closing-bracket-spacing": [
+        "error",
+        {
+          "selfClosingTag": "never"
+        }
+      ],
+      "vue/html-self-closing": [
+        "error",
+        {
+          "html": {
+            "component": "never"
+          }
+        }
+      ]
     }
   },
   "postcss": {

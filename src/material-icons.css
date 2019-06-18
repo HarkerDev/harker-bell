@@ -1,0 +1,34 @@
+@charset "UTF-8";
+@font-face {
+  font-family: "Material Icons Outlined";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Material Icons Outlined"),
+    local("MaterialIcons-Outlined"),
+    url(assets/MaterialIcons-Outlined.woff2) format("woff2"), /* Modern browsers */
+    url(assets/MaterialIcons-Outlined.woff) format("woff"); /* IE11 */
+}
+.material-icons {
+  font-family: "Material Icons Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: "liga";
+}
