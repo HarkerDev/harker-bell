@@ -11,8 +11,9 @@ import "./material-icons.css";
 
 Vue.config.productionTip=false;
 
-new Vue({
+var app=new Vue({
   router,
   vuetify,
   render: h => h(App)
 }).$mount("#app");
+window.app=app;
