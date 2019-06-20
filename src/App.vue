@@ -48,7 +48,7 @@
         <v-divider></v-divider>
         <v-list dense subheader>
           <v-subheader>Change view</v-subheader>
-          <v-list-item @click="$vuetify.breakpoint.xsOnly?changeMode('day'):''" :disabled="$vuetify.breakpoint.smAndUp" two-line>
+          <v-list-item @click="$vuetify.breakpoint.xsOnly?changeMode('day'):''" :disabled="$vuetify.breakpoint.smAndUp">
             <v-list-item-icon>
               <v-icon v-if="mode=='day'">check</v-icon>
             </v-list-item-icon>
@@ -72,6 +72,16 @@
             <v-list-item-content>
               <v-list-item-title>Month</v-list-item-title>
             </v-list-item-content>
+          </v-list-item>
+        </v-list>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-item @click="print">
+            <v-list-item-content>
+              <v-list-item-title>Print</v-list-item-title>
+              <v-list-item-subtitle v-if="$vuetify.theme.dark">Light theme recommended</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action class="text--secondary">&#8984;P</v-list-item-action>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -100,6 +110,13 @@
             </v-list-item-action>
           </v-list-item>
         </v-list>
+        <v-card-actions>
+          <v-layout justify-center>
+            <a href="https://www.netlify.com" target="_blank">
+              <v-img height="51" :src="$vuetify.theme.dark?'https://www.netlify.com/img/global/badges/netlify-dark.svg':'https://www.netlify.com/img/global/badges/netlify-light.svg'"></v-img>
+            </a>
+          </v-layout>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </v-app>
@@ -122,6 +139,9 @@ export default {
       this.$nextTick(() => {
         this.mode=mode;
       });
+    },
+    print() {
+      window.print();
     }
   }
 };
