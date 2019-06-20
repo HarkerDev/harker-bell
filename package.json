@@ -7,6 +7,16 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "author": "Bowen Yin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BowenYin/harker-bell"
+  },
+  "bugs": {
+    "url": "https://github.com/BowenYin/harker-bell/issues"
+  },
+  "homepage": "https://github.com/BowenYin/harker-bell#readme",
+  "license": "MIT",
   "dependencies": {
     "core-js": "^2.6.5",
     "material-design-icons-iconfont": "^5.0.1",
@@ -85,7 +95,8 @@
           }
         }
       ],
-      "vue/singleline-html-element-content-newline": "off"
+      "vue/singleline-html-element-content-newline": "off",
+      "vue/mustache-interpolation-spacing": ["warning", "never"]
     }
   },
   "postcss": {
@@ -94,7 +105,7 @@
     }
   },
   "browserslist": [
-    "> 1%",
+    "> 1% in US",
     "last 2 versions"
   ]
 }

@@ -26,7 +26,10 @@ export default new Vuetify({
         info: "#1A73E8",
         anchor: "#8AB4F8"
       },
-    }
+    },
+    options: {
+      customProperties: true
+    },
   },
   icons: {
     iconfont: "md"

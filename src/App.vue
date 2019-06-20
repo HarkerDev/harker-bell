@@ -4,7 +4,7 @@
       <v-spacer></v-spacer>
       <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
         <template v-slot:activator="{on}">
-          <v-btn v-on="on" icon>
+          <v-btn v-on="on" class="hidden-print-only" icon>
             <v-icon>chevron_left</v-icon>
           </v-btn>
         </template>
@@ -12,7 +12,7 @@
       </v-tooltip>
       <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
         <template v-slot:activator="{on}">
-          <v-btn v-on="on" icon>
+          <v-btn v-on="on" class="hidden-print-only" icon>
             <v-icon>date_range</v-icon>
           </v-btn>
         </template>
@@ -20,7 +20,7 @@
       </v-tooltip>
       <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
         <template v-slot:activator="{on}">
-          <v-btn class="mr-2" v-on="on" icon>
+          <v-btn v-on="on" class="hidden-print-only mr-2" icon>
             <v-icon>chevron_right</v-icon>
           </v-btn>
         </template>
@@ -31,7 +31,7 @@
         <template v-slot:activator="{on: menu}">
           <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
             <template v-slot:activator="{on: tooltip}">
-              <v-btn v-on="{...tooltip, ...menu}" class="ml-2" icon>
+              <v-btn v-on="{...tooltip, ...menu}" class="hidden-print-only ml-2" icon>
                 <v-icon>settings</v-icon>
               </v-btn>
             </template>
@@ -39,14 +39,14 @@
           </v-tooltip>
         </template>
         <v-list>
-          <v-list-item @click="">
+          <v-list-item @click="settings.dialog=true">
             <v-list-item-content>
               <v-list-item-title>Settings</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
         <v-divider></v-divider>
-        <v-list subheader>
+        <v-list dense subheader>
           <v-subheader>Change view</v-subheader>
           <v-list-item @click="$vuetify.breakpoint.xsOnly?changeMode('day'):''" :disabled="$vuetify.breakpoint.smAndUp" two-line>
             <v-list-item-icon>
@@ -77,7 +77,31 @@
       </v-menu>
       <v-spacer></v-spacer>
     </v-app-bar>
-    <router-view></router-view>
+    <v-content>
+      <router-view></router-view>
+    </v-content>
+    <v-dialog v-model="settings.dialog" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
+      <v-card>
+        <v-app-bar elevate-on-scroll>
+          <v-btn @click="settings.dialog=false" icon>
+            <v-icon>close</v-icon>
+          </v-btn>
+          <v-toolbar-title class="font-family pt-sans font-weight-bold">Settings</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <div class="overline">Version {{env.VUE_APP_VERSION}}</div>
+        </v-app-bar>
+        <v-list>
+          <v-list-item>
+            <v-list-item-content>
+              Use dark theme
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-switch v-model="$vuetify.theme.dark"></v-switch>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -86,8 +110,12 @@ export default {
   name: "App",
   data() {
     return {
-      mode: "week"
-    }
+      env: process.env,
+      mode: "week",
+      settings: {
+        dialog: false,
+      },
+    };
   },
   methods: {
     changeMode(mode) {
