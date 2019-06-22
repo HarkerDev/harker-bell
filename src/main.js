@@ -9,11 +9,11 @@ import "typeface-roboto";
 import "typeface-pt-sans";
 import "./material-icons.css";
 
-Vue.config.productionTip=false;
+Vue.config.productionTip = false;
 
-var app=new Vue({
+var app = new Vue({
   router,
   vuetify,
   render: h => h(App)
 }).$mount("#app");
-window.app=app;
+window.app = app;
