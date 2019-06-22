@@ -18,5 +18,8 @@ module.exports = {
     manifestOptions: {
       short_name: "Harker Bell"
     },
-  }
+    workboxOptions: {
+      skipWaiting: true
+    },
+  },
 };
