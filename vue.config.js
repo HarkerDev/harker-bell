@@ -1,6 +1,6 @@
-process.env.VUE_APP_VERSION=require("./package.json").version;
+process.env.VUE_APP_VERSION = require("./package.json").version;
 
-module.exports={
+module.exports = {
   productionSourceMap: false,
   transpileDependencies: ["vuetify"],
   css: {
@@ -11,9 +11,12 @@ module.exports={
     }
   },
   pwa: {
-    name: "Harker Bell",
+    name: "Harker Bell Schedule",
     themeColor: "#FFFFFF",
     msTileColor: "#FFFFFF",
-    appleMobileWebAppCapable: "yes"
+    appleMobileWebAppCapable: "yes",
+    manifestOptions: {
+      short_name: "Harker Bell"
+    },
   }
-}
+};

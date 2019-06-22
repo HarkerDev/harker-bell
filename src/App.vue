@@ -113,7 +113,7 @@
         <v-card-actions>
           <v-layout justify-center>
             <a href="https://www.netlify.com" target="_blank">
-              <v-img height="51" :src="$vuetify.theme.dark?'https://www.netlify.com/img/global/badges/netlify-dark.svg':'https://www.netlify.com/img/global/badges/netlify-light.svg'"></v-img>
+              <v-img height="51" :src="require('./assets/'+($vuetify.theme.dark?'netlify-dark.svg':'netlify-light.svg'))"></v-img>
             </a>
           </v-layout>
         </v-card-actions>
@@ -137,7 +137,7 @@ export default {
   methods: {
     changeMode(mode) {
       this.$nextTick(() => {
-        this.mode=mode;
+        this.mode = mode;
       });
     },
     print() {
