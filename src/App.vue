@@ -87,7 +87,7 @@
       </v-menu>
       <v-spacer></v-spacer>
     </v-app-bar>
-    <v-content>
+    <v-content style="overflow-x: scroll;">
       <router-view></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">

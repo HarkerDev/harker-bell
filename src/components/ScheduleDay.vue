@@ -3,10 +3,13 @@
     <v-sheet height="50" tile>
       date
     </v-sheet>
-    <v-layout v-for="group in computedSchedule" :key="group">
-      <v-flex v-for="column in group" :key="column">
-        <v-sheet v-for="period in column" :key="period" class="period" :height="period.duration+1" tile>
-          {{period.name}}
+    <v-layout v-for="group in computedSchedule" :key="+group[0][0].start" class="group">
+      <v-flex v-for="column in group" :key="column[0].name" class="column">
+        <v-sheet v-for="period in column" :key="+period.start" class="period caption d-flex" :height="period.duration+1" tile>
+          <v-layout class="content" column align-center justify-center>
+            <div>{{period.name}}</div>
+            <div v-if="period.start && period.duration > 40">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+          </v-layout>
         </v-sheet>
       </v-flex>
     </v-layout>
@@ -19,12 +22,12 @@ export default {
     return {
       schedule: [
         {
-          name: "Period 1",
+          name: "P1",
           start: new Date("2019-06-21T08:00Z"),
           end: new Date("2019-06-21T09:25Z")
         },
         {
-          name: "Period 2",
+          name: "P2",
           start: new Date("2019-06-21T09:35Z"),
           end: new Date("2019-06-21T11:00Z")
         },
@@ -39,7 +42,7 @@ export default {
           end: new Date("2019-06-21T11:25Z")
         },
         {
-          name: "Period 3",
+          name: "P3",
           start: new Date("2019-06-21T12:00Z"),
           end: new Date("2019-06-21T13:25Z")
         }
@@ -82,6 +85,12 @@ export default {
       }
       return result;
     },
+  },
+  filters: {
+    formatTime(date) {
+      return (date.getUTCHours()+11)%12+1+":"+ // convert hours to 12-hour time
+             ("0"+date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
+    }
   }
 };
 </script>
@@ -95,7 +104,10 @@ export default {
   border: 1px solid #5F6368 !important;
   margin: 0 -1px -1px;
 }
-/*.period+.period {
-  margin-top: -1px;
-}*/
+.column:not(:first-child) > .period {
+  margin-left: 0;
+}
+.content {
+  padding-bottom: 2px;
+}
 </style>

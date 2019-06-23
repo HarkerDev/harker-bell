@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid>
+  <v-container fluid style="min-width: 932px;">
     <v-layout row justify-center>
-      <schedule-day v-for="i in 5" :key="i"></schedule-day>
+      <schedule-day v-for="i in 5" :key="i" :id="'day'+i"></schedule-day>
     </v-layout>
   </v-container>
 </template>
