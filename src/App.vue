@@ -39,7 +39,7 @@
           </v-tooltip>
         </template>
         <v-list>
-          <v-list-item @click="settings.dialog=true">
+          <v-list-item @click="$router.push('/settings')">
             <v-list-item-content>
               <v-list-item-title>Settings</v-list-item-title>
             </v-list-item-content>
@@ -90,10 +90,10 @@
     <v-content style="overflow-x: scroll;">
       <router-view></router-view>
     </v-content>
-    <v-dialog v-model="settings.dialog" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
+    <v-dialog v-model="settings.dialog" @input="closeSettings()" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
       <v-card>
         <v-app-bar elevate-on-scroll>
-          <v-btn @click="settings.dialog=false" icon>
+          <v-btn @click="closeSettings()" icon>
             <v-icon>close</v-icon>
           </v-btn>
           <v-toolbar-title class="font-family pt-sans font-weight-bold">Settings</v-toolbar-title>
@@ -130,8 +130,9 @@ export default {
       env: process.env,
       mode: "week",
       settings: {
-        dialog: false,
+        dialog: this.$route.name == "settings",
       },
+      prevRoute: null,
     };
   },
   methods: {
@@ -140,10 +141,20 @@ export default {
         this.mode = mode;
       });
     },
+    closeSettings() {
+      if (this.prevRoute) this.$router.back();
+      else this.$router.push("/");
+    },
     print() {
       window.print();
+    },
+  },
+  watch: {
+    $route(route, prevRoute) {
+      this.prevRoute = prevRoute;
+      this.settings.dialog = route.name == "settings";
     }
-  }
+  },
 };
 </script>
 

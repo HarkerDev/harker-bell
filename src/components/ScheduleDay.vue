@@ -1,51 +1,42 @@
 <template>
-  <v-sheet class="day-container" width="180">
+  <v-sheet class="day-container" :min-width="view == 'day' ? 180 : 150" :max-width="view == 'day' ? 240 : 150" :height="view == 'day' ? 'auto' : 100">
     <v-sheet height="50" tile>
       date
     </v-sheet>
-    <v-layout v-for="group in computedSchedule" :key="+group[0][0].start" class="group">
-      <v-flex v-for="column in group" :key="column[0].name" class="column">
-        <v-sheet v-for="period in column" :key="+period.start" class="period caption d-flex" :height="period.duration+1" tile>
-          <v-layout class="content" column align-center justify-center>
-            <div>{{period.name}}</div>
-            <div v-if="period.start && period.duration > 40">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-          </v-layout>
-        </v-sheet>
-      </v-flex>
-    </v-layout>
+    <template v-if="view == 'day'">
+      <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
+        <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
+          <v-sheet v-for="(period, pIndex) in column" :key="pIndex" class="period caption text-xs-center d-flex" :height="period.duration+1" tile>
+            <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
+              <div ref="periodNames">{{period.name}}</div>
+              <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
+              <div v-if="period.start && period.duration >= 30">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+            </v-layout>
+          </v-sheet>
+        </v-flex>
+      </v-layout>
+    </template>
   </v-sheet>
 </template>
 
 <script>
 export default {
+  props: {
+    schedule: {
+      type: Array,
+      required: true
+    },
+    view: {
+      validator(value) {
+        return ["day", "month"].indexOf(value) != -1;
+      },
+      required: true
+    },
+  },
   data() {
     return {
-      schedule: [
-        {
-          name: "P1",
-          start: new Date("2019-06-21T08:00Z"),
-          end: new Date("2019-06-21T09:25Z")
-        },
-        {
-          name: "P2",
-          start: new Date("2019-06-21T09:35Z"),
-          end: new Date("2019-06-21T11:00Z")
-        },
-        {
-          name: "Lunch",
-          start: new Date("2019-06-21T11:10Z"),
-          end: new Date("2019-06-21T11:55Z")
-        },
-        {
-          name: "Class Mtg.",
-          start: new Date("2019-06-21T11:10Z"),
-          end: new Date("2019-06-21T11:25Z")
-        },
-        {
-          name: "P3",
-          start: new Date("2019-06-21T12:00Z"),
-          end: new Date("2019-06-21T13:25Z")
-        }
+      scheduled: [
+        
       ],
       lunch: [
         
@@ -99,6 +90,7 @@ export default {
 .day-container {
   border: 1px solid #5F6368 !important;
   margin-right: -1px;
+  transition: min-width 500ms;
 }
 .period {
   border: 1px solid #5F6368 !important;
@@ -108,6 +100,13 @@ export default {
   margin-left: 0;
 }
 .content {
-  padding-bottom: 2px;
+  padding: 0 2px 2px;
+  overflow-y: hidden;
+}
+.short {
+  line-height: 1.2;
+}
+.group {
+  transition: all 500ms;
 }
 </style>

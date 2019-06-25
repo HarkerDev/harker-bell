@@ -19,6 +19,16 @@ export default new Router({
       component: Home
     },
     {
+      path: "/:year/:month",
+      name: "month",
+      component: Home
+    },
+    {
+      path: "/:year/:month/:day",
+      name: "day",
+      component: Home
+    },
+    {
       path: "/about",
       name: "about",
       // route level code-splitting
