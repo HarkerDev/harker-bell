@@ -60,7 +60,8 @@ export default {
   },
   methods: {
     updateView() {
-      //this.$emit("route-changed");
+      if (this.$route.name == "day" || this.$route.name == "month")
+        this.view = this.$route.name;
     }
   },
   watch: {
