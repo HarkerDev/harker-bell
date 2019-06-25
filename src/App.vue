@@ -125,6 +125,10 @@
 <script>
 export default {
   name: "App",
+  created() {
+    let darkTheme = localStorage.getItem("darkTheme");
+    if (darkTheme) this.$vuetify.theme.dark = darkTheme === "true";
+  },
   data() {
     return {
       env: process.env,
@@ -153,7 +157,10 @@ export default {
     $route(route, prevRoute) {
       this.prevRoute = prevRoute;
       this.settings.dialog = route.name == "settings";
-    }
+    },
+    "$vuetify.theme.dark"() {
+      localStorage.setItem("darkTheme", this.$vuetify.theme.dark);
+    },
   },
 };
 </script>
