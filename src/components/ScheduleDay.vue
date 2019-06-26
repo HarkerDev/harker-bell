@@ -4,8 +4,8 @@
       <v-layout align-center>
         <v-flex xs3>
           <v-layout column align-center>
-            <span class="overline">Wed</span>
-            <span class="headline short font-family pt-sans text--secondary font-weight-bold">30</span>
+            <span class="overline">Mon</span>
+            <span class="headline short font-family pt-sans text--secondary font-weight-bold">24</span>
           </v-layout>
         </v-flex>
         <v-flex xs8>

@@ -170,9 +170,6 @@ export default {
       this.$nextTick(() => {
         this.menu.open = true;
       });
-      //this.menuEl = el;
-      //this.menu.open = el != null;
-      //console.log(el);
     },
   },
   watch: {
