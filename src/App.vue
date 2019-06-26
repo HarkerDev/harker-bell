@@ -119,7 +119,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-menu v-model="menu.open" absolute :close-on-content-click="false" offset-x :position-x="menu.x" :position-y="menu.y">
+    <v-menu v-model="menu.open" absolute :close-on-click="false" :close-on-content-click="false" offset-x :position-x="menu.x" :position-y="menu.y">
       <v-card>
         <v-card-text>yay</v-card-text>
       </v-card>
@@ -163,9 +163,16 @@ export default {
       window.print();
     },
     toggleMenu(el) {
-      this.menuEl = el;
-      this.menu = el != null;
-      console.log(el);
+      this.menu.open = false;
+      let rect = el.getBoundingClientRect();
+      this.menu.x = rect.left+rect.width;
+      this.menu.y = rect.top;
+      this.$nextTick(() => {
+        this.menu.open = true;
+      });
+      //this.menuEl = el;
+      //this.menu.open = el != null;
+      //console.log(el);
     },
   },
   watch: {
