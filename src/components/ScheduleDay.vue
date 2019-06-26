@@ -1,12 +1,26 @@
 <template>
   <v-sheet class="day-container" :min-width="view == 'day' ? 180 : 150" :max-width="view == 'day' ? 240 : 150" :height="view == 'day' ? 'auto' : 100">
-    <v-sheet height="50" tile>
-      date
+    <v-sheet height="48" tile>
+      <v-layout align-center>
+        <v-flex xs3>
+          <v-layout column align-center>
+            <span class="overline">Wed</span>
+            <span class="headline short font-family pt-sans text--secondary font-weight-bold">30</span>
+          </v-layout>
+        </v-flex>
+        <v-flex xs8>
+          <v-layout wrap justify-end align-center>
+            <span class="overline normal text--secondary">Adjusted</span>
+            <span class="ml-1 display-1 font-family pt-sans text--disabled font-weight-bold">B</span>
+          </v-layout>
+        </v-flex>
+        <v-flex xs1></v-flex>
+      </v-layout>
     </v-sheet>
     <template v-if="view == 'day'">
       <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
         <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
-          <v-sheet v-for="(period, pIndex) in column" :key="pIndex" class="period caption text-xs-center d-flex" :height="period.duration+1" tile>
+          <v-sheet v-for="(period, pIndex) in column" :key="pIndex" class="period caption text-xs-center d-flex" :height="period.duration+1" tile @click.prevent="$emit('toggle-menu', $refs.sheet[0])" ref="sheet">
             <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
               <div ref="periodNames">{{period.name}}</div>
               <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
@@ -105,6 +119,9 @@ export default {
 }
 .short {
   line-height: 1.2;
+}
+.normal {
+  line-height: normal;
 }
 .group {
   transition: all 500ms;
