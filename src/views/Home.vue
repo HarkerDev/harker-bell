@@ -1,7 +1,7 @@
 <template>
   <v-container fluid style="min-width: 932px;">
     <v-layout row justify-center>
-      <schedule-day v-for="i in 5" :key="i" :id="'day'+i" :schedule="schedule" :view="view"></schedule-day>
+      <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :id="'day'+i" :schedule="schedule" :view="view"></schedule-day>
     </v-layout>
   </v-container>
 </template>
@@ -62,7 +62,7 @@ export default {
     updateView() {
       if (this.$route.name == "day" || this.$route.name == "month")
         this.view = this.$route.name;
-    }
+    },
   },
   watch: {
     $route() {

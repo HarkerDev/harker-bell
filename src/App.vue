@@ -88,7 +88,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <router-view></router-view>
+      <router-view @toggle-menu="toggleMenu($event.$el)"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" @input="closeSettings()" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
       <v-card>
@@ -119,6 +119,11 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-menu v-model="menu.open" absolute :close-on-content-click="false" offset-x :position-x="menu.x" :position-y="menu.y">
+      <v-card>
+        <v-card-text>yay</v-card-text>
+      </v-card>
+    </v-menu>
   </v-app>
 </template>
 
@@ -133,6 +138,11 @@ export default {
     return {
       env: process.env,
       mode: "week",
+      menu: {
+        open: false,
+        x: 0,
+        y: 0,
+      },
       settings: {
         dialog: this.$route.name == "settings",
       },
@@ -151,6 +161,11 @@ export default {
     },
     print() {
       window.print();
+    },
+    toggleMenu(el) {
+      this.menuEl = el;
+      this.menu = el != null;
+      console.log(el);
     },
   },
   watch: {
