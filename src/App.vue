@@ -88,7 +88,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <router-view @toggle-menu="toggleMenu($event.$el)"></router-view>
+      <router-view @toggle-menu="showMenu($event.$el)"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" @input="closeSettings()" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
       <v-card>
@@ -119,9 +119,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-menu v-model="menu.open" absolute :close-on-click="false" :close-on-content-click="false" offset-x :position-x="menu.x" :position-y="menu.y">
-      <v-card>
-        <v-card-text>yay</v-card-text>
+    <v-menu v-model="menu.open" absolute :close-on-content-click="false" offset-x :position-x="menu.x" :position-y="menu.y">
+      <v-card height="100">
+        <v-card-text>what's not for lunch</v-card-text>
       </v-card>
     </v-menu>
   </v-app>
@@ -140,6 +140,7 @@ export default {
       mode: "week",
       menu: {
         open: false,
+        openTracker: 0,
         x: 0,
         y: 0,
       },
@@ -159,14 +160,20 @@ export default {
       if (this.prevRoute) this.$router.back();
       else this.$router.push("/");
     },
+    /** Prints the current page of the bell schedule. */
     print() {
       window.print();
     },
-    toggleMenu(el) {
-      this.menu.open = false;
+    /**
+     * Opens the panel displaying the lunch menu next to the appropriate date.
+     * @param {VueComponent} a v-sheet component corresponding to the lunch date whose menu should be shown
+     */
+    showMenu(el) {
+      this.menu.open = false; // required in order for the position transition to work
       let rect = el.getBoundingClientRect();
       this.menu.x = rect.left+rect.width;
       this.menu.y = rect.top;
+      this.menu.openTracker = 2;
       this.$nextTick(() => {
         this.menu.open = true;
       });
@@ -176,6 +183,15 @@ export default {
     $route(route, prevRoute) {
       this.prevRoute = prevRoute;
       this.settings.dialog = route.name == "settings";
+    },
+    "menu.open"(open) {
+      console.log("watch "+open+" "+this.menu.openTracker);
+      if (open == false && this.menu.openTracker > 0) {
+        console.log("should open");
+        this.$nextTick(() => {
+          this.menu.open = true;
+          this.menu.openTracker--;
+        });}
     },
     "$vuetify.theme.dark"() {
       localStorage.setItem("darkTheme", this.$vuetify.theme.dark);

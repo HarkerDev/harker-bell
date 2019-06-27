@@ -20,7 +20,7 @@
     <template v-if="view == 'day'">
       <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
         <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
-          <v-sheet v-for="(period, pIndex) in column" :key="pIndex" class="period caption text-xs-center d-flex" :height="period.duration+1" tile @click.prevent="$emit('toggle-menu', $refs.sheet[0])" ref="sheet">
+          <v-sheet v-for="(period, pIndex) in column" :key="pIndex" class="period caption text-xs-center d-flex" :height="period.duration+1" tile @click.stop="$emit('toggle-menu', $refs.sheet[0])" ref="sheet">
             <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
               <div ref="periodNames">{{period.name}}</div>
               <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
@@ -36,6 +36,7 @@
 <script>
 export default {
   props: {
+    /** Raw schedule fetched from either the API or IndexedDB. */
     schedule: {
       type: Array,
       required: true
@@ -61,6 +62,13 @@ export default {
     };
   },
   computed: {
+    /**
+     * Processes the raw schedule array prop and constructs a new array of the following format:
+     * 1st dimension: list of period groups in a day. Period groups are separated by full-width horizontal lines when displayed in week or day view.
+     * 2nd dimension: column groups for each period group. Column groups are used to split schedules when there are concurrent periods, indicated by vertical lines on the page.
+     * 3rd dimension: list of periods in the group, including passing periods.
+     * @return {Array} three-dimensional array
+     */
     computedSchedule() {
       let result = [[[{ // create result array with first period (including its duration) as first element
         ...this.schedule[0],
@@ -92,11 +100,15 @@ export default {
     },
   },
   filters: {
+    /**
+     * Returns a human-readable time from a Date object in H:MM format.
+     * @return {String} 12-hour time without AM/PM
+     */
     formatTime(date) {
       return (date.getUTCHours()+11)%12+1+":"+ // convert hours to 12-hour time
              ("0"+date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
     }
-  }
+  },
 };
 </script>
 
