@@ -141,6 +141,7 @@ export default {
       menu: {
         open: false,
         openTracker: 0,
+        history: [],
         x: 0,
         y: 0,
       },
@@ -169,11 +170,13 @@ export default {
      * @param {VueComponent} a v-sheet component corresponding to the lunch date whose menu should be shown
      */
     showMenu(el) {
-      this.menu.open = false; // required in order for the position transition to work
+      if (this.menu.open) {
+        this.menu.openTracker = 2;
+        this.menu.open = false; // required in order for the position transition to work
+      }
       let rect = el.getBoundingClientRect();
       this.menu.x = rect.left+rect.width;
       this.menu.y = rect.top;
-      this.menu.openTracker = 2;
       this.$nextTick(() => {
         this.menu.open = true;
       });
@@ -188,6 +191,7 @@ export default {
       console.log("watch "+open+" "+this.menu.openTracker);
       if (open == false && this.menu.openTracker > 0) {
         console.log("should open");
+        this.menu.history.push(true);
         this.$nextTick(() => {
           this.menu.open = true;
           this.menu.openTracker--;
