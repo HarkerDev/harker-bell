@@ -20,13 +20,7 @@
     <template v-if="view == 'day'">
       <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
         <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
-          <v-sheet v-for="(period, pIndex) in column" :key="pIndex" class="period caption text-xs-center d-flex" :height="period.duration+1" tile @click.stop="$emit('toggle-menu', $refs.sheet[0])" ref="sheet">
-            <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
-              <div ref="periodNames">{{period.name}}</div>
-              <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
-              <div v-if="period.start && period.duration >= 30">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-            </v-layout>
-          </v-sheet>
+          <schedule-period v-for="(period, pIndex) in column" :key="pIndex" @toggle-menu="$emit('toggle-menu', $event)" :lunch="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :period="period" :sheet-id="gIndex+'-'+cIndex+'-'+pIndex"></schedule-period>
         </v-flex>
       </v-layout>
     </template>
@@ -34,7 +28,12 @@
 </template>
 
 <script>
+import SchedulePeriod from "../components/SchedulePeriod";
+
 export default {
+  components: {
+    SchedulePeriod,
+  },
   props: {
     /** Raw schedule fetched from either the API or IndexedDB. */
     schedule: {
@@ -99,28 +98,14 @@ export default {
       return result;
     },
   },
-  filters: {
-    /**
-     * Returns a human-readable time from a Date object in H:MM format.
-     * @return {String} 12-hour time without AM/PM
-     */
-    formatTime(date) {
-      return (date.getUTCHours()+11)%12+1+":"+ // convert hours to 12-hour time
-             ("0"+date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
-    }
-  },
 };
 </script>
 
-<style scoped>
+<style>
 .day-container {
   border: 1px solid #5F6368 !important;
   margin-right: -1px;
   transition: min-width 500ms;
-}
-.period {
-  border: 1px solid #5F6368 !important;
-  margin: 0 -1px -1px;
 }
 .column:not(:first-child) > .period {
   margin-left: 0;

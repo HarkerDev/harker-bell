@@ -88,7 +88,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <router-view @toggle-menu="showMenu($event.$el)"></router-view>
+      <router-view @toggle-menu="showMenu($event)"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" @input="closeSettings()" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
       <v-card>
@@ -134,6 +134,24 @@ export default {
     let darkTheme = localStorage.getItem("darkTheme");
     if (darkTheme) this.$vuetify.theme.dark = darkTheme === "true";
   },
+  mounted() {
+    /**
+     * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
+     * @param {VueComponent} a v-sheet component corresponding to the lunch date whose menu should be shown
+     */
+    this.$root.$on("show-menu", el => {
+      if (this.menu.open) {
+        this.menu.openTracker = 2;
+        this.menu.open = false; // required in order for the position transition to work
+      }
+      let rect = document.getElementById(el).getBoundingClientRect();
+      this.menu.x = rect.left+rect.width;
+      this.menu.y = rect.top;
+      this.$nextTick(() => {
+        this.menu.open = true;
+      });
+    });
+  },
   data() {
     return {
       env: process.env,
@@ -141,7 +159,6 @@ export default {
       menu: {
         open: false,
         openTracker: 0,
-        history: [],
         x: 0,
         y: 0,
       },
@@ -165,22 +182,6 @@ export default {
     print() {
       window.print();
     },
-    /**
-     * Opens the panel displaying the lunch menu next to the appropriate date.
-     * @param {VueComponent} a v-sheet component corresponding to the lunch date whose menu should be shown
-     */
-    showMenu(el) {
-      if (this.menu.open) {
-        this.menu.openTracker = 2;
-        this.menu.open = false; // required in order for the position transition to work
-      }
-      let rect = el.getBoundingClientRect();
-      this.menu.x = rect.left+rect.width;
-      this.menu.y = rect.top;
-      this.$nextTick(() => {
-        this.menu.open = true;
-      });
-    },
   },
   watch: {
     $route(route, prevRoute) {
@@ -188,14 +189,11 @@ export default {
       this.settings.dialog = route.name == "settings";
     },
     "menu.open"(open) {
-      console.log("watch "+open+" "+this.menu.openTracker);
-      if (open == false && this.menu.openTracker > 0) {
-        console.log("should open");
-        this.menu.history.push(true);
+      if (open == false && this.menu.openTracker > 0)
         this.$nextTick(() => {
           this.menu.open = true;
           this.menu.openTracker--;
-        });}
+        });
     },
     "$vuetify.theme.dark"() {
       localStorage.setItem("darkTheme", this.$vuetify.theme.dark);
