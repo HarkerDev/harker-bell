@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="day-container" :min-width="view == 'day' ? 180 : 150" :max-width="view == 'day' ? 240 : 150" :height="view == 'day' ? 'auto' : 100">
+  <v-sheet class="day-container overflow-y-hidden" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 72 : 500" min-height="72">
     <v-sheet height="48" tile>
       <v-layout align-center>
         <v-flex xs3>
@@ -17,10 +17,10 @@
         <v-flex xs1></v-flex>
       </v-layout>
     </v-sheet>
-    <template v-if="view == 'day'">
+    <template v-if="mode != 'month'">
       <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
         <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
-          <schedule-period v-for="(period, pIndex) in column" :key="pIndex" @toggle-menu="$emit('toggle-menu', $event)" :lunch="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :period="period" :sheet-id="gIndex+'-'+cIndex+'-'+pIndex"></schedule-period>
+          <schedule-period v-for="(period, pIndex) in column" :key="pIndex" @toggle-menu="$emit('toggle-menu', $event)" :lunch="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :period="period" :sheet-id="index+'-'+gIndex+'-'+cIndex+'-'+pIndex"></schedule-period>
         </v-flex>
       </v-layout>
     </template>
@@ -35,15 +35,19 @@ export default {
     SchedulePeriod,
   },
   props: {
+    index: {
+      type: Number,
+      required: true
+    },
+    mode: {
+      validator(value) {
+        return ["day", "week", "month"].indexOf(value) != -1;
+      },
+      required: true
+    },
     /** Raw schedule fetched from either the API or IndexedDB. */
     schedule: {
       type: Array,
-      required: true
-    },
-    view: {
-      validator(value) {
-        return ["day", "month"].indexOf(value) != -1;
-      },
       required: true
     },
   },
@@ -105,7 +109,7 @@ export default {
 .day-container {
   border: 1px solid #5F6368 !important;
   margin-right: -1px;
-  transition: min-width 500ms;
+  transition: min-width 250ms, max-height 250ms;
 }
 .column:not(:first-child) > .period {
   margin-left: 0;

@@ -1,8 +1,12 @@
 <template>
   <v-container fluid style="min-width: 932px;">
-    <v-layout row justify-center>
-      <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :id="'day'+i" :schedule="schedule" :view="view"></schedule-day>
-    </v-layout>
+    <transition-group name="schedule-transition">
+      <v-layout v-for="j in 5" :key="j" row justify-center wrap>
+        <template v-if="(mode == 'month') ? true : (j == 1)">
+          <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :index="i" :schedule="schedule" :mode="mode"></schedule-day>
+        </template>
+      </v-layout>
+    </transition-group>
   </v-container>
 </template>
 
@@ -15,6 +19,14 @@ export default {
   },
   created() {
     this.updateView();
+  },
+  props: {
+    mode: {
+      validator(value) {
+        return ["day", "week", "month"].indexOf(value) != -1;
+      },
+      required: true
+    }
   },
   data() {
     return {
@@ -71,3 +83,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.schedule-transition-move {
+  transition: transform 250ms;
+}
+</style>

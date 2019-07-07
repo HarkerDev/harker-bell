@@ -88,7 +88,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <router-view @toggle-menu="showMenu($event)"></router-view>
+      <router-view @toggle-menu="showMenu($event)" :mode="mode"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" @input="closeSettings()" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
       <v-card>
@@ -170,9 +170,9 @@ export default {
   },
   methods: {
     changeMode(mode) {
-      this.$nextTick(() => {
+      //this.$nextTick(() => {
         this.mode = mode;
-      });
+      //});
     },
     closeSettings() {
       if (this.prevRoute) this.$router.back();
