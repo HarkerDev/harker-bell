@@ -12,11 +12,6 @@ import "./material-icons.css";
 Vue.config.productionTip = false;
 
 var app = new Vue({
-  data() {
-    return {
-      weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-    };
-  },
   router,
   vuetify,
   render: h => h(App)
