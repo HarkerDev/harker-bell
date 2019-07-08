@@ -1,13 +1,16 @@
 <template>
   <v-container fluid style="min-width: 932px;">
+    <!-- MONTH HEADER -->
+    <v-layout v-if="mode == 'month'" class="overline" justify-center row>
+      <v-sheet v-for="day in weekdays" :key="day" class="text-xs-center" height="24" width="149">{{day}}</v-sheet>
+    </v-layout>
     <transition-group name="schedule-transition">
-      <v-layout v-if="mode == 'month'" class="overline" key="'header'" justify-center row>
-        <v-sheet v-for="i in 5" :key="i" class="text-xs-center" height="24" width="150">{{i}}</v-sheet>
-      </v-layout>
       <v-layout v-for="j in 5" :key="j" row justify-center wrap>
         <template v-if="(mode == 'month') ? true : (j == 2)">
           <!-- <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :index="i" :schedule="schedule" :mode="mode"></schedule-day> -->
+          <!-- DAY CONTAINER -->
           <v-sheet v-for="index in 5" :key="index" class="day-container overflow-hidden" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
+            <!-- DAY HEADER -->
             <v-sheet :height="mode == 'month' ? 36 : 48" tile>
               <v-layout align-center>
                 <v-flex xs3>
@@ -25,14 +28,17 @@
                 <v-flex xs1></v-flex>
               </v-layout>
             </v-sheet>
+            <!-- MONTH DAY CONTENT -->
             <div v-if="displayMonthView" class="body-2">
               
             </div>
+            <!-- WEEK DAY CONTENT -->
             <template v-else>
               <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
                 <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
                   <!-- <schedule-period v-for="(period, pIndex) in column" @toggle-menu="$emit('toggle-menu', $event)" :lunch="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :period="period" :sheet-id="index+'-'+gIndex+'-'+cIndex+'-'+pIndex"></schedule-period> -->
                   <template v-for="(period, pIndex) in column">
+                    <!-- LUNCH PERIOD -->
                     <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
                       <v-sheet :id="index+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-xs-center d-flex" :elevation="open ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile @click.stop="showMenu()" :style="{'z-index': (open || hover) ? 2 : 1}">
                         <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
@@ -42,6 +48,7 @@
                         </v-layout>
                       </v-sheet>
                     </v-hover>
+                    <!-- REGULAR PERIOD -->
                     <v-sheet v-else :key="pIndex" class="period caption text-xs-center d-flex" :height="period.duration+1" tile>
                       <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
                         <div ref="periodNames">{{period.name}}</div>
@@ -125,11 +132,12 @@ export default {
           end: new Date("2019-06-21T15:00Z")
         },
       ],
+      weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
     };
   },
   computed: {
     /**
-     * Processes the raw schedule array prop and constructs a new array of the following format:
+     * Processes the raw schedule array prop and constructs a new array in the following format:
      * 1st dimension: list of period groups in a day. Period groups are separated by full-width horizontal lines when displayed in week or day view.
      * 2nd dimension: column groups for each period group. Column groups are used to split schedules when there are concurrent periods, indicated by vertical lines on the page.
      * 3rd dimension: list of periods in the group, including passing periods.
@@ -199,11 +207,16 @@ export default {
     $route() {
       this.updateView();
     },
+    /**
+     * Called when the calendar mode changes.
+     */
     mode(value) {
-      let timeout = value == "month" ? 300 : 0;
-      setTimeout(() => {
-        this.displayMonthView = value == "month";
-      }, timeout);
+      let timeout = value == "month" ? 250 : 0;
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.displayMonthView = value == "month";
+        }, timeout);
+      });
     },
   }
 };
@@ -240,9 +253,6 @@ export default {
 .lunch {
   cursor: pointer;
 }
-/*.group {
-  transition: all 500ms;
-}*/
 .font-transition {
   -webkit-transition: font-size 300ms, letter-spacing 300ms;
           transition: font-size 300ms, letter-spacing 300ms;
