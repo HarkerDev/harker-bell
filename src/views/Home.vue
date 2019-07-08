@@ -1,6 +1,9 @@
 <template>
   <v-container fluid style="min-width: 932px;">
     <transition-group name="schedule-transition">
+      <v-layout v-if="mode == 'month'" class="overline" key="'header'" justify-center row>
+        <v-sheet v-for="day in weekdays" :key="day" class="text-xs-center" height="24" width="150">{day}</v-sheet>
+      </v-layout>
       <v-layout v-for="j in 5" :key="j" row justify-center wrap>
         <template v-if="(mode == 'month') ? true : (j == 2)">
           <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :index="i" :schedule="schedule" :mode="mode"></schedule-day>

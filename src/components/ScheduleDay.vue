@@ -10,7 +10,7 @@
         </v-flex>
         <v-flex xs8>
           <v-layout wrap justify-end align-center>
-            <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}"></span>
+            <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">Adjusted</span>
             <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'pt-sans', 'text--disabled', 'font-weight-bold', 'font-transition']">B</span>
           </v-layout>
         </v-flex>
