@@ -2,7 +2,7 @@
   <v-container fluid style="min-width: 932px;">
     <transition-group name="schedule-transition">
       <v-layout v-for="j in 5" :key="j" row justify-center wrap>
-        <template v-if="(mode == 'month') ? true : (j == 1)">
+        <template v-if="displayMonthView ? true : (j == 2)">
           <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :index="i" :schedule="schedule" :mode="mode"></schedule-day>
         </template>
       </v-layout>
@@ -30,6 +30,7 @@ export default {
   },
   data() {
     return {
+      displayMonthView: this.mode == "month",
       view: "day",
       schedule: [
         {
@@ -79,6 +80,12 @@ export default {
   watch: {
     $route() {
       this.updateView();
+    },
+    mode(value) {
+      let timeout = value == "month" ? 0 : 250;
+      setTimeout(() => {
+        this.displayMonthView = value == "month";
+      }, timeout);
     }
   }
 };

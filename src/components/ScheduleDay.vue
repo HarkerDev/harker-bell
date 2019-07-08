@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="day-container overflow-y-hidden" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 72 : 500" min-height="72">
+  <v-sheet class="day-container overflow-hidden" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 72 : 500" min-height="72">
     <v-sheet height="48" tile>
       <v-layout align-center>
         <v-flex xs3>
@@ -17,7 +17,7 @@
         <v-flex xs1></v-flex>
       </v-layout>
     </v-sheet>
-    <template v-if="mode != 'month'">
+    <template v-if="!displayMonthView">
       <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
         <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
           <schedule-period v-for="(period, pIndex) in column" :key="pIndex" @toggle-menu="$emit('toggle-menu', $event)" :lunch="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :period="period" :sheet-id="index+'-'+gIndex+'-'+cIndex+'-'+pIndex"></schedule-period>
@@ -53,6 +53,7 @@ export default {
   },
   data() {
     return {
+      displayMonthView: this.mode == "month",
       scheduled: [
         
       ],
@@ -102,6 +103,14 @@ export default {
       return result;
     },
   },
+  watch: {
+    mode(value) {
+      let timeout = value == "month" ? 250 : 0;
+      setTimeout(() => {
+        this.displayMonthView = value == "month";
+      }, timeout);
+    }
+  },
 };
 </script>
 
@@ -109,7 +118,7 @@ export default {
 .day-container {
   border: 1px solid #5F6368 !important;
   margin-right: -1px;
-  transition: min-width 250ms, max-height 250ms;
+  transition: min-width 250ms, max-height 300ms;
 }
 .column:not(:first-child) > .period {
   margin-left: 0;
