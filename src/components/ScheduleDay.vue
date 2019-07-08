@@ -1,23 +1,26 @@
 <template>
-  <v-sheet class="day-container overflow-hidden" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 72 : 500" min-height="72">
-    <v-sheet height="48" tile>
+  <v-sheet class="day-container overflow-hidden" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
+    <v-sheet :height="mode == 'month' ? 36 : 48" tile>
       <v-layout align-center>
         <v-flex xs3>
           <v-layout column align-center>
-            <span class="overline">Mon</span>
-            <span class="headline short font-family pt-sans text--secondary font-weight-bold">24</span>
+            <span v-if="mode != 'month'" class="overline">Mon</span>
+            <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', 'text--secondary', 'font-weight-bold', 'font-transition']">24</span>
           </v-layout>
         </v-flex>
         <v-flex xs8>
           <v-layout wrap justify-end align-center>
-            <span class="overline normal text--secondary">Adjusted</span>
-            <span class="ml-1 display-1 font-family pt-sans text--disabled font-weight-bold">B</span>
+            <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}"></span>
+            <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'pt-sans', 'text--disabled', 'font-weight-bold', 'font-transition']">B</span>
           </v-layout>
         </v-flex>
         <v-flex xs1></v-flex>
       </v-layout>
     </v-sheet>
-    <template v-if="!displayMonthView">
+    <div v-if="displayMonthView" class="body-2">
+      
+    </div>
+    <template v-else>
       <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
         <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
           <schedule-period v-for="(period, pIndex) in column" :key="pIndex" @toggle-menu="$emit('toggle-menu', $event)" :lunch="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :period="period" :sheet-id="index+'-'+gIndex+'-'+cIndex+'-'+pIndex"></schedule-period>
@@ -105,7 +108,7 @@ export default {
   },
   watch: {
     mode(value) {
-      let timeout = value == "month" ? 250 : 0;
+      let timeout = value == "month" ? 300 : 0;
       setTimeout(() => {
         this.displayMonthView = value == "month";
       }, timeout);
@@ -117,8 +120,9 @@ export default {
 <style>
 .day-container {
   border: 1px solid #5F6368 !important;
-  margin-right: -1px;
-  transition: min-width 250ms, max-height 300ms;
+  margin: 0 -1px -1px 0;
+  -webkit-transition: min-width 300ms, max-height 300ms;
+          transition: min-width 300ms, max-height 300ms;
 }
 .column:not(:first-child) > .period {
   margin-left: 0;
@@ -133,7 +137,11 @@ export default {
 .normal {
   line-height: normal;
 }
-.group {
+/*.group {
   transition: all 500ms;
+}*/
+.font-transition {
+  -webkit-transition: font-size 300ms, letter-spacing 300ms;
+          transition: font-size 300ms, letter-spacing 300ms;
 }
 </style>
