@@ -9,7 +9,7 @@
         <template v-if="(mode == 'month') ? true : (j == 2)">
           <!-- <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :index="i" :schedule="schedule" :mode="mode"></schedule-day> -->
           <!-- DAY CONTAINER -->
-          <v-sheet v-for="index in 5" :key="index" class="day-container" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
+          <v-sheet v-for="index in 5" :key="index" :class="['day-container', {'overflow-hidden': displayMonthStyle}]" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
             <!-- DAY HEADER -->
             <v-sheet :height="mode == 'month' ? 36 : 48" tile>
               <v-layout align-center>
@@ -29,7 +29,7 @@
               </v-layout>
             </v-sheet>
             <!-- MONTH DAY CONTENT -->
-            <div v-if="displayMonthView" class="body-2">
+            <div v-if="displayMonthContent" class="body-2">
               
             </div>
             <!-- WEEK DAY CONTENT -->
@@ -87,7 +87,8 @@ export default {
   },
   data() {
     return {
-      displayMonthView: this.mode == "month",
+      displayMonthContent: this.mode == "month",
+      displayMonthStyle: this.mode == "month",
       open: false,
       stayOpen: true,
       scheduled: [
@@ -196,6 +197,9 @@ export default {
       if (this.$route.name == "day" || this.$route.name == "month")
         this.view = this.$route.name;
     },
+    leave() {
+      console.log("done")
+    }
   },
   filters: {
     /**
@@ -215,11 +219,19 @@ export default {
      * Called when the calendar mode changes.
      */
     mode(value) {
-      let timeout = value == "month" ? 250 : 0;
+      //let timeout = value == "month" ? 250 : 0;
       this.$nextTick(() => {
-        setTimeout(() => {
-          this.displayMonthView = value == "month";
-        }, timeout);
+        if (value == "month") {
+          setTimeout(() => {
+            this.displayMonthContent = value == "month";
+          }, 250);
+          this.displayMonthStyle = value == "month";
+        } else {
+          setTimeout(() => {
+            this.displayMonthStyle = value == "month";
+          }, 500);
+          this.displayMonthContent = value == "month";
+        }
       });
     },
   }
