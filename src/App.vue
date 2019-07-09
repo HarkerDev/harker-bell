@@ -163,7 +163,9 @@ export default {
     },
     /** Prints the current view of the bell schedule. */
     print() {
-      window.print();
+      setTimeout(() => {
+        window.print();
+      }, 100);
     },
     /**
      * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
@@ -205,5 +207,10 @@ export default {
 <style>
 .font-family.pt-sans {
   font-family: "PT Sans", sans-serif !important;
+}
+@media print {
+  @page {
+    size: landscape;
+  }
 }
 </style>

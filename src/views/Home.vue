@@ -88,7 +88,6 @@ export default {
   data() {
     return {
       displayMonthContent: this.mode == "month",
-      displayMonthStyle: this.mode == "month",
       open: false,
       ref: undefined,
       stayOpen: true,
@@ -224,12 +223,6 @@ export default {
      * Called when the calendar mode changes.
      */
     mode(value) {
-      /*let timeout = value == "month" ? 250 : 0;
-      this.$nextTick(() => {
-        setTimeout(() => {
-            this.displayMonthContent = value == "month";
-          }, timeout);
-      });*/
       if (value == "month") {
         this.ref = this.$refs.day[0].$el;
         this.ref.addEventListener("transitionend", this.transitionEnd);
