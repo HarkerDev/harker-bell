@@ -9,7 +9,7 @@
         <template v-if="(mode == 'month') ? true : (j == 2)">
           <!-- <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :index="i" :schedule="schedule" :mode="mode"></schedule-day> -->
           <!-- DAY CONTAINER -->
-          <v-sheet v-for="index in 5" :key="index" :class="['day-container', {'overflow-hidden': displayMonthStyle}]" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
+          <v-sheet v-for="index in 5" :key="index" :class="['day-container', {'overflow-hidden': mode == 'month'}]" ref="day" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
             <!-- DAY HEADER -->
             <v-sheet :height="mode == 'month' ? 36 : 48" tile>
               <v-layout align-center>
@@ -90,6 +90,7 @@ export default {
       displayMonthContent: this.mode == "month",
       displayMonthStyle: this.mode == "month",
       open: false,
+      ref: undefined,
       stayOpen: true,
       scheduled: [
         
@@ -177,6 +178,9 @@ export default {
       }
       return result;
     },
+    isMonth() {
+      return this.mode == "month";
+    },
   },
   methods: {
     showMenu(id) {
@@ -197,9 +201,10 @@ export default {
       if (this.$route.name == "day" || this.$route.name == "month")
         this.view = this.$route.name;
     },
-    leave() {
-      console.log("done")
-    }
+    transitionEnd() {
+      this.displayMonthContent = true;
+      this.ref.removeEventListener("transitionend", this.transitionEnd);
+    },
   },
   filters: {
     /**
@@ -219,20 +224,17 @@ export default {
      * Called when the calendar mode changes.
      */
     mode(value) {
-      //let timeout = value == "month" ? 250 : 0;
+      /*let timeout = value == "month" ? 250 : 0;
       this.$nextTick(() => {
-        if (value == "month") {
-          setTimeout(() => {
+        setTimeout(() => {
             this.displayMonthContent = value == "month";
-          }, 250);
-          this.displayMonthStyle = value == "month";
-        } else {
-          setTimeout(() => {
-            this.displayMonthStyle = value == "month";
-          }, 500);
-          this.displayMonthContent = value == "month";
-        }
-      });
+          }, timeout);
+      });*/
+      if (value == "month") {
+        this.ref = this.$refs.day[0].$el;
+        this.ref.addEventListener("transitionend", this.transitionEnd);
+      } else
+        this.displayMonthContent = false;
     },
   }
 };
@@ -242,6 +244,9 @@ export default {
 .schedule-transition-move {
   -webkit-transition: -webkit-transform 300ms;
           transition: transform 300ms;
+}
+.schedule-transition-move .day-container {
+  overflow: hidden;
 }
 .day-container {
   border: 1px solid #5F6368 !important;
