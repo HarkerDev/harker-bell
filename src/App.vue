@@ -88,7 +88,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <router-view @toggle-menu="showMenu($event)" :mode="mode"></router-view>
+      <router-view @show-menu="showMenu($event)" :mode="mode" :sheet-id="menu.open ? menu.sheetId : null"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" @input="closeSettings()" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
       <v-card>
@@ -134,24 +134,6 @@ export default {
     let darkTheme = localStorage.getItem("darkTheme");
     if (darkTheme) this.$vuetify.theme.dark = darkTheme === "true";
   },
-  mounted() {
-    /**
-     * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
-     * @param {VueComponent} a v-sheet component corresponding to the lunch date whose menu should be shown
-     */
-    this.$root.$on("show-menu", el => {
-      if (this.menu.open) {
-        this.menu.openTracker = 2;
-        this.menu.open = false; // required in order for the position transition to work
-      }
-      let rect = document.getElementById(el).getBoundingClientRect();
-      this.menu.x = rect.left+rect.width;
-      this.menu.y = rect.top;
-      this.$nextTick(() => {
-        this.menu.open = true;
-      });
-    });
-  },
   data() {
     return {
       env: process.env,
@@ -159,6 +141,7 @@ export default {
       menu: {
         open: false,
         openTracker: 0,
+        sheetId: null,
         x: 0,
         y: 0,
       },
@@ -178,9 +161,26 @@ export default {
       if (this.prevRoute) this.$router.back();
       else this.$router.push("/");
     },
-    /** Prints the current page of the bell schedule. */
+    /** Prints the current view of the bell schedule. */
     print() {
       window.print();
+    },
+    /**
+     * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
+     * @param {VueComponent} a v-sheet component corresponding to the lunch date whose menu should be shown
+     */
+    showMenu(id) {
+      this.menu.sheetId = id;
+      if (this.menu.open) {
+        this.menu.openTracker = 2;
+        this.menu.open = false; // required in order for the position transition to work
+      }
+      let rect = document.getElementById(id).getBoundingClientRect();
+      this.menu.x = rect.left+rect.width;
+      this.menu.y = rect.top;
+      this.$nextTick(() => {
+        this.menu.open = true;
+      });
     },
   },
   watch: {

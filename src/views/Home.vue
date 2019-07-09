@@ -1,15 +1,15 @@
 <template>
   <v-container fluid style="min-width: 932px;">
-    <!-- MONTH HEADER -->
-    <v-layout v-if="mode == 'month'" class="overline" justify-center row>
-      <v-sheet v-for="day in weekdays" :key="day" class="text-xs-center" height="24" width="149">{{day}}</v-sheet>
-    </v-layout>
     <transition-group name="schedule-transition">
+      <!-- MONTH HEADER -->
+      <v-layout v-if="mode == 'month'" key="header" class="overline" justify-center row>
+        <v-sheet v-for="day in weekdays" :key="day" class="text-xs-center" height="24" width="149">{{day}}</v-sheet>
+      </v-layout>
       <v-layout v-for="j in 5" :key="j" row justify-center wrap>
         <template v-if="(mode == 'month') ? true : (j == 2)">
           <!-- <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :index="i" :schedule="schedule" :mode="mode"></schedule-day> -->
           <!-- DAY CONTAINER -->
-          <v-sheet v-for="index in 5" :key="index" class="day-container overflow-hidden" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
+          <v-sheet v-for="index in 5" :key="index" class="day-container" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
             <!-- DAY HEADER -->
             <v-sheet :height="mode == 'month' ? 36 : 48" tile>
               <v-layout align-center>
@@ -33,14 +33,15 @@
               
             </div>
             <!-- WEEK DAY CONTENT -->
-            <template v-else>
+            <template v-else-if="j==2">
               <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
                 <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
                   <!-- <schedule-period v-for="(period, pIndex) in column" @toggle-menu="$emit('toggle-menu', $event)" :lunch="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :period="period" :sheet-id="index+'-'+gIndex+'-'+cIndex+'-'+pIndex"></schedule-period> -->
                   <template v-for="(period, pIndex) in column">
                     <!-- LUNCH PERIOD -->
                     <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
-                      <v-sheet :id="index+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-xs-center d-flex" :elevation="open ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile @click.stop="showMenu()" :style="{'z-index': (open || hover) ? 2 : 1}">
+                      <!-- TODO: Find a way to extract id logic somewhere -->
+                      <v-sheet :id="index+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-xs-center d-flex" :elevation="(sheetId == index+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile @click.stop="showMenu(index+'-'+gIndex+'-'+cIndex+'-'+pIndex)" :style="{'z-index': (sheetId == index+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}">
                         <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
                           <div ref="periodNames">{{period.name}}</div>
                           <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
@@ -78,11 +79,14 @@ export default {
         return ["day", "week", "month"].indexOf(value) != -1;
       },
       required: true
-    }
+    },
+    sheetId: {
+      type: String,
+      default: null
+    },
   },
   data() {
     return {
-      view: "day",
       displayMonthView: this.mode == "month",
       open: false,
       stayOpen: true,
@@ -174,10 +178,10 @@ export default {
     },
   },
   methods: {
-    showMenu() {
-      this.$root.$emit('show-menu', this.sheetId);
+    showMenu(id) {
+      this.$emit('show-menu', id);
       this.open = this.stayOpen = true;
-      console.log(this.$parent.$parent)
+      /*console.log(this.$parent.$parent)
       let unwatch = this.$watch("$parent.$parent.$parent.$parent.$parent.$parent.menu.open", () => {
         console.log(this.stayOpen);
         if (this.stayOpen)
@@ -186,7 +190,7 @@ export default {
           this.open = false;
           unwatch();
         }
-      });
+      });*/
     },
     updateView() {
       if (this.$route.name == "day" || this.$route.name == "month")
