@@ -1,7 +1,7 @@
 # Harker Bell Schedule
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/BowenYin/harker-bell.svg)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/af49fbbb-c506-4bc7-a158-ab0ae4e922bf/deploy-status)](https://app.netlify.com/sites/harker-bell/deploys)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FBowenYin%2Fharker-bell.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FBowenYin%2Fharker-bell?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FBowenYin%2Fharker-bell.svg?type=small)](https://app.fossa.io/projects/git%2Bgithub.com%2FBowenYin%2Fharker-bell?ref=badge_shield)
 
 ## Project setup
 ```
@@ -35,6 +35,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
   <img src="https://www.netlify.com/img/global/badges/netlify-light.svg"/>
 </a>
 
-
-## License
+### License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FBowenYin%2Fharker-bell.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FBowenYin%2Fharker-bell?ref=badge_large)
