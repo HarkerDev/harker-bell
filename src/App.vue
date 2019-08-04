@@ -88,7 +88,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <router-view @show-menu="showMenu($event)" :mode="mode" :sheet-id="menu.open ? menu.sheetId : null"></router-view>
+      <router-view @show-menu="showMenu($event)" :calendar="calendar" :mode="mode" :sheet-id="menu.open ? menu.sheetId : null"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" @input="closeSettings()" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
       <v-card>
@@ -131,13 +131,19 @@
 export default {
   name: "App",
   created() {
+    window.MS_PER_DAY = 24*60*60*1000;
     let darkTheme = localStorage.getItem("darkTheme");
     if (darkTheme) this.$vuetify.theme.dark = darkTheme === "true";
+    this.setCalendar(this.$route);
   },
   data() {
     return {
       env: process.env,
-      mode: "week",
+      mode: localStorage.getItem("calendarMode") || "week",
+      calendar: {
+        currentDate: this.getCurrentUTCMidnight(),
+        dates: [],
+      },
       menu: {
         open: false,
         openTracker: 0,
@@ -153,19 +159,68 @@ export default {
   },
   methods: {
     changeMode(mode) {
-      //this.$nextTick(() => {
-        this.mode = mode;
-      //});
+      localStorage.setItem("calendarMode", mode);
+      this.mode = mode;
     },
     closeSettings() {
       if (this.prevRoute) this.$router.back();
       else this.$router.push("/");
+    },
+    /** TODO: DELETE
+     * Calculates the start of the current day, which is defined as the last midnight on or before the current
+     * timestamp, and expressed in UTC time.
+     * @return {Date} midnight in UTC of the current time
+     */
+    getCurrentUTCMidnight() {
+      let now = new Date();
+      let date = new Date(now-now.getTimezoneOffset()*60*1000);
+      date.setUTCHours(0, 0, 0, 0);
+      return date;
+    },
+    /**
+     * Calculates the date of the last sunday on or before a given date.
+     * @param {Date} date the date to use for calculating sunday
+     * @return {Date}     the latest sunday on or before date
+     */
+    getSunday(date) {
+      date.setUTCDate(date.getUTCDate()-date.getUTCDay());
+      return date;
     },
     /** Prints the current view of the bell schedule. */
     print() {
       setTimeout(() => {
         window.print();
       }, 100);
+    },
+    /**
+     * 
+     * @param {Route} route the current route object
+     */
+    setCalendar(route) {
+      console.log(MS_PER_DAY);
+      let year = +route.params.year, month = +route.params.month;
+      /** @type {Date} */
+      let startDate, endDate;
+      if (route.name == "month") {
+        startDate = this.getSunday(new Date(Date.UTC(year, month-1))); // first week of month
+        // need to add 5 days to the previous sunday to get friday of the last week of the month
+        endDate = new Date(this.getSunday(new Date(Date.UTC(year, month, 0))).getTime()+5*MS_PER_DAY);
+      } else if (route.name == "day" && this.mode == "week") {
+        startDate = this.getSunday(new Date(Date.UTC(year, month-1, +route.params.day)));
+        endDate = new Date(startDate.getTime()+5*MS_PER_DAY); // add 5 days to get friday
+      } else if (route.name == "day") { // if day mode
+        startDate = endDate = new Date(Date.UTC(year, month-1, +route.params.day)); // date specified in URL path
+      } else { // if no date specified in URL path
+        let now = new Date();
+        let date = new Date(now-now.getTimezoneOffset()*60*1000);
+        date.setUTCHours(0, 0, 0, 0);
+        startDate = endDate = date; // set both start and end to midnight of the current date (in UTC)
+      }
+      while (startDate <= endDate) {
+        if (startDate.getUTCDay() > 0 && startDate.getUTCDay() < 6) // if date is a weekday
+          this.calendar.dates.push(startDate);
+        startDate = new Date(startDate.getTime()+MS_PER_DAY);
+      }
     },
     /**
      * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
@@ -205,7 +260,7 @@ export default {
 </script>
 
 <style>
-.font-family.pt-sans {
+.v-application .font-family.pt-sans {
   font-family: "PT Sans", sans-serif !important;
 }
 @media print {

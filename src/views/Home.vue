@@ -5,7 +5,7 @@
       <v-layout v-if="mode == 'month'" key="header" class="overline" justify-center row>
         <v-sheet v-for="day in weekdays" :key="day" class="text-xs-center" height="24" width="149">{{day}}</v-sheet>
       </v-layout>
-      <v-layout v-for="j in 5" :key="j" row justify-center wrap>
+      <v-layout v-for="j in calendar.dates.length/5" :key="j" row justify-center wrap>
         <template v-if="(mode == 'month') ? true : (j == 2)">
           <!-- <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :index="i" :schedule="schedule" :mode="mode"></schedule-day> -->
           <!-- DAY CONTAINER -->
@@ -74,6 +74,10 @@ export default {
     this.updateView();
   },
   props: {
+    calendar: {
+      type: Object,
+      required: true
+    },
     mode: {
       validator(value) {
         return ["day", "week", "month"].indexOf(value) != -1;
@@ -143,8 +147,10 @@ export default {
   computed: {
     /**
      * Processes the raw schedule array prop and constructs a new array in the following format:
-     * 1st dimension: list of period groups in a day. Period groups are separated by full-width horizontal lines when displayed in week or day view.
-     * 2nd dimension: column groups for each period group. Column groups are used to split schedules when there are concurrent periods, indicated by vertical lines on the page.
+     * 1st dimension: list of period groups in a day. Period groups are separated by full-width horizontal
+     *                lines when displayed in week or day view.
+     * 2nd dimension: column groups for each period group. Column groups are used to split schedules when
+     *                there are concurrent periods and are indicated by vertical lines on the page.
      * 3rd dimension: list of periods in the group, including passing periods.
      * @return {Array} three-dimensional array
      */

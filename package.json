@@ -2,21 +2,12 @@
   "name": "harker-bell",
   "version": "2.0.0-alpha.0",
   "private": true,
+  "author": "Bowen Yin",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
-  "author": "Bowen Yin",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/BowenYin/harker-bell"
-  },
-  "bugs": {
-    "url": "https://github.com/BowenYin/harker-bell/issues"
-  },
-  "homepage": "https://github.com/BowenYin/harker-bell#readme",
-  "license": "MIT",
   "dependencies": {
     "core-js": "^2.6.5",
     "material-design-icons-iconfont": "^5.0.1",
@@ -110,5 +101,14 @@
   "browserslist": [
     "> 1% in US",
     "last 2 versions"
-  ]
+  ],
+  "bugs": {
+    "url": "https://github.com/BowenYin/harker-bell/issues"
+  },
+  "homepage": "https://github.com/BowenYin/harker-bell#readme",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BowenYin/harker-bell"
+  }
 }
