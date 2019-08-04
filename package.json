@@ -26,23 +26,23 @@
     "typeface-roboto": "^0.0.54",
     "vue": "^2.6.10",
     "vue-router": "^3.0.7",
-    "vuetify": "^2.0.0-beta.5"
+    "vuetify": "^2.0.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.8.0",
-    "@vue/cli-plugin-eslint": "^3.8.0",
-    "@vue/cli-plugin-pwa": "^3.8.0",
-    "@vue/cli-service": "^3.8.0",
+    "@vue/cli-plugin-babel": "^3.10.0",
+    "@vue/cli-plugin-eslint": "^3.10.0",
+    "@vue/cli-plugin-pwa": "^3.10.0",
+    "@vue/cli-service": "^3.10.0",
     "babel-eslint": "^10.0.1",
     "deepmerge": "^3.3.0",
-    "eslint": "^5.16.0",
+    "eslint": "^6.1.0",
     "eslint-plugin-vue": "^5.2.3",
     "fibers": "^4.0.1",
-    "sass": "^1.22.3",
+    "sass": "^1.22.9",
     "sass-loader": "^7.1.0",
-    "vue-cli-plugin-vuetify": "git+https://github.com/vuetifyjs/vue-cli-plugin-vuetify.git#dev",
+    "vue-cli-plugin-vuetify": "^0.6.1",
     "vue-template-compiler": "^2.6.10",
-    "vuetify-loader": "^1.2.2"
+    "vuetify-loader": "^1.3.0"
   },
   "eslintConfig": {
     "root": true,
