@@ -48,7 +48,7 @@
         <v-divider></v-divider>
         <v-list dense subheader>
           <v-subheader>Change view</v-subheader>
-          <v-list-item @click="$vuetify.breakpoint.xsOnly?changeMode('day'):''" :disabled="$vuetify.breakpoint.smAndUp">
+          <v-list-item @click="(true||$vuetify.breakpoint.xsOnly) ? changeMode('day') : ''" :disabled="false&&$vuetify.breakpoint.smAndUp">
             <v-list-item-icon>
               <v-icon v-if="mode=='day'">check</v-icon>
             </v-list-item-icon>
@@ -143,6 +143,7 @@ export default {
       mode: localStorage.getItem("calendarMode") || "week",
       calendar: {
         currentDate: this.getCurrentUTCMidnight(),
+        currentMonth: new Date().getMonth(),
         dates: [],
       },
       menu: {
@@ -162,6 +163,7 @@ export default {
     changeMode(mode) {
       localStorage.setItem("calendarMode", mode);
       this.mode = mode;
+      this.setCalendar(this.$route);
     },
     closeSettings() {
       if (this.prevRoute) this.$router.back();
@@ -204,15 +206,17 @@ export default {
       let startDate, endDate;
       if (this.mode == "month") {
         if (route.name == "month") {
+          this.calendar.currentMonth = month-1;
           startDate = this.getSunday(new Date(Date.UTC(year, month-1))); // first week of month
           // need to add 5 days to the previous sunday to get friday of the last week of the month
           endDate = new Date(this.getSunday(new Date(Date.UTC(year, month, 0))).getTime()+5*MS_PER_DAY);
         } else {
           let date = this.getCurrentUTCMidnight();
+          this.calendar.currentMonth = date.getUTCMonth();
+          // sunday of the last day of the month, plus 5 days (a.k.a. friday of the last week)
+          endDate = new Date(this.getSunday(new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth()+1, 0))).getTime()+5*MS_PER_DAY);
           date.setUTCDate(1); // first day of current month
           startDate = this.getSunday(date); // sunday of the first week
-          // sunday of the last day of the month, plus 5 days (a.k.a. friday of the last week)
-          endDate = new Date(this.getSunday(new Date(Date.UTC(date.getUTCYear(), date.getUTCMonth()+1, 0))).getTime()+5*MS_PER_DAY);
         }
       } else if (this.mode == "week") {
         if (route.name == "day")
@@ -224,6 +228,7 @@ export default {
         startDate = endDate = new Date(Date.UTC(year, month-1, +route.params.day)); // date specified in URL
       else // if no date specified in URL path
         startDate = endDate = this.getCurrentUTCMidnight();
+      this.calendar.dates = [];
       while (startDate <= endDate) {
         if (startDate.getUTCDay() > 0 && startDate.getUTCDay() < 6) // if date is a weekday
           this.calendar.dates.push(startDate);
@@ -252,6 +257,7 @@ export default {
     $route(route, prevRoute) {
       this.prevRoute = prevRoute;
       this.settings.dialog = route.name == "settings";
+      if (["home", "day", "month"].includes(route.name)) this.setCalendar(route);
     },
     "menu.open"(open) {
       if (open == false && this.menu.openTracker > 0)

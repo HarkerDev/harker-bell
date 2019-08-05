@@ -1,27 +1,27 @@
 <template>
-  <v-container fluid style="min-width: 932px;">
+  <v-container fluid>
     <transition-group name="schedule-transition">
       <!-- MONTH HEADER -->
-      <v-layout v-if="mode == 'month'" key="header" class="overline" justify-center row>
-        <v-sheet v-for="day in weekdays" :key="day" class="text-xs-center" height="24" width="149">{{day}}</v-sheet>
+      <v-layout v-if="mode == 'month'" key="header" class="overline" justify-center>
+        <v-sheet v-for="day in weekdays" :key="day" class="text-xs-center" height="24" width="143">{{day}}</v-sheet>
       </v-layout>
-      <v-layout v-for="j in calendar.dates.length/5" :key="j" row justify-center wrap>
-        <template v-if="(mode == 'month') ? true : (j == 2)">
+      <v-layout v-for="j in Math.ceil(calendar.dates.length/5)" :key="calendar.dates[(j-1)*5].getTime()" justify-center>
+        <template>
           <!-- <schedule-day @toggle-menu="$emit('toggle-menu', $event)" v-for="i in 5" :key="i" :index="i" :schedule="schedule" :mode="mode"></schedule-day> -->
           <!-- DAY CONTAINER -->
-          <v-sheet v-for="index in 5" :key="index" :class="['day-container', {'overflow-hidden': mode == 'month'}]" ref="day" :min-width="mode == 'month' ? 150 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
+          <v-sheet v-for="index in (mode == 'day') ? 1 : 5" :key="index" :class="['day-container', {'overflow-hidden': mode == 'month'}]" ref="day" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
             <!-- DAY HEADER -->
             <v-sheet :height="mode == 'month' ? 36 : 48" tile>
               <v-layout align-center>
                 <v-flex xs3>
                   <v-layout column align-center>
-                    <span v-if="mode != 'month'" class="overline">Mon</span>
-                    <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', 'text--secondary', 'font-weight-bold', 'font-transition']">24</span>
+                    <span v-if="mode != 'month'" class="overline">{{weekdays[index-1]}}</span>
+                    <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', calendar.dates[(j-1)*5+index-1].getUTCMonth() == calendar.currentMonth ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{calendar.dates[(j-1)*5+index-1].getUTCDate()}}</span>
                   </v-layout>
                 </v-flex>
                 <v-flex xs8>
                   <v-layout wrap justify-end align-center>
-                    <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">Adjusted</span>
+                    <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">Adj.</span>
                     <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'pt-sans', 'text--disabled', 'font-weight-bold', 'font-transition']">B</span>
                   </v-layout>
                 </v-flex>
@@ -207,8 +207,9 @@ export default {
         this.view = this.$route.name;
     },
     transitionEnd() {
-      this.displayMonthContent = true;
       this.ref.removeEventListener("transitionend", this.transitionEnd);
+      this.displayMonthContent = true;
+      //this.$root.setCalendar(this.$route);
     },
   },
   filters: {
