@@ -131,6 +131,7 @@
 export default {
   name: "App",
   created() {
+    /** Number of milliseconds in a day */
     window.MS_PER_DAY = 24*60*60*1000;
     let darkTheme = localStorage.getItem("darkTheme");
     if (darkTheme) this.$vuetify.theme.dark = darkTheme === "true";
@@ -166,7 +167,7 @@ export default {
       if (this.prevRoute) this.$router.back();
       else this.$router.push("/");
     },
-    /** TODO: DELETE
+    /**
      * Calculates the start of the current day, which is defined as the last midnight on or before the current
      * timestamp, and expressed in UTC time.
      * @return {Date} midnight in UTC of the current time
@@ -193,33 +194,40 @@ export default {
       }, 100);
     },
     /**
-     * 
+     * Sets the calendar dates that will be displayed to the user based on the current view setting
+     * and the date specified in the URL path.
      * @param {Route} route the current route object
      */
     setCalendar(route) {
-      console.log(MS_PER_DAY);
       let year = +route.params.year, month = +route.params.month;
       /** @type {Date} */
       let startDate, endDate;
-      if (route.name == "month") {
-        startDate = this.getSunday(new Date(Date.UTC(year, month-1))); // first week of month
-        // need to add 5 days to the previous sunday to get friday of the last week of the month
-        endDate = new Date(this.getSunday(new Date(Date.UTC(year, month, 0))).getTime()+5*MS_PER_DAY);
-      } else if (route.name == "day" && this.mode == "week") {
-        startDate = this.getSunday(new Date(Date.UTC(year, month-1, +route.params.day)));
+      if (this.mode == "month") {
+        if (route.name == "month") {
+          startDate = this.getSunday(new Date(Date.UTC(year, month-1))); // first week of month
+          // need to add 5 days to the previous sunday to get friday of the last week of the month
+          endDate = new Date(this.getSunday(new Date(Date.UTC(year, month, 0))).getTime()+5*MS_PER_DAY);
+        } else {
+          let date = this.getCurrentUTCMidnight();
+          date.setUTCDate(1); // first day of current month
+          startDate = this.getSunday(date); // sunday of the first week
+          // sunday of the last day of the month, plus 5 days (a.k.a. friday of the last week)
+          endDate = new Date(this.getSunday(new Date(Date.UTC(date.getUTCYear(), date.getUTCMonth()+1, 0))).getTime()+5*MS_PER_DAY);
+        }
+      } else if (this.mode == "week") {
+        if (route.name == "day")
+          startDate = this.getSunday(new Date(Date.UTC(year, month-1, +route.params.day))); // date in URL
+        else
+          startDate = this.getSunday(this.getCurrentUTCMidnight()); // sunday of the current week
         endDate = new Date(startDate.getTime()+5*MS_PER_DAY); // add 5 days to get friday
-      } else if (route.name == "day") { // if day mode
-        startDate = endDate = new Date(Date.UTC(year, month-1, +route.params.day)); // date specified in URL path
-      } else { // if no date specified in URL path
-        let now = new Date();
-        let date = new Date(now-now.getTimezoneOffset()*60*1000);
-        date.setUTCHours(0, 0, 0, 0);
-        startDate = endDate = date; // set both start and end to midnight of the current date (in UTC)
-      }
+      } else if (route.name == "day") // is day mode
+        startDate = endDate = new Date(Date.UTC(year, month-1, +route.params.day)); // date specified in URL
+      else // if no date specified in URL path
+        startDate = endDate = this.getCurrentUTCMidnight();
       while (startDate <= endDate) {
         if (startDate.getUTCDay() > 0 && startDate.getUTCDay() < 6) // if date is a weekday
           this.calendar.dates.push(startDate);
-        startDate = new Date(startDate.getTime()+MS_PER_DAY);
+        startDate = new Date(startDate.getTime()+MS_PER_DAY); // add 1 day
       }
     },
     /**
