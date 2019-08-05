@@ -48,7 +48,7 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "vue/attributes-order": "warning",
+      "vue/attributes-order": 1,
       "vue/no-confusing-v-for-v-if": "warning",
       "vue/no-v-html": "warning",
       "vue/order-in-components": "warning",
