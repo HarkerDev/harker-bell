@@ -4,11 +4,11 @@
       <v-spacer></v-spacer>
       <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
         <template v-slot:activator="{on}">
-          <v-btn v-on="on" class="hidden-print-only" icon>
+          <v-btn v-on="on" class="hidden-print-only" icon @click="nextOrPrevious(false)">
             <v-icon>chevron_left</v-icon>
           </v-btn>
         </template>
-        <span>Previous</span>
+        <span>Previous {{mode}}</span>
       </v-tooltip>
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on: menu}">
@@ -18,7 +18,7 @@
                 <v-icon>date_range</v-icon>
               </v-btn>
             </template>
-            <span>Jump to date</span>
+            <span>Select a date</span>
           </v-tooltip>
         </template>
         <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false">
@@ -27,11 +27,11 @@
       </v-menu>
       <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
         <template v-slot:activator="{on}">
-          <v-btn v-on="on" class="hidden-print-only mr-2" icon>
+          <v-btn v-on="on" class="hidden-print-only mr-2" icon @click="nextOrPrevious(true)">
             <v-icon>chevron_right</v-icon>
           </v-btn>
         </template>
-        <span>Next</span>
+        <span>Next {{mode}}</span>
       </v-tooltip>
       <v-toolbar-title class="headline font-family pt-sans font-weight-bold">Harker Bell Schedule</v-toolbar-title>
       <v-menu offset-y>
@@ -226,6 +226,30 @@ export default {
       date.setUTCDate(date.getUTCDate()-date.getUTCDay());
       return date;
     },
+    /**
+     * 
+     * @param isNext {boolean}  true if next; false if previous
+     */
+    nextOrPrevious(isNext) {
+      let sign = isNext ? 1 : -1;
+      let today = this.getCurrentUTCMidnight(), date = new Date(this.calendar.currentDate.getTime());
+      if (this.mode == "month")
+        date.setUTCMonth(date.getUTCMonth()+sign*1);
+      else if (this.mode == "week")
+        date.setUTCDate(date.getUTCDate()+sign*7);
+      // if going next and it's a friday, then skip directly to monday, and vice versa
+      else if (isNext && date.getUTCDay() == 5 || !isNext && date.getUTCDay() == 1)
+        date.setUTCDate(date.getUTCDate()+sign*3);
+      else // day mode
+        date.setUTCDate(date.getUTCDate()+sign*1);
+      if (date.getTime() == today.getTime() ||
+          this.mode == "month" && date.getUTCMonth() == today.getUTCMonth())
+        this.$router.push("/");
+      else if (this.mode == "month")
+        this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}`);
+      else
+        this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
+    },
     /** Prints the current view of the bell schedule. */
     print() {
       setTimeout(() => {
@@ -297,7 +321,7 @@ export default {
       this.prevRoute = prevRoute;
       this.settings.dialog = route.name == "settings";
       if (this.mode != "month" && route.name == "month") this.mode = "month";
-      else if (route.name == "day") this.mode = "week";
+      else if (this.mode == "month" && route.name == "day") this.mode = "week";
       if (["home", "day", "month"].includes(route.name)) this.setCalendar(route);
       // DON'T FORGET TO CHANGE CALENDAR.CURRENTDATE HERE!!!
     },
