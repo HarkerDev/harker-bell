@@ -10,14 +10,21 @@
         </template>
         <span>Previous</span>
       </v-tooltip>
-      <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
-        <template v-slot:activator="{on}">
-          <v-btn v-on="on" class="hidden-print-only" icon>
-            <v-icon>date_range</v-icon>
-          </v-btn>
+      <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
+        <template v-slot:activator="{on: menu}">
+          <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
+            <template v-slot:activator="{on: tooltip}">
+              <v-btn v-on="{...tooltip, ...menu}" class="hidden-print-only" icon>
+                <v-icon>date_range</v-icon>
+              </v-btn>
+            </template>
+            <span>Jump to date</span>
+          </v-tooltip>
         </template>
-        <span>Jump to date</span>
-      </v-tooltip>
+        <v-date-picker v-model="currentDateString" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false">
+          
+        </v-date-picker>
+      </v-menu>
       <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
         <template v-slot:activator="{on}">
           <v-btn v-on="on" class="hidden-print-only mr-2" icon>
@@ -90,7 +97,7 @@
     <v-content style="overflow-x: scroll;">
       <router-view @show-menu="showMenu($event)" :calendar="calendar" :mode="mode" :sheet-id="menu.open ? menu.sheetId : null"></router-view>
     </v-content>
-    <v-dialog v-model="settings.dialog" @input="closeSettings()" :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
+    <v-dialog v-model="settings.dialog" @input="closeSettings()" eager :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
       <v-card>
         <v-app-bar elevate-on-scroll>
           <v-btn @click="closeSettings()" icon>
@@ -132,7 +139,7 @@ export default {
   name: "App",
   created() {
     /** Number of milliseconds in a day */
-    window.MS_PER_DAY = 24*60*60*1000;
+    this.$MS_PER_DAY = 24*60*60*1000;
     let darkTheme = localStorage.getItem("darkTheme");
     if (darkTheme) this.$vuetify.theme.dark = darkTheme === "true";
     this.setCalendar(this.$route);
@@ -153,11 +160,32 @@ export default {
         x: 0,
         y: 0,
       },
+      datePicker: false,
       settings: {
         dialog: this.$route.name == "settings",
       },
       prevRoute: null,
     };
+  },
+  computed: {
+    currentDateString: {
+      get() {
+        let date = this.calendar.currentDate.toISOString()
+        if (this.mode == "month") return date.substring(0, 7);
+        return date.substring(0, 10);
+      },
+      set(value) {
+        this.calendar.currentDate = new Date(value);
+        let today = this.getCurrentUTCMidnight();
+        if (this.calendar.currentDate.getTime() == today.getTime() ||
+            this.mode == "month" && this.calendar.currentDate.getUTCMonth() == today.getUTCMonth())
+          this.$router.push("/");
+        else if (this.mode == "month")
+          this.$router.push(`/${value.substring(0, 4)}/${+value.substring(5, 7)}`);
+        else
+          this.$router.push(`/${value.substring(0, 4)}/${+value.substring(5, 7)}/${+value.substring(8, 10)}`);
+      }
+    }
   },
   methods: {
     changeMode(mode) {
@@ -209,12 +237,12 @@ export default {
           this.calendar.currentMonth = month-1;
           startDate = this.getSunday(new Date(Date.UTC(year, month-1))); // first week of month
           // need to add 5 days to the previous sunday to get friday of the last week of the month
-          endDate = new Date(this.getSunday(new Date(Date.UTC(year, month, 0))).getTime()+5*MS_PER_DAY);
+          endDate = new Date(this.getSunday(new Date(Date.UTC(year, month, 0))).getTime()+5*this.$MS_PER_DAY);
         } else {
           let date = this.getCurrentUTCMidnight();
           this.calendar.currentMonth = date.getUTCMonth();
           // sunday of the last day of the month, plus 5 days (a.k.a. friday of the last week)
-          endDate = new Date(this.getSunday(new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth()+1, 0))).getTime()+5*MS_PER_DAY);
+          endDate = new Date(this.getSunday(new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth()+1, 0))).getTime()+5*this.$MS_PER_DAY);
           date.setUTCDate(1); // first day of current month
           startDate = this.getSunday(date); // sunday of the first week
         }
@@ -223,7 +251,7 @@ export default {
           startDate = this.getSunday(new Date(Date.UTC(year, month-1, +route.params.day))); // date in URL
         else
           startDate = this.getSunday(this.getCurrentUTCMidnight()); // sunday of the current week
-        endDate = new Date(startDate.getTime()+5*MS_PER_DAY); // add 5 days to get friday
+        endDate = new Date(startDate.getTime()+5*this.$MS_PER_DAY); // add 5 days to get friday
       } else if (route.name == "day") // is day mode
         startDate = endDate = new Date(Date.UTC(year, month-1, +route.params.day)); // date specified in URL
       else // if no date specified in URL path
@@ -232,7 +260,7 @@ export default {
       while (startDate <= endDate) {
         if (startDate.getUTCDay() > 0 && startDate.getUTCDay() < 6) // if date is a weekday
           this.calendar.dates.push(startDate);
-        startDate = new Date(startDate.getTime()+MS_PER_DAY); // add 1 day
+        startDate = new Date(startDate.getTime()+this.$MS_PER_DAY); // add 1 day
       }
     },
     /**
@@ -257,7 +285,10 @@ export default {
     $route(route, prevRoute) {
       this.prevRoute = prevRoute;
       this.settings.dialog = route.name == "settings";
+      if (this.mode != "month" && route.name == "month") this.mode = "month";
+      else if (route.name == "day") this.mode = "week";
       if (["home", "day", "month"].includes(route.name)) this.setCalendar(route);
+      // DON'T FORGET TO CHANGE CALENDAR.CURRENTDATE HERE!!!
     },
     "menu.open"(open) {
       if (open == false && this.menu.openTracker > 0)
