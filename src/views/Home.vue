@@ -33,7 +33,7 @@
               
             </div>
             <!-- WEEK DAY CONTENT -->
-            <template v-else-if="i == 0">
+            <template v-else-if="mode != 'month'">
               <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
                 <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
                   <!-- <schedule-period v-for="(period, pIndex) in column" @toggle-menu="$emit('toggle-menu', $event)" :lunch="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :period="period" :sheet-id="index+'-'+gIndex+'-'+cIndex+'-'+pIndex"></schedule-period> -->
