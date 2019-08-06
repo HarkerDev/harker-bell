@@ -6,63 +6,60 @@
         <v-sheet v-for="day in weekdays" :key="day" class="text-center" height="24" width="143">{{day}}</v-sheet>
       </v-layout>
       <v-layout v-for="(n, i) in Math.ceil(calendar.dates.length/5)" :key="calendar.dates[i*5].getTime()" justify-center>
-        <template>
-          <!-- DAY CONTAINER -->
-          <v-sheet v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()" :class="['day-container', {'overflow-hidden': mode == 'month'}]" ref="day" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
-            <!-- DAY HEADER -->
-            <v-sheet :height="mode == 'month' ? 36 : 48" tile>
-              <v-layout align-center>
-                <v-flex xs3>
-                  <v-layout column align-center>
-                    <span v-if="mode != 'month'" class="overline">{{weekdays[date.getUTCDay()-1]}}</span>
-                    <span v-else-if="date.getUTCDate() == 1" class="overline mb-n2">{{months[date.getUTCMonth()]}}</span>
-                    <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', date.getUTCMonth() == calendar.currentMonth ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
-                  </v-layout>
-                </v-flex>
-                <v-flex xs8>
-                  <v-layout wrap justify-end align-center>
-                    <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">Adj.</span>
-                    <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'pt-sans', 'text--disabled', 'font-weight-bold', 'font-transition']">B</span>
-                  </v-layout>
-                </v-flex>
-                <v-flex xs1></v-flex>
-              </v-layout>
-            </v-sheet>
-            <!-- MONTH DAY CONTENT -->
-            <div v-if="displayMonthContent" class="body-2">
-              
-            </div>
-            <!-- WEEK DAY CONTENT -->
-            <template v-else-if="mode != 'month'">
-              <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
-                <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
-                  <!-- <schedule-period v-for="(period, pIndex) in column" @toggle-menu="$emit('toggle-menu', $event)" :lunch="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :period="period" :sheet-id="index+'-'+gIndex+'-'+cIndex+'-'+pIndex"></schedule-period> -->
-                  <template v-for="(period, pIndex) in column">
-                    <!-- LUNCH PERIOD -->
-                    <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
-                      <!-- TODO: Find a way to extract id logic somewhere -->
-                      <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-xs-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex)" :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}">
-                        <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
-                          <div ref="periodNames">{{period.name}}</div>
-                          <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
-                          <div v-if="period.start && period.duration >= 30">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-                        </v-layout>
-                      </v-sheet>
-                    </v-hover>
-                    <!-- REGULAR PERIOD -->
-                    <v-sheet v-else :key="pIndex" class="period caption text-xs-center d-flex" :height="period.duration+1" tile>
+        <!-- DAY CONTAINER -->
+        <v-sheet v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()" :class="['day-container', {'overflow-hidden': mode == 'month'}]" ref="day" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
+          <!-- DAY HEADER -->
+          <v-sheet :height="mode == 'month' ? 36 : 48" tile>
+            <v-layout align-center>
+              <v-flex xs3>
+                <v-layout column align-center>
+                  <span v-if="mode != 'month'" class="overline">{{weekdays[date.getUTCDay()-1]}}</span>
+                  <span v-else-if="date.getUTCDate() == 1" class="overline mb-n2">{{months[date.getUTCMonth()]}}</span>
+                  <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', date.getUTCMonth() == calendar.currentMonth ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
+                </v-layout>
+              </v-flex>
+              <v-flex xs8>
+                <v-layout wrap justify-end align-center>
+                  <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">Adj.</span>
+                  <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'pt-sans', 'text--disabled', 'font-weight-bold', 'font-transition']">B</span>
+                </v-layout>
+              </v-flex>
+              <v-flex xs1></v-flex>
+            </v-layout>
+          </v-sheet>
+          <!-- MONTH DAY CONTENT -->
+          <div v-if="mode == 'month'" class="body-2">
+            Events
+          </div>
+          <!-- WEEK DAY CONTENT -->
+          <template v-else>
+            <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
+              <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
+                <template v-for="(period, pIndex) in column">
+                  <!-- LUNCH PERIOD -->
+                  <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
+                    <!-- TODO: Find a way to extract id logic somewhere -->
+                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-xs-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex)" :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}">
                       <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
                         <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                         <div v-if="period.start && period.duration >= 30">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
                       </v-layout>
                     </v-sheet>
-                  </template>
-                </v-flex>
-              </v-layout>
-            </template>
-          </v-sheet>
-        </template>
+                  </v-hover>
+                  <!-- REGULAR PERIOD -->
+                  <v-sheet v-else :key="pIndex" class="period caption text-xs-center d-flex" :height="period.duration+1" tile>
+                    <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
+                      <div ref="periodNames">{{period.name}}</div>
+                      <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
+                      <div v-if="period.start && period.duration >= 30">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+                    </v-layout>
+                  </v-sheet>
+                </template>
+              </v-flex>
+            </v-layout>
+          </template>
+        </v-sheet>
       </v-layout>
     </transition-group>
   </v-container>
@@ -236,8 +233,10 @@ export default {
 
 <style scoped>
 .schedule-transition-move {
-  -webkit-transition: -webkit-transform 300ms;
-          transition: transform 300ms;
+  /*-webkit-transition: -webkit-transform 300ms;
+          transition: transform 300ms;*/
+  -webkit-transition: all 300ms;
+          transition: all 300ms;
 }
 .schedule-transition-move .day-container {
   overflow: hidden;
@@ -245,8 +244,10 @@ export default {
 .day-container {
   border: 1px solid #5F6368 !important;
   margin: 0 -1px -1px 0;
-  -webkit-transition: width 300ms, max-width 300ms, max-height 300ms;
-          transition: width 300ms, max-width 300ms, max-height 300ms;
+  /*-webkit-transition: width 300ms, max-width 300ms, max-height 300ms;
+          transition: width 300ms, max-width 300ms, max-height 300ms;*/
+  -webkit-transition: all 300ms;
+          transition: all 300ms;
 }
 .column:not(:first-child) > .period {
   margin-left: 0;
@@ -268,8 +269,8 @@ export default {
 .lunch {
   cursor: pointer;
 }
-.font-transition {
+/*.font-transition {
   -webkit-transition: font-size 300ms, letter-spacing 300ms;
           transition: font-size 300ms, letter-spacing 300ms;
-}
+}*/
 </style>
