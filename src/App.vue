@@ -143,6 +143,10 @@ export default {
     let darkTheme = localStorage.getItem("darkTheme");
     if (darkTheme) this.$vuetify.theme.dark = darkTheme === "true";
     this.setCalendar(this.$route);
+    window.addEventListener("keyup", event => {
+      if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
+      else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
+    });
   },
   data() {
     return {

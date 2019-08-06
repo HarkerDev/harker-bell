@@ -71,7 +71,7 @@
 <script>
 export default {
   created() {
-    this.updateView();
+    
   },
   props: {
     calendar: {
@@ -203,10 +203,6 @@ export default {
         }
       });*/
     },
-    updateView() {
-      if (this.$route.name == "day" || this.$route.name == "month")
-        this.view = this.$route.name;
-    },
     transitionEnd() {
       this.ref.removeEventListener("transitionend", this.transitionEnd);
       this.displayMonthContent = true;
@@ -224,9 +220,6 @@ export default {
     }
   },
   watch: {
-    $route() {
-      this.updateView();
-    },
     /**
      * Called when the calendar mode changes.
      */
