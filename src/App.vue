@@ -21,7 +21,7 @@
             <span>Jump to date</span>
           </v-tooltip>
         </template>
-        <v-date-picker v-model="currentDateString" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false">
+        <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false">
           
         </v-date-picker>
       </v-menu>
@@ -175,10 +175,9 @@ export default {
         return date.substring(0, 10);
       },
       set(value) {
-        this.calendar.currentDate = new Date(value);
-        let today = this.getCurrentUTCMidnight();
-        if (this.calendar.currentDate.getTime() == today.getTime() ||
-            this.mode == "month" && this.calendar.currentDate.getUTCMonth() == today.getUTCMonth())
+        let date = new Date(value), today = this.getCurrentUTCMidnight();
+        if (date.getTime() == today.getTime() ||
+            this.mode == "month" && date.getUTCMonth() == today.getUTCMonth())
           this.$router.push("/");
         else if (this.mode == "month")
           this.$router.push(`/${value.substring(0, 4)}/${+value.substring(5, 7)}`);
@@ -188,6 +187,16 @@ export default {
     }
   },
   methods: {
+    /**
+     * Determines if the date represented by a given ISO date is allowed in the date picker.
+     * @param dateString {string} date as an ISO date string (YYYY-MM-DD format)
+     * @return                    true if the date falls on a weekday or it is month mode; otherwise, false
+     */
+    allowedDate(dateString) {
+      if (this.mode == "month") return true;
+      let date = new Date(dateString);
+      return date.getUTCDay() > 0 && date.getUTCDay() < 6;
+    },
     changeMode(mode) {
       localStorage.setItem("calendarMode", mode);
       this.mode = mode;
@@ -229,7 +238,9 @@ export default {
      * @param {Route} route the current route object
      */
     setCalendar(route) {
-      let year = +route.params.year, month = +route.params.month;
+      let year = +route.params.year, month = +route.params.month, day = +route.params.day;
+      if (year && month) this.calendar.currentDate = new Date(Date.UTC(year, month-1, day || 1));
+      else this.calendar.currentDate = this.getCurrentUTCMidnight();
       /** @type {Date} */
       let startDate, endDate;
       if (this.mode == "month") {
@@ -248,12 +259,12 @@ export default {
         }
       } else if (this.mode == "week") {
         if (route.name == "day")
-          startDate = this.getSunday(new Date(Date.UTC(year, month-1, +route.params.day))); // date in URL
+          startDate = this.getSunday(new Date(Date.UTC(year, month-1, day))); // date in URL
         else
           startDate = this.getSunday(this.getCurrentUTCMidnight()); // sunday of the current week
         endDate = new Date(startDate.getTime()+5*this.$MS_PER_DAY); // add 5 days to get friday
       } else if (route.name == "day") // is day mode
-        startDate = endDate = new Date(Date.UTC(year, month-1, +route.params.day)); // date specified in URL
+        startDate = endDate = new Date(Date.UTC(year, month-1, day)); // date specified in URL
       else // if no date specified in URL path
         startDate = endDate = this.getCurrentUTCMidnight();
       this.calendar.dates = [];

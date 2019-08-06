@@ -5,18 +5,18 @@
       <v-layout v-if="mode == 'month'" key="header" class="overline" justify-center>
         <v-sheet v-for="day in weekdays" :key="day" class="text-center" height="24" width="143">{{day}}</v-sheet>
       </v-layout>
-      <v-layout v-for="(n1, i) in Math.ceil(calendar.dates.length/5)" :key="calendar.dates[i*5].getTime()" justify-center>
+      <v-layout v-for="(n, i) in Math.ceil(calendar.dates.length/5)" :key="calendar.dates[i*5].getTime()" justify-center>
         <template>
           <!-- DAY CONTAINER -->
-          <v-sheet v-for="(n2, j) in (mode == 'day') ? 1 : 5" :key="calendar.dates[i*5+j].getTime()" :class="['day-container', {'overflow-hidden': mode == 'month'}]" ref="day" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
+          <v-sheet v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()" :class="['day-container', {'overflow-hidden': mode == 'month'}]" ref="day" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
             <!-- DAY HEADER -->
             <v-sheet :height="mode == 'month' ? 36 : 48" tile>
               <v-layout align-center>
                 <v-flex xs3>
                   <v-layout column align-center>
                     <span v-if="mode != 'month'" class="overline">{{weekdays[j]}}</span>
-                    <span v-else-if="calendar.dates[i*5+j].getUTCDate() == 1" class="overline mb-n2">{{months[calendar.dates[i*5+j].getUTCMonth()]}}</span>
-                    <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', calendar.dates[i*5+j].getUTCMonth() == calendar.currentMonth ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{calendar.dates[i*5+j].getUTCDate()}}</span>
+                    <span v-else-if="date.getUTCDate() == 1" class="overline mb-n2">{{months[date.getUTCMonth()]}}</span>
+                    <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', date.getUTCMonth() == calendar.currentMonth ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
                   </v-layout>
                 </v-flex>
                 <v-flex xs8>
@@ -252,8 +252,8 @@ export default {
 .day-container {
   border: 1px solid #5F6368 !important;
   margin: 0 -1px -1px 0;
-  -webkit-transition: min-width 300ms, max-height 300ms;
-          transition: min-width 300ms, max-height 300ms;
+  -webkit-transition: width 300ms, max-width 300ms, max-height 300ms;
+          transition: width 300ms, max-width 300ms, max-height 300ms;
 }
 .column:not(:first-child) > .period {
   margin-left: 0;
