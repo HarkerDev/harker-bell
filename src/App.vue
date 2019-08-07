@@ -153,8 +153,8 @@ export default {
       env: process.env,
       mode: localStorage.getItem("calendarMode") || "week",
       calendar: {
-        currentDate: this.getCurrentUTCMidnight(),
-        currentMonth: new Date().getMonth(),
+        currentDate: null,
+        currentMonth: null,
         dates: [],
       },
       menu: {
@@ -180,7 +180,7 @@ export default {
       },
       set(value) {
         let date = new Date(value), today = this.getCurrentUTCMidnight();
-        if (date.getTime() == today.getTime() ||
+        if (+date == +today ||
             this.mode == "month" && date.getUTCMonth() == today.getUTCMonth())
           this.$router.push("/");
         else if (this.mode == "month")
@@ -204,7 +204,20 @@ export default {
     changeMode(mode) {
       localStorage.setItem("calendarMode", mode);
       this.mode = mode;
-      this.setCalendar(this.$route);
+      let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
+      if (mode == "month" && this.$route.name == "day")
+        if (new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
+          this.$router.push("/");
+        else
+          this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}`);
+      else if (mode == "week" && this.$route.name == "day" && +this.getSunday(date) == +this.getSunday(today))
+        this.$router.push("/");
+      else if (this.$route.name == "month")
+        if (new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
+          this.$router.push("/");
+        else
+          this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
+      else this.setCalendar(this.$route);
     },
     closeSettings() {
       if (this.prevRoute) this.$router.back();
@@ -236,7 +249,7 @@ export default {
      */
     nextOrPrevious(isNext) {
       let sign = isNext ? 1 : -1;
-      let today = this.getCurrentUTCMidnight(), date = new Date(this.calendar.currentDate.getTime());
+      let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (this.mode == "month")
         date.setUTCMonth(date.getUTCMonth()+sign*1);
       else if (this.mode == "week")
@@ -246,8 +259,8 @@ export default {
         date.setUTCDate(date.getUTCDate()+sign*3);
       else // day mode
         date.setUTCDate(date.getUTCDate()+sign*1);
-      if (date.getTime() == today.getTime() ||
-          this.mode == "month" && date.getUTCMonth() == today.getUTCMonth())
+      if (+date == +today ||
+          this.mode == "month" && new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
         this.$router.push("/");
       else if (this.mode == "month")
         this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}`);
@@ -263,12 +276,15 @@ export default {
     /**
      * Sets the calendar dates that will be displayed to the user based on the current view setting
      * and the date specified in the URL path.
-     * @param {Route} route the current route object
+     * @param {Route} route             the current route object
+     * @param {boolean} keepCurrentDate whether to avoid updating the currentDate variable
+     *                                  (for use when only the mode is changing and not the date)
      */
-    setCalendar(route) {
+    setCalendar(route, keepCurrentDate) {
       let year = +route.params.year, month = +route.params.month, day = +route.params.day;
-      if (year && month) this.calendar.currentDate = new Date(Date.UTC(year, month-1, day || 1));
-      else this.calendar.currentDate = this.getCurrentUTCMidnight();
+      if (!keepCurrentDate && year && month) this.calendar.currentDate = new Date(Date.UTC(year, month-1, day || 1));
+      else if (!keepCurrentDate) this.calendar.currentDate = this.getCurrentUTCMidnight();
+      this.calendar.currentMonth = null;
       /** @type {Date} */
       let startDate, endDate;
       if (this.mode == "month") {
@@ -276,12 +292,12 @@ export default {
           this.calendar.currentMonth = month-1;
           startDate = this.getSunday(new Date(Date.UTC(year, month-1))); // first week of month
           // need to add 5 days to the previous sunday to get friday of the last week of the month
-          endDate = new Date(this.getSunday(new Date(Date.UTC(year, month, 0))).getTime()+5*this.$MS_PER_DAY);
+          endDate = new Date(+this.getSunday(new Date(Date.UTC(year, month, 0)))+5*this.$MS_PER_DAY);
         } else {
           let date = this.getCurrentUTCMidnight();
           this.calendar.currentMonth = date.getUTCMonth();
           // sunday of the last day of the month, plus 5 days (a.k.a. friday of the last week)
-          endDate = new Date(this.getSunday(new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth()+1, 0))).getTime()+5*this.$MS_PER_DAY);
+          endDate = new Date(+this.getSunday(new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth()+1, 0)))+5*this.$MS_PER_DAY);
           date.setUTCDate(1); // first day of current month
           startDate = this.getSunday(date); // sunday of the first week
         }
@@ -290,7 +306,7 @@ export default {
           startDate = this.getSunday(new Date(Date.UTC(year, month-1, day))); // date in URL
         else
           startDate = this.getSunday(this.getCurrentUTCMidnight()); // sunday of the current week
-        endDate = new Date(startDate.getTime()+5*this.$MS_PER_DAY); // add 5 days to get friday
+        endDate = new Date(+startDate+5*this.$MS_PER_DAY); // add 5 days to get friday
       } else if (route.name == "day") // is day mode
         startDate = endDate = new Date(Date.UTC(year, month-1, day)); // date specified in URL
       else // if no date specified in URL path
@@ -299,7 +315,7 @@ export default {
       while (startDate <= endDate) {
         if (startDate.getUTCDay() > 0 && startDate.getUTCDay() < 6) // if date is a weekday
           this.calendar.dates.push(startDate);
-        startDate = new Date(startDate.getTime()+this.$MS_PER_DAY); // add 1 day
+        startDate = new Date(+startDate+this.$MS_PER_DAY); // add 1 day
       }
     },
     /**
@@ -327,7 +343,6 @@ export default {
       if (this.mode != "month" && route.name == "month") this.mode = "month";
       else if (this.mode == "month" && route.name == "day") this.mode = "week";
       if (["home", "day", "month"].includes(route.name)) this.setCalendar(route);
-      // DON'T FORGET TO CHANGE CALENDAR.CURRENTDATE HERE!!!
     },
     "menu.open"(open) {
       if (open == false && this.menu.openTracker > 0)

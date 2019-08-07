@@ -13,9 +13,8 @@
             <v-layout align-center>
               <v-flex xs3>
                 <v-layout column align-center>
-                  <span v-if="mode != 'month'" class="overline">{{weekdays[date.getUTCDay()-1]}}</span>
-                  <span v-else-if="date.getUTCDate() == 1" class="overline mb-n2">{{months[date.getUTCMonth()]}}</span>
-                  <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', date.getUTCMonth() == calendar.currentMonth ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
+                  <span v-if="mode != 'month' && date.getUTCDate() != 1" class="overline">{{weekdays[date.getUTCDay()-1]}}</span>
+                  <span v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}]">{{months[date.getUTCMonth()]}}</span>
                 </v-layout>
               </v-flex>
               <v-flex xs8>
@@ -269,8 +268,8 @@ export default {
 .lunch {
   cursor: pointer;
 }
-/*.font-transition {
-  -webkit-transition: font-size 300ms, letter-spacing 300ms;
-          transition: font-size 300ms, letter-spacing 300ms;
-}*/
+.font-transition {
+  -webkit-transition: all 300ms;
+          transition: all 300ms;
+}
 </style>
