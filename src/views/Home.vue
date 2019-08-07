@@ -15,6 +15,7 @@
                 <v-layout column align-center>
                   <span v-if="mode != 'month' && date.getUTCDate() != 1" class="overline">{{weekdays[date.getUTCDay()-1]}}</span>
                   <span v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}]">{{months[date.getUTCMonth()]}}</span>
+                  <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
                 </v-layout>
               </v-flex>
               <v-flex xs8>
