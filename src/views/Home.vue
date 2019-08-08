@@ -7,7 +7,7 @@
       </v-layout>
       <v-layout v-for="(n, i) in Math.ceil(calendar.dates.length/5)" :key="calendar.dates[i*5].getTime()" justify-center>
         <!-- DAY CONTAINER -->
-        <v-sheet v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()" :class="['day-container', {'overflow-hidden': mode == 'month'}]" ref="day" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
+        <v-sheet v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()" ref="day" :class="['day-container', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
           <!-- DAY HEADER -->
           <v-sheet :height="mode == 'month' ? 36 : 48" tile>
             <v-layout align-center>
@@ -39,7 +39,7 @@
                   <!-- LUNCH PERIOD -->
                   <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
                     <!-- TODO: Find a way to extract id logic somewhere -->
-                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-xs-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex)" :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}">
+                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-xs-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex)">
                       <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
                         <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
@@ -67,6 +67,16 @@
 
 <script>
 export default {
+  filters: {
+    /**
+     * Returns a human-readable time from a Date object in H:MM format.
+     * @return {String} 12-hour time without AM/PM
+     */
+    formatTime(date) {
+      return (date.getUTCHours()+11)%12+1+":"+ // convert hours to 12-hour time
+             ("0"+date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
+    }
+  },
   props: {
     calendar: {
       type: Object,
@@ -174,6 +184,16 @@ export default {
       return this.mode == "month";
     },
   },
+  watch: {
+    /** Responds to calendar mode changes. */
+    mode(value) {
+      if (value == "month") {
+        this.ref = this.$refs.day[0].$el;
+        this.ref.addEventListener("transitionend", this.transitionEnd);
+      } else
+        this.displayMonthContent = false;
+    },
+  },
   methods: {
     /**
      * Shows the lunch menu for the lunch period element at the provided ID
@@ -188,26 +208,6 @@ export default {
       this.ref.removeEventListener("transitionend", this.transitionEnd);
       this.displayMonthContent = true;
       //this.$root.setCalendar(this.$route);
-    },
-  },
-  filters: {
-    /**
-     * Returns a human-readable time from a Date object in H:MM format.
-     * @return {String} 12-hour time without AM/PM
-     */
-    formatTime(date) {
-      return (date.getUTCHours()+11)%12+1+":"+ // convert hours to 12-hour time
-             ("0"+date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
-    }
-  },
-  watch: {
-    /** Responds to calendar mode changes. */
-    mode(value) {
-      if (value == "month") {
-        this.ref = this.$refs.day[0].$el;
-        this.ref.addEventListener("transitionend", this.transitionEnd);
-      } else
-        this.displayMonthContent = false;
     },
   }
 };

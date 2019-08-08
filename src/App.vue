@@ -4,7 +4,7 @@
       <v-spacer></v-spacer>
       <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
         <template v-slot:activator="{on}">
-          <v-btn v-on="on" class="hidden-print-only" icon @click="nextOrPrevious(false)">
+          <v-btn class="hidden-print-only" icon v-on="on" @click="nextOrPrevious(false)">
             <v-icon>chevron_left</v-icon>
           </v-btn>
         </template>
@@ -14,7 +14,7 @@
         <template v-slot:activator="{on: menu}">
           <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
             <template v-slot:activator="{on: tooltip}">
-              <v-btn v-on="{...tooltip, ...menu}" class="hidden-print-only" icon>
+              <v-btn class="hidden-print-only" icon v-on="{...tooltip, ...menu}">
                 <v-icon>date_range</v-icon>
               </v-btn>
             </template>
@@ -27,7 +27,7 @@
       </v-menu>
       <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
         <template v-slot:activator="{on}">
-          <v-btn v-on="on" class="hidden-print-only mr-2" icon @click="nextOrPrevious(true)">
+          <v-btn class="hidden-print-only mr-2" icon v-on="on" @click="nextOrPrevious(true)">
             <v-icon>chevron_right</v-icon>
           </v-btn>
         </template>
@@ -53,7 +53,7 @@
         <template v-slot:activator="{on: menu}">
           <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
             <template v-slot:activator="{on: tooltip}">
-              <v-btn v-on="{...tooltip, ...menu}" class="hidden-print-only ml-2" icon>
+              <v-btn class="hidden-print-only ml-2" icon v-on="{...tooltip, ...menu}">
                 <v-icon>settings</v-icon>
               </v-btn>
             </template>
@@ -70,7 +70,7 @@
         <v-divider></v-divider>
         <v-list dense subheader>
           <v-subheader>Change view</v-subheader>
-          <v-list-item @click="(true||$vuetify.breakpoint.xsOnly) ? changeMode('day') : ''" :disabled="false&&$vuetify.breakpoint.smAndUp">
+          <v-list-item :disabled="false&&$vuetify.breakpoint.smAndUp" @click="(true||$vuetify.breakpoint.xsOnly) ? changeMode('day') : ''">
             <v-list-item-icon>
               <v-icon v-if="mode == 'day'">check</v-icon>
             </v-list-item-icon>
@@ -110,12 +110,12 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <router-view @show-menu="showMenu($event)" :calendar="calendar" :mode="mode" :sheet-id="menu.open ? menu.sheetId : null"></router-view>
+      <router-view :calendar="calendar" :mode="mode" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu($event)"></router-view>
     </v-content>
-    <v-dialog v-model="settings.dialog" @input="closeSettings()" eager :fullscreen="$vuetify.breakpoint.xsOnly" width="480">
+    <v-dialog v-model="settings.dialog" eager :fullscreen="$vuetify.breakpoint.xsOnly" width="480" @input="closeSettings">
       <v-card>
         <v-app-bar elevate-on-scroll>
-          <v-btn @click="closeSettings()" icon>
+          <v-btn icon @click="closeSettings()">
             <v-icon>close</v-icon>
           </v-btn>
           <v-toolbar-title class="font-family pt-sans font-weight-bold">Settings</v-toolbar-title>
@@ -146,29 +146,21 @@
         <v-card-text>what's not for lunch</v-card-text>
       </v-card>
     </v-menu>
+    <v-footer app color="white" elevation="2" fixed padless>
+      {{connected}}
+    </v-footer>
   </v-app>
 </template>
 
 <script>
+import io from "socket.io-client";
 export default {
   name: "App",
-  created() {
-    /** Number of milliseconds in a day */
-    this.$MS_PER_DAY = 24*60*60*1000;
-    let darkTheme = localStorage.getItem("darkTheme");
-    if (darkTheme == "true") {
-      this.$vuetify.theme.dark = true;
-      document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
-    }
-    this.setCalendar(this.$route);
-    window.addEventListener("keyup", event => {
-      if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
-      else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
-    });
-  },
   data() {
     return {
       env: process.env,
+      socket: io("https://bell.dev.harker.org"),
+      connected: false,
       mode: localStorage.getItem("calendarMode") || "week",
       calendar: {
         currentDate: null,
@@ -217,6 +209,52 @@ export default {
           this.$router.push(`/${value.substring(0, 4)}/${+value.substring(5, 7)}/${+value.substring(8, 10)}`);
       }
     }
+  },
+  watch: {
+    /** Responds to route changes. */
+    $route(route, prevRoute) {
+      this.prevRoute = prevRoute;
+      this.settings.dialog = route.name == "settings";
+      if (this.mode != "month" && route.name == "month") this.saveMode(this.mode = "month");
+      else if (this.mode == "month" && route.name == "day") this.saveMode(this.mode = "week");
+      if (["home", "day", "month"].includes(route.name)) this.setCalendar(route);
+    },
+    /** Responds to lunch menu changes by keeping it open when choosing a different date. */
+    "menu.open"(open) {
+      if (open == false && this.menu.openTracker > 0)
+        this.$nextTick(() => {
+          this.menu.open = true;
+          this.menu.openTracker--;
+        });
+    },
+    /** Handles changes to the dark mode setting. */
+    "$vuetify.theme.dark"(dark) {
+      localStorage.setItem("darkTheme", dark);
+      if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
+      else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
+    },
+  },
+  created() {
+    /** Number of milliseconds in a day */
+    this.$MS_PER_DAY = 24*60*60*1000;
+    let darkTheme = localStorage.getItem("darkTheme");
+    if (darkTheme == "true") {
+      this.$vuetify.theme.dark = true;
+      document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
+    }
+    this.setCalendar(this.$route);
+    window.addEventListener("keyup", event => {
+      if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
+      else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
+    });
+    this.socket.on("connect", () => {
+      this.connected = true;
+      console.log(this.socket.id);
+    });
+    this.socket.on("disconnect", reason => {
+      this.connected = false;
+      console.log(reason);
+    });
   },
   methods: {
     /**
@@ -401,30 +439,6 @@ export default {
       this.$nextTick(() => {
         this.menu.open = true;
       });
-    },
-  },
-  watch: {
-    /** Responds to route changes. */
-    $route(route, prevRoute) {
-      this.prevRoute = prevRoute;
-      this.settings.dialog = route.name == "settings";
-      if (this.mode != "month" && route.name == "month") this.saveMode(this.mode = "month");
-      else if (this.mode == "month" && route.name == "day") this.saveMode(this.mode = "week");
-      if (["home", "day", "month"].includes(route.name)) this.setCalendar(route);
-    },
-    /** Responds to lunch menu changes by keeping it open when choosing a different date. */
-    "menu.open"(open) {
-      if (open == false && this.menu.openTracker > 0)
-        this.$nextTick(() => {
-          this.menu.open = true;
-          this.menu.openTracker--;
-        });
-    },
-    /** Handles changes to the dark mode setting. */
-    "$vuetify.theme.dark"(dark) {
-      localStorage.setItem("darkTheme", dark);
-      if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
-      else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
     },
   },
 };

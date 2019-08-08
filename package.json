@@ -13,11 +13,12 @@
     "material-design-icons-iconfont": "^5.0.1",
     "register-service-worker": "^1.6.2",
     "roboto-fontface": "*",
+    "socket.io-client": "^2.2.0",
     "typeface-pt-sans": "^0.0.72",
     "typeface-roboto": "^0.0.54",
     "vue": "^2.6.10",
-    "vue-router": "^3.0.7",
-    "vuetify": "^2.0.0"
+    "vue-router": "^3.1.2",
+    "vuetify": "^2.0.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.10.0",
@@ -48,34 +49,32 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "vue/attributes-order": "warning",
-      "vue/no-confusing-v-for-v-if": "warning",
-      "vue/no-v-html": "warning",
-      "vue/order-in-components": "warning",
-      "vue/this-in-template": "warning",
-      "vue/array-bracket-spacing": "warning",
-      "vue/arrow-spacing": "warning",
-      "vue/block-spacing": "warning",
-      "vue/brace-style": "warning",
-      "vue/camelcase": "warning",
-      "vue/comma-dangle": "warning",
-      "vue/component-name-in-template-casing": "warning",
-      "vue/eqeqeq": "warning",
-      "vue/key-spacing": "warning",
-      "vue/match-component-file-name": "warning",
-      "vue/no-boolean-default": "warning",
-      "vue/no-restricted-syntax": "warning",
-      "vue/object-curly-spacing": "warning",
-      "vue/require-direct-export": "warning",
-      "vue/script-indent": "warning",
-      "vue/space-infix-ops": "warning",
-      "vue/space-unary-ops": "warning",
-      "vue/v-on-function-call": "warning",
-      "vue/max-attributes-per-line": "off",
+      "vue/attributes-order": 1,
+      "vue/no-confusing-v-for-v-if": 1,
+      "vue/no-v-html": 1,
+      "vue/order-in-components": 1,
+      "vue/this-in-template": 1,
+      "vue/array-bracket-spacing": 1,
+      "vue/arrow-spacing": 1,
+      "vue/block-spacing": 1,
+      "vue/brace-style": 1,
+      "vue/camelcase": 1,
+      "vue/comma-dangle": 1,
+      "vue/component-name-in-template-casing": 1,
+      "vue/key-spacing": 1,
+      "vue/match-component-file-name": 1,
+      "vue/no-boolean-default": 1,
+      "vue/no-restricted-syntax": 1,
+      "vue/object-curly-spacing": 1,
+      "vue/require-direct-export": 1,
+      "vue/script-indent": 1,
+      "vue/space-unary-ops": 1,
+      "vue/v-on-function-call": 1,
+      "vue/max-attributes-per-line": 0,
       "vue/html-closing-bracket-spacing": [
         "error",
         {
-          "selfClosingTag": "never"
+          "selfClosingTag": 0
         }
       ],
       "vue/html-self-closing": [
@@ -86,7 +85,7 @@
           }
         }
       ],
-      "vue/singleline-html-element-content-newline": "off",
+      "vue/singleline-html-element-content-newline": 0,
       "vue/mustache-interpolation-spacing": [
         "warning",
         "never"
