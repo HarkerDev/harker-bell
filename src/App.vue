@@ -33,9 +33,22 @@
         </template>
         <span>Next {{mode}}</span>
       </v-tooltip>
-      <v-toolbar-title class="headline font-family pt-sans font-weight-bold">
-        <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
-      </v-toolbar-title>
+      <transition name="fade" mode="out-in">
+        <v-toolbar-title v-if="calendar.changing" key="changing" class="title font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '142px'}">
+          <template v-if="$vuetify.breakpoint.smAndUp">
+            <span v-if="mode == 'month'">{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
+            <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}</span>
+            <span v-else>{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
+          </template><template v-else>
+            <span v-if="mode == 'month'">{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
+            <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} - {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}</span>
+            <span v-else>{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
+          </template>
+        </v-toolbar-title>
+        <v-toolbar-title v-else key="title" class="headline font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '140px'}">
+          <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
+        </v-toolbar-title>
+      </transition>
       <v-menu offset-y>
         <template v-slot:activator="{on: menu}">
           <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
@@ -57,26 +70,26 @@
         <v-divider></v-divider>
         <v-list dense subheader>
           <v-subheader>Change view</v-subheader>
-          <v-list-item @click="(true||$vuetify.breakpoint.xsOnly) ? mode = 'day' : ''" :disabled="false&&$vuetify.breakpoint.smAndUp">
+          <v-list-item @click="(true||$vuetify.breakpoint.xsOnly) ? changeMode('day') : ''" :disabled="false&&$vuetify.breakpoint.smAndUp">
             <v-list-item-icon>
-              <v-icon v-if="mode=='day'">check</v-icon>
+              <v-icon v-if="mode == 'day'">check</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Day</v-list-item-title>
               <v-list-item-subtitle>Mobile devices only</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="mode = 'week'">
+          <v-list-item @click="changeMode('week')">
             <v-list-item-icon>
-              <v-icon v-if="mode=='week'">check</v-icon>
+              <v-icon v-if="mode == 'week'">check</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Week</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="mode = 'month'">
+          <v-list-item @click="changeMode('month')">
             <v-list-item-icon>
-              <v-icon v-if="mode=='month'">check</v-icon>
+              <v-icon v-if="mode == 'month'">check</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Month</v-list-item-title>
@@ -159,6 +172,7 @@ export default {
         currentMonth: null,
         dates: [],
         keepCurrentDate: false,
+        changing: false,
       },
       menu: {
         open: false,
@@ -172,15 +186,22 @@ export default {
         dialog: this.$route.name == "settings",
       },
       prevRoute: null,
+      longMonths: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+      shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     };
   },
   computed: {
     currentDateString: {
+      /** Returns the current date as an ISO string for date picker purposes. */
       get() {
         let date = this.calendar.currentDate.toISOString()
         if (this.mode == "month") return date.substring(0, 7);
         return date.substring(0, 10);
       },
+      /**
+       * When set, the underlying date variable is also updated to reflect the changes.
+       * @param {string} value  date string in ISO format
+       */
       set(value) {
         let date = new Date(value), today = this.getCurrentUTCMidnight();
         if (+date == +today ||
@@ -196,7 +217,7 @@ export default {
   methods: {
     /**
      * Determines if the date represented by a given ISO date is allowed in the date picker.
-     * @param dateString {string} date as an ISO date string (YYYY-MM-DD format)
+     * @param {string} dateString date as an ISO date string (YYYY-MM-DD format)
      * @return                    true if the date falls on a weekday or it is month mode; otherwise, false
      */
     allowedDate(dateString) {
@@ -204,25 +225,35 @@ export default {
       let date = new Date(dateString);
       return date.getUTCDay() > 0 && date.getUTCDay() < 6;
     },
+    /**
+     * Changes the calendar display mode.
+     * @param {string} mode     the mode to change the view to (either "day", "week", or "month")
+     */
     changeMode(mode) {
-      localStorage.setItem("calendarMode", mode);
+      let prevMode = this.mode;
+      this.saveMode(this.mode = mode);
       this.calendar.keepCurrentDate = true;
-      this.mode = mode;
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (mode == "month" && this.$route.name == "day")
         if (new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
           this.$router.push("/");
         else
           this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}`);
-      else if (mode == "week" && this.$route.name == "day" && +this.getSunday(date) == +this.getSunday(today))
-        this.$router.push("/");
-      else if (this.$route.name == "month" || mode != "month" && this.$route.name == "home")
+      else if (mode != "month" && this.$route.name == "month")
         if (new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
           this.$router.push("/");
         else
           this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
+      else if (mode == "week" && this.$route.name == "day" &&
+              +this.getSunday(new Date(+date)) == +this.getSunday(new Date(+today)))
+        this.$router.push("/");
+      else if (mode != "month" && prevMode == "month" &&
+              (mode == "week" && +this.getSunday(new Date(+date)) != +this.getSunday(new Date(+today)) ||
+              mode == "day" && +date != +today))
+        this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
       else this.setCalendar(this.$route);
     },
+    /** Closes the settings dialog by either navigating back in history or going to the home page. */
     closeSettings() {
       if (this.prevRoute) this.$router.back();
       else this.$router.push("/");
@@ -248,7 +279,7 @@ export default {
       return date;
     },
     /**
-     * 
+     * Navigates to the next or previous view, depending on the current calendar mode selected.
      * @param isNext {boolean}  true if next; false if previous
      */
     nextOrPrevious(isNext) {
@@ -278,17 +309,31 @@ export default {
       }, 100);
     },
     /**
+     * Saves the calendar mode to local storage.
+     * @param {string} mode the current calendar view mode
+     */
+    saveMode(mode) {
+      localStorage.setItem("calendarMode", mode);
+    },
+    /**
      * Sets the calendar dates that will be displayed to the user based on the current view setting
      * and the date specified in the URL path.
      * @param {Route} route the current route object
      */
     setCalendar(route) {
-      if (this.$route.name == "month" && this.mode != "month") this.mode = "month";
-      else if (this.$route.name == "day" && !["day", "week"].includes(this.mode)) this.mode = "week";
+      if (this.$route.name == "month" && this.mode != "month")
+        this.saveMode(this.mode = "month");
+      else if (this.$route.name == "day" && !["day", "week"].includes(this.mode))
+        this.saveMode(this.mode = "week");
       let year = +route.params.year, month = +route.params.month, day = +route.params.day;
       if (!this.calendar.keepCurrentDate)
-        if (year && month) this.calendar.currentDate = new Date(Date.UTC(year, month-1, day || 1));
-        else this.calendar.currentDate = this.getCurrentUTCMidnight();
+        if (year && month) {
+          this.calendar.currentDate = new Date(Date.UTC(year, month-1, day || 1));
+          if (!day && this.calendar.currentDate.getUTCDay() == 0)
+            this.calendar.currentDate = new Date(+this.calendar.currentDate+this.$MS_PER_DAY);
+          else if (!day && this.calendar.currentDate.getUTCDay() == 6)
+            this.calendar.currentDate = new Date(+this.calendar.currentDate+2*this.$MS_PER_DAY);
+        } else this.calendar.currentDate = this.getCurrentUTCMidnight();
       else this.calendar.keepCurrentDate = false;
       this.calendar.currentMonth = null;
       /** @type {Date} */
@@ -343,13 +388,15 @@ export default {
     },
   },
   watch: {
+    /** Responds to route changes. */
     $route(route, prevRoute) {
       this.prevRoute = prevRoute;
       this.settings.dialog = route.name == "settings";
-      if (this.mode != "month" && route.name == "month") this.mode = "month";
-      else if (this.mode == "month" && route.name == "day") this.mode = "week";
+      if (this.mode != "month" && route.name == "month") this.saveMode(this.mode = "month");
+      else if (this.mode == "month" && route.name == "day") this.saveMode(this.mode = "week");
       if (["home", "day", "month"].includes(route.name)) this.setCalendar(route);
     },
+    /** Responds to lunch menu changes by keeping it open when choosing a different date. */
     "menu.open"(open) {
       if (open == false && this.menu.openTracker > 0)
         this.$nextTick(() => {
@@ -357,29 +404,7 @@ export default {
           this.menu.openTracker--;
         });
     },
-    mode(mode, prevMode) {
-      localStorage.setItem("calendarMode", mode);
-      this.calendar.keepCurrentDate = true;
-      let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
-      if (mode == "month" && this.$route.name == "day")
-        if (new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
-          this.$router.push("/");
-        else
-          this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}`);
-      else if (this.$route.name == "month")
-        if (new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
-          this.$router.push("/");
-        else
-          this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
-      else if (mode == "week" && this.$route.name == "day" &&
-              +this.getSunday(new Date(+date)) == +this.getSunday(new Date(+today)))
-        this.$router.push("/");
-      else if (prevMode == "month" &&
-              (mode == "week" && +this.getSunday(new Date(+date)) != +this.getSunday(new Date(+today)) ||
-              prevMode == "month" && +date != +today))
-        this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
-      else this.setCalendar(this.$route);
-    },
+    /** Handles changes to the dark mode setting. */
     "$vuetify.theme.dark"() {
       localStorage.setItem("darkTheme", this.$vuetify.theme.dark);
     },
@@ -390,6 +415,12 @@ export default {
 <style>
 .v-application .font-family.pt-sans {
   font-family: "PT Sans", sans-serif !important;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 400ms;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 @media print {
   @page {

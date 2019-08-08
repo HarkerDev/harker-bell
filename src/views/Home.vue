@@ -67,9 +67,6 @@
 
 <script>
 export default {
-  created() {
-    
-  },
   props: {
     calendar: {
       type: Object,
@@ -92,15 +89,6 @@ export default {
       open: false,
       ref: undefined,
       stayOpen: true,
-      scheduled: [
-        
-      ],
-      lunch: [
-        
-      ],
-      events: [
-        
-      ],
       schedule: [
         {
           name: "P1",
@@ -181,25 +169,21 @@ export default {
       }
       return result;
     },
+    /** Keeps track of whether the current calendar mode is set to month view. */
     isMonth() {
       return this.mode == "month";
     },
   },
   methods: {
+    /**
+     * Shows the lunch menu for the lunch period element at the provided ID
+     * @param {string} id ID of the lunch period element
+     */
     showMenu(id) {
       this.$emit('show-menu', id);
       this.open = this.stayOpen = true;
-      /*console.log(this.$parent.$parent)
-      let unwatch = this.$watch("$parent.$parent.$parent.$parent.$parent.$parent.menu.open", () => {
-        console.log(this.stayOpen);
-        if (this.stayOpen)
-          this.stayOpen = false;
-        else {
-          this.open = false;
-          unwatch();
-        }
-      });*/
     },
+    /** TODO: DOCUMENT THIS */
     transitionEnd() {
       this.ref.removeEventListener("transitionend", this.transitionEnd);
       this.displayMonthContent = true;
@@ -217,9 +201,7 @@ export default {
     }
   },
   watch: {
-    /**
-     * Called when the calendar mode changes.
-     */
+    /** Responds to calendar mode changes. */
     mode(value) {
       if (value == "month") {
         this.ref = this.$refs.day[0].$el;
