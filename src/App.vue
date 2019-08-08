@@ -156,7 +156,10 @@ export default {
     /** Number of milliseconds in a day */
     this.$MS_PER_DAY = 24*60*60*1000;
     let darkTheme = localStorage.getItem("darkTheme");
-    if (darkTheme) this.$vuetify.theme.dark = darkTheme === "true";
+    if (darkTheme == "true") {
+      this.$vuetify.theme.dark = true;
+      document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
+    }
     this.setCalendar(this.$route);
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
@@ -418,8 +421,10 @@ export default {
         });
     },
     /** Handles changes to the dark mode setting. */
-    "$vuetify.theme.dark"() {
-      localStorage.setItem("darkTheme", this.$vuetify.theme.dark);
+    "$vuetify.theme.dark"(dark) {
+      localStorage.setItem("darkTheme", dark);
+      if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
+      else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
     },
   },
 };
@@ -430,7 +435,7 @@ export default {
   font-family: "PT Sans", sans-serif !important;
 }
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 300ms;
+  transition: opacity 250ms;
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
