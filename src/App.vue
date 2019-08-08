@@ -45,7 +45,7 @@
             <span v-else>{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
           </template>
         </v-toolbar-title>
-        <v-toolbar-title v-else key="title" class="headline font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '140px'}">
+        <v-toolbar-title v-else key="title" class="headline font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '142px', cursor: 'pointer'}" @click="changeTitle">
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
         </v-toolbar-title>
       </transition>
@@ -254,6 +254,14 @@ export default {
         this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
       else this.setCalendar(this.$route);
     },
+    /** Changes the bell schedule title to briefly show the current date range. */
+    changeTitle() {
+      if (this.calendar.timeout) {
+        this.calendar.changing = true;
+        clearTimeout(this.calendar.timeout);
+        this.calendar.timeout = setTimeout(() => {this.calendar.changing = false;}, 2000);
+      } else this.calendar.timeout = true;
+    },
     /** Closes the settings dialog by either navigating back in history or going to the home page. */
     closeSettings() {
       if (this.prevRoute) this.$router.back();
@@ -340,40 +348,39 @@ export default {
       /** @type {Date} */
       let startDate, endDate;
       if (this.mode == "month") {
+        let firstDay, lastDay;
         if (route.name == "month") {
           this.calendar.currentMonth = month-1;
-          startDate = this.getSunday(new Date(Date.UTC(year, month-1))); // first week of month
-          // need to add 5 days to the previous sunday to get friday of the last week of the month
-          endDate = new Date(+this.getSunday(new Date(Date.UTC(year, month, 0)))+5*this.$MS_PER_DAY);
+          firstDay = new Date(Date.UTC(year, month-1));
+          lastDay = new Date(Date.UTC(year, month, 0));
         } else {
-          let date = new Date(+this.calendar.currentDate); //this.getCurrentUTCMidnight();
+          let date = new Date(+this.calendar.currentDate);
           this.calendar.currentMonth = date.getUTCMonth();
-          // sunday of the last day of the month, plus 5 days (a.k.a. friday of the last week)
-          endDate = new Date(+this.getSunday(new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth()+1, 0)))+5*this.$MS_PER_DAY);
-          date.setUTCDate(1); // first day of current month
-          startDate = this.getSunday(date); // sunday of the first week
+          lastDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth()+1, 0));
+          firstDay = new Date(date.setUTCDate(1));
         }
+        if (firstDay.getUTCDay() == 6) startDate = new Date(+firstDay+this.$MS_PER_DAY);
+        else startDate = this.getSunday(firstDay); // first week of month
+        if (lastDay.getUTCDay() == 0) endDate = new Date(lastDay-this.$MS_PER_DAY);
+        else endDate = new Date(+this.getSunday(lastDay)+5*this.$MS_PER_DAY);
+        // ^ need to add 5 days to the previous sunday to get friday of the last week of the month
       } else if (this.mode == "week") {
         if (route.name == "day")
           startDate = this.getSunday(new Date(Date.UTC(year, month-1, day))); // date in URL
         else
-          startDate = this.getSunday(new Date(+this.calendar.currentDate)); //this.getCurrentUTCMidnight()); // sunday of the current week
+          startDate = this.getSunday(new Date(+this.calendar.currentDate)); // sunday of the current week
         endDate = new Date(+startDate+5*this.$MS_PER_DAY); // add 5 days to get friday
       } else if (route.name == "day") // is day mode
         startDate = endDate = new Date(Date.UTC(year, month-1, day)); // date specified in URL
       else // if no date specified in URL path
-        startDate = endDate = new Date(+this.calendar.currentDate); //this.getCurrentUTCMidnight();
+        startDate = endDate = new Date(+this.calendar.currentDate);
       this.calendar.dates = [];
       while (startDate <= endDate) {
         if (startDate.getUTCDay() > 0 && startDate.getUTCDay() < 6) // if date is a weekday
           this.calendar.dates.push(startDate);
         startDate = new Date(+startDate+this.$MS_PER_DAY); // add 1 day
       }
-      if (this.calendar.timeout) {
-        this.calendar.changing = true;
-        clearTimeout(this.calendar.timeout);
-        this.calendar.timeout = setTimeout(() => {this.calendar.changing = false;}, 2000);
-      } else this.calendar.timeout = true;
+      this.changeTitle();
     },
     /**
      * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
