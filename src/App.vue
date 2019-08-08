@@ -33,7 +33,9 @@
         </template>
         <span>Next {{mode}}</span>
       </v-tooltip>
-      <v-toolbar-title class="headline font-family pt-sans font-weight-bold">Harker Bell Schedule</v-toolbar-title>
+      <v-toolbar-title class="headline font-family pt-sans font-weight-bold">
+        <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
+      </v-toolbar-title>
       <v-menu offset-y>
         <template v-slot:activator="{on: menu}">
           <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
@@ -55,7 +57,7 @@
         <v-divider></v-divider>
         <v-list dense subheader>
           <v-subheader>Change view</v-subheader>
-          <v-list-item @click="(true||$vuetify.breakpoint.xsOnly) ? changeMode('day') : ''" :disabled="false&&$vuetify.breakpoint.smAndUp">
+          <v-list-item @click="(true||$vuetify.breakpoint.xsOnly) ? mode = 'day' : ''" :disabled="false&&$vuetify.breakpoint.smAndUp">
             <v-list-item-icon>
               <v-icon v-if="mode=='day'">check</v-icon>
             </v-list-item-icon>
@@ -64,7 +66,7 @@
               <v-list-item-subtitle>Mobile devices only</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="changeMode('week')">
+          <v-list-item @click="mode = 'week'">
             <v-list-item-icon>
               <v-icon v-if="mode=='week'">check</v-icon>
             </v-list-item-icon>
@@ -72,7 +74,7 @@
               <v-list-item-title>Week</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="changeMode('month')">
+          <v-list-item @click="mode = 'month'">
             <v-list-item-icon>
               <v-icon v-if="mode=='month'">check</v-icon>
             </v-list-item-icon>
@@ -156,6 +158,7 @@ export default {
         currentDate: null,
         currentMonth: null,
         dates: [],
+        keepCurrentDate: false,
       },
       menu: {
         open: false,
@@ -203,6 +206,7 @@ export default {
     },
     changeMode(mode) {
       localStorage.setItem("calendarMode", mode);
+      this.calendar.keepCurrentDate = true;
       this.mode = mode;
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (mode == "month" && this.$route.name == "day")
@@ -212,7 +216,7 @@ export default {
           this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}`);
       else if (mode == "week" && this.$route.name == "day" && +this.getSunday(date) == +this.getSunday(today))
         this.$router.push("/");
-      else if (this.$route.name == "month")
+      else if (this.$route.name == "month" || mode != "month" && this.$route.name == "home")
         if (new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
           this.$router.push("/");
         else
@@ -276,14 +280,16 @@ export default {
     /**
      * Sets the calendar dates that will be displayed to the user based on the current view setting
      * and the date specified in the URL path.
-     * @param {Route} route             the current route object
-     * @param {boolean} keepCurrentDate whether to avoid updating the currentDate variable
-     *                                  (for use when only the mode is changing and not the date)
+     * @param {Route} route the current route object
      */
-    setCalendar(route, keepCurrentDate) {
+    setCalendar(route) {
+      if (this.$route.name == "month" && this.mode != "month") this.mode = "month";
+      else if (this.$route.name == "day" && !["day", "week"].includes(this.mode)) this.mode = "week";
       let year = +route.params.year, month = +route.params.month, day = +route.params.day;
-      if (!keepCurrentDate && year && month) this.calendar.currentDate = new Date(Date.UTC(year, month-1, day || 1));
-      else if (!keepCurrentDate) this.calendar.currentDate = this.getCurrentUTCMidnight();
+      if (!this.calendar.keepCurrentDate)
+        if (year && month) this.calendar.currentDate = new Date(Date.UTC(year, month-1, day || 1));
+        else this.calendar.currentDate = this.getCurrentUTCMidnight();
+      else this.calendar.keepCurrentDate = false;
       this.calendar.currentMonth = null;
       /** @type {Date} */
       let startDate, endDate;
@@ -294,7 +300,7 @@ export default {
           // need to add 5 days to the previous sunday to get friday of the last week of the month
           endDate = new Date(+this.getSunday(new Date(Date.UTC(year, month, 0)))+5*this.$MS_PER_DAY);
         } else {
-          let date = this.getCurrentUTCMidnight();
+          let date = new Date(+this.calendar.currentDate); //this.getCurrentUTCMidnight();
           this.calendar.currentMonth = date.getUTCMonth();
           // sunday of the last day of the month, plus 5 days (a.k.a. friday of the last week)
           endDate = new Date(+this.getSunday(new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth()+1, 0)))+5*this.$MS_PER_DAY);
@@ -305,12 +311,12 @@ export default {
         if (route.name == "day")
           startDate = this.getSunday(new Date(Date.UTC(year, month-1, day))); // date in URL
         else
-          startDate = this.getSunday(this.getCurrentUTCMidnight()); // sunday of the current week
+          startDate = this.getSunday(new Date(+this.calendar.currentDate)); //this.getCurrentUTCMidnight()); // sunday of the current week
         endDate = new Date(+startDate+5*this.$MS_PER_DAY); // add 5 days to get friday
       } else if (route.name == "day") // is day mode
         startDate = endDate = new Date(Date.UTC(year, month-1, day)); // date specified in URL
       else // if no date specified in URL path
-        startDate = endDate = this.getCurrentUTCMidnight();
+        startDate = endDate = new Date(+this.calendar.currentDate); //this.getCurrentUTCMidnight();
       this.calendar.dates = [];
       while (startDate <= endDate) {
         if (startDate.getUTCDay() > 0 && startDate.getUTCDay() < 6) // if date is a weekday
@@ -350,6 +356,29 @@ export default {
           this.menu.open = true;
           this.menu.openTracker--;
         });
+    },
+    mode(mode, prevMode) {
+      localStorage.setItem("calendarMode", mode);
+      this.calendar.keepCurrentDate = true;
+      let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
+      if (mode == "month" && this.$route.name == "day")
+        if (new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
+          this.$router.push("/");
+        else
+          this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}`);
+      else if (this.$route.name == "month")
+        if (new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
+          this.$router.push("/");
+        else
+          this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
+      else if (mode == "week" && this.$route.name == "day" &&
+              +this.getSunday(new Date(+date)) == +this.getSunday(new Date(+today)))
+        this.$router.push("/");
+      else if (prevMode == "month" &&
+              (mode == "week" && +this.getSunday(new Date(+date)) != +this.getSunday(new Date(+today)) ||
+              prevMode == "month" && +date != +today))
+        this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
+      else this.setCalendar(this.$route);
     },
     "$vuetify.theme.dark"() {
       localStorage.setItem("darkTheme", this.$vuetify.theme.dark);
