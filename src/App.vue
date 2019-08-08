@@ -37,7 +37,7 @@
         <v-toolbar-title v-if="calendar.changing" key="changing" class="title font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '142px'}">
           <template v-if="$vuetify.breakpoint.smAndUp">
             <span v-if="mode == 'month'">{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
-            <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
+            <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
             <span v-else>{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
           </template><template v-else>
             <span v-if="mode == 'month'">{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
@@ -369,9 +369,11 @@ export default {
           this.calendar.dates.push(startDate);
         startDate = new Date(+startDate+this.$MS_PER_DAY); // add 1 day
       }
-      this.calendar.changing = true;
-      clearTimeout(this.calendar.timeout);
-      this.calendar.timeout = setTimeout(() => {this.calendar.changing = false;}, 2000);
+      if (this.calendar.timeout) {
+        this.calendar.changing = true;
+        clearTimeout(this.calendar.timeout);
+        this.calendar.timeout = setTimeout(() => {this.calendar.changing = false;}, 2000);
+      } else this.calendar.timeout = true;
     },
     /**
      * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
