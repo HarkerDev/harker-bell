@@ -147,8 +147,17 @@
       </v-card>
     </v-menu>
     <v-footer app color="white" elevation="2" fixed padless>
-      {{connected}}
+      <div class="caption mx-2">
+        <span>Last connected </span>
+        <span :class="{'success--text': io.connected}">{{io.connected ? "just now" : io.lastConnected || "never"}}</span>
+      </div>
+      <v-spacer></v-spacer>
+      <div class="caption mx-2">
+        <span>Last updated </span>
+        <span>{{io.lastUpdated || "never"}}</span>
+      </div>
     </v-footer>
+    <v-snackbar v-model="snackbars.offlineReady">hi</v-snackbar>
   </v-app>
 </template>
 
@@ -159,8 +168,12 @@ export default {
   data() {
     return {
       env: process.env,
-      socket: io("https://bell.dev.harker.org"),
-      connected: false,
+      socket: io("https://bell.dev.harker.org", {timeout: 10000}),
+      io: {
+        connected: false,
+        lastConnected: localStorage.getItem("lastConnected") || null,
+        lastUpdated: localStorage.getItem("lastUpdated") || null,
+      },
       mode: localStorage.getItem("calendarMode") || "week",
       calendar: {
         currentDate: null,
@@ -181,12 +194,19 @@ export default {
       settings: {
         dialog: this.$route.name == "settings",
       },
+      snackbars: {
+        offlineReady: true
+      },
       prevRoute: null,
       longMonths: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     };
   },
   computed: {
+    test() {
+      console.log("COMPUTE");
+      return this.mode;
+    },
     currentDateString: {
       /** Returns the current date as an ISO string for date picker purposes. */
       get() {
@@ -248,12 +268,20 @@ export default {
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
     });
     this.socket.on("connect", () => {
-      this.connected = true;
+      this.io.connected = true;
       console.log(this.socket.id);
     });
     this.socket.on("disconnect", reason => {
-      this.connected = false;
+      this.io.connected = false;
       console.log(reason);
+    });
+    this.socket.on("test", value => {
+      console.log(value);
+    });
+    this.socket.on("pong", () => {
+      let now = new Date();
+      this.lastConnected = now;
+      localStorage.setItem("lastConnected", now.getTime());
     });
   },
   methods: {
