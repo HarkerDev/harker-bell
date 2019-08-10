@@ -32,8 +32,8 @@
             Events
           </div>
           <!-- WEEK DAY CONTENT -->
-          <template v-else>
-            <v-layout v-for="(group, gIndex) in computedSchedule" :key="gIndex" class="group">
+          <template v-else-if="computedSchedules[date.getTime()]">
+            <v-layout v-for="(group, gIndex) in computedSchedules[date.getTime()].schedule" :key="gIndex" class="group">
               <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
                 <template v-for="(period, pIndex) in column">
                   <!-- LUNCH PERIOD -->
@@ -86,6 +86,10 @@ export default {
       validator(value) {
         return ["day", "week", "month"].indexOf(value) != -1;
       },
+      required: true
+    },
+    schedules: {
+      type: Array,
       required: true
     },
     sheetId: {
@@ -142,42 +146,51 @@ export default {
   },
   computed: {
     /**
-     * Processes the raw schedule array prop and constructs a new array in the following format:
+     * Processes the raw schedule array prop and constructs a new object with arrays in the following format:
      * 1st dimension: list of period groups in a day. Period groups are separated by full-width horizontal
      *                lines when displayed in week or day view.
      * 2nd dimension: column groups for each period group. Column groups are used to split schedules when
      *                there are concurrent periods and are indicated by vertical lines on the page.
      * 3rd dimension: list of periods in the group, including passing periods.
-     * @return {Array} three-dimensional array
+     * @return {Object} object with dates as keys and 3-dimensional arrays as values
      */
-    computedSchedule() {
-      let result = [[[{ // create result array with first period (including its duration) as first element
-        ...this.schedule[0],
-        ...{duration: (this.schedule[0].end-this.schedule[0].start)/60000}} // 60,000 ms per minute
-      ]]];
-      let latestEnd = this.schedule[0].end; // latest ending time in the current top-level period group (which can have multiple columns)
-      for (let i = 1; i < this.schedule.length; i++) {
-        let lastGroup = result[result.length-1]; // last group of periods in the schedule array being built
-        let period = this.schedule[i], prevPeriod = this.schedule[i-1];
-        period.duration = (period.end-period.start)/60000;
-        if (+period.start == +prevPeriod.start) // add column if two periods start at the same time (dates are coerced to numbers)
-          lastGroup.push([period]);
-        else if (period.start < prevPeriod.end) // insert placeholder in new column if period starts before previous one ends
-          lastGroup.push([
-            {duration: (period.start-prevPeriod.end)/60000}, // duration of placeholder period
-            period
-          ]);
-        else if (+period.start == +prevPeriod.end && period.start < latestEnd) // simply add to current column if periods are adjacent
-          lastGroup[lastGroup.length-1].push(period);
-        else if (+period.start == +prevPeriod.end) // start a new period group if period starts after the previous group
-          result.push([[period]]);
-        else if (period.start < latestEnd) // insert placeholder in current column if there's a gap between two periods
-          lastGroup[lastGroup.length-1].push([[{duration: (period.start-prevPeriod.end)/60000}]], [[period]]);
-        else // insert placeholder in a new period group otherwise
-          result.push([[{duration: (period.start-latestEnd)/60000}]], [[period]]);
-        latestEnd = Math.max(latestEnd, period.end);
-      }
-      return result;
+    computedSchedules() {
+      let computedSchedules = {};
+      this.schedules.forEach(schedule => {
+        schedule = schedule.schedule;
+        schedule[0].start = new Date(schedule[0].start);
+        schedule[0].end = new Date(schedule[0].end);
+        let result = [[[{ // create result array with first period (including its duration) as first element
+          ...schedule[0],
+          ...{duration: (schedule[0].end-schedule[0].start)/this.$MS_PER_MIN}}
+        ]]];
+        let latestEnd = schedule[0].end; // latest ending time in the current top-level period group (which can have multiple columns)
+        for (let i = 1; i < schedule.length; i++) {
+          let lastGroup = result[result.length-1]; // last group of periods in the schedule array being built
+          let period = schedule[i], prevPeriod = schedule[i-1];
+          period.start = new Date(period.start);
+          period.end = new Date(period.end);
+          period.duration = (period.end-period.start)/this.$MS_PER_MIN;
+          if (+period.start == +prevPeriod.start) // add column if two periods start at the same time (dates are coerced to numbers)
+            lastGroup.push([period]);
+          else if (period.start < prevPeriod.end) // insert placeholder in new column if period starts before previous one ends
+            lastGroup.push([
+              {duration: (period.start-prevPeriod.end)/this.$MS_PER_MIN}, // duration of placeholder period
+              period
+            ]);
+          else if (+period.start == +prevPeriod.end && period.start < latestEnd) // simply add to current column if periods are adjacent
+            lastGroup[lastGroup.length-1].push(period);
+          else if (+period.start == +prevPeriod.end) // start a new period group if period starts after the previous group
+            result.push([[period]]);
+          else if (period.start < latestEnd) // insert placeholder in current column if there's a gap between two periods
+            lastGroup[lastGroup.length-1].push([[{duration: (period.start-prevPeriod.end)/this.$MS_PER_MIN}]], [[period]]);
+          else // insert placeholder in a new period group otherwise
+            result.push([[{duration: (period.start-latestEnd)/this.$MS_PER_MIN}]], [[period]]);
+          latestEnd = Math.max(latestEnd, period.end);
+        }
+        computedSchedules[schedule.date.getTime()] = result;
+      });
+      return computedSchedules;
     },
     /** Keeps track of whether the current calendar mode is set to month view. */
     isMonth() {
@@ -193,6 +206,10 @@ export default {
       } else
         this.displayMonthContent = false;
     },
+  },
+  created() {
+    /** Number of milliseconds in a minute */
+    this.$MS_PER_MIN = 60*1000;
   },
   methods: {
     /**

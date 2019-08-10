@@ -110,7 +110,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <router-view :calendar="calendar" :mode="mode" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu($event)"></router-view>
+      <router-view :calendar="calendar" :mode="mode" :schedules="schedules" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu($event)"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" eager :fullscreen="$vuetify.breakpoint.xsOnly" width="480" @input="closeSettings">
       <v-card>
@@ -163,18 +163,21 @@
 
 <script>
 import io from "socket.io-client";
+import {openDB} from "idb";
 export default {
   name: "App",
   data() {
     return {
       env: process.env,
-      socket: io("https://bell.dev.harker.org", {timeout: 10000}),
+      socket: io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000}),
       io: {
         connected: false,
         lastConnected: localStorage.getItem("lastConnected") || null,
         lastUpdated: localStorage.getItem("lastUpdated") || null,
       },
+      db: null,
       mode: localStorage.getItem("calendarMode") || "week",
+      schedules: [],
       calendar: {
         currentDate: null,
         currentMonth: null,
@@ -198,15 +201,14 @@ export default {
         offlineReady: true
       },
       prevRoute: null,
+      features: {
+        indexedDB: window.indexedDB ? true : false,
+      },
       longMonths: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     };
   },
   computed: {
-    test() {
-      console.log("COMPUTE");
-      return this.mode;
-    },
     currentDateString: {
       /** Returns the current date as an ISO string for date picker purposes. */
       get() {
@@ -270,6 +272,15 @@ export default {
     this.socket.on("connect", () => {
       this.io.connected = true;
       console.log(this.socket.id);
+      this.socket.emit("schedule request", {
+        start: this.calendar.dates[0],
+        end: this.calendar.dates[this.calendar.dates.length-1]
+      }, schedules => {
+        console.log("SCHEDULES");
+        console.log(this.schedules = schedules);
+        console.log(this.db);
+        // might get this data back before this.db is even opened, so consider using eventlisteners to wait until the db is initialized before storing schedules.
+      });
     });
     this.socket.on("disconnect", reason => {
       this.io.connected = false;
@@ -277,6 +288,9 @@ export default {
     });
     this.socket.on("test", value => {
       console.log(value);
+    });
+    this.socket.on("schedule update", details => {
+      
     });
     this.socket.on("pong", () => {
       let now = new Date();
@@ -398,7 +412,7 @@ export default {
      * and the date specified in the URL path.
      * @param {Route} route the current route object
      */
-    setCalendar(route) {
+    async setCalendar(route) {
       if (this.$route.name == "month" && this.mode != "month")
         this.saveMode(this.mode = "month");
       else if (this.$route.name == "day" && !["day", "week"].includes(this.mode))
@@ -443,13 +457,27 @@ export default {
         startDate = endDate = new Date(Date.UTC(year, month-1, day)); // date specified in URL
       else // if no date specified in URL path
         startDate = endDate = new Date(+this.calendar.currentDate);
-      this.calendar.dates = [];
+      let dates = [];
       while (startDate <= endDate) {
         if (startDate.getUTCDay() > 0 && startDate.getUTCDay() < 6) // if date is a weekday
-          this.calendar.dates.push(startDate);
+          dates.push(startDate);
         startDate = new Date(+startDate+this.$MS_PER_DAY); // add 1 day
       }
+      this.calendar.dates = dates;
       this.changeTitle();
+      if (!this.db && this.features.indexedDB)
+        this.db = await openDB("harker-bell-db", 1, {
+          upgrade(db) {
+            db.createObjectStore("schedules", {keyPath: "date"});
+          },
+        });
+        console.log(this.db);
+      let schedules = [];
+      await Promise.all(dates.map(async date => {
+        let schedule = await this.db.get("schedules", date);
+        if (schedule) schedules.push(schedule);
+      }));
+      this.schedules = schedules;
     },
     /**
      * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
