@@ -32,8 +32,8 @@
             Events
           </div>
           <!-- WEEK DAY CONTENT -->
-          <template v-else-if="computedSchedules[date.getTime()]">
-            <v-layout v-for="(group, gIndex) in computedSchedules[date.getTime()].schedule" :key="gIndex" class="group">
+          <template v-else>
+            <v-layout v-for="(group, gIndex) in computedSchedules[date.toISOString()]" :key="gIndex" class="group">
               <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
                 <template v-for="(period, pIndex) in column">
                   <!-- LUNCH PERIOD -->
@@ -156,8 +156,10 @@ export default {
      */
     computedSchedules() {
       let computedSchedules = {};
-      this.schedules.forEach(schedule => {
-        schedule = schedule.schedule;
+      this.schedules.forEach(entry => {
+        console.log(entry);
+        let schedule = entry.schedule;
+        schedule.date = new Date(schedule.date);
         schedule[0].start = new Date(schedule[0].start);
         schedule[0].end = new Date(schedule[0].end);
         let result = [[[{ // create result array with first period (including its duration) as first element
@@ -188,7 +190,7 @@ export default {
             result.push([[{duration: (period.start-latestEnd)/this.$MS_PER_MIN}]], [[period]]);
           latestEnd = Math.max(latestEnd, period.end);
         }
-        computedSchedules[schedule.date.getTime()] = result;
+        computedSchedules[entry.date] = result;
       });
       return computedSchedules;
     },
