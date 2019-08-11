@@ -103,43 +103,6 @@ export default {
       open: false,
       ref: undefined,
       stayOpen: true,
-      schedule: [
-        {
-          name: "P1",
-          start: new Date("2019-06-21T08:00Z"),
-          end: new Date("2019-06-21T09:25Z")
-        },
-        {
-          name: "P2",
-          start: new Date("2019-06-21T09:35Z"),
-          end: new Date("2019-06-21T11:00Z")
-        },
-        {
-          name: "Lunch",
-          start: new Date("2019-06-21T11:10Z"),
-          end: new Date("2019-06-21T11:55Z")
-        },
-        {
-          name: "Soph Mtg.",
-          start: new Date("2019-06-21T11:10Z"),
-          end: new Date("2019-06-21T11:25Z")
-        },
-        {
-          name: "Lunch",
-          start: new Date("2019-06-21T11:25Z"),
-          end: new Date("2019-06-21T11:55Z")
-        },
-        {
-          name: "P3",
-          start: new Date("2019-06-21T12:00Z"),
-          end: new Date("2019-06-21T13:25Z")
-        },
-        {
-          name: "P4",
-          start: new Date("2019-06-21T13:35Z"),
-          end: new Date("2019-06-21T15:00Z")
-        },
-      ],
       weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
       months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     };
@@ -157,7 +120,6 @@ export default {
     computedSchedules() {
       let computedSchedules = {};
       this.schedules.forEach(entry => {
-        console.log(entry);
         let schedule = entry.schedule;
         schedule.date = new Date(schedule.date);
         schedule[0].start = new Date(schedule[0].start);

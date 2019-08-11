@@ -164,6 +164,7 @@
 <script>
 import io from "socket.io-client";
 import {openDB} from "idb";
+var abcd = new Date;
 export default {
   name: "App",
   data() {
@@ -257,27 +258,37 @@ export default {
     },
   },
   created() {
+    console.log(new Date-abcd);
     /** Number of milliseconds in a day */
     this.$MS_PER_DAY = 24*60*60*1000;
-    let darkTheme = localStorage.getItem("darkTheme");
-    if (darkTheme == "true") {
+    console.log("#0:\t", new Date-abcd);
+    if (localStorage.getItem("darkTheme") == "true") {
       this.$vuetify.theme.dark = true;
       document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
     }
-    this.setCalendar(this.$route);
-    window.addEventListener("keyup", event => {
-      if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
-      else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
+    console.log("#1:\t", new Date-abcd);
+    openDB("harker-bell-db", 1, {
+      upgrade(db) {
+        db.createObjectStore("schedules", {keyPath: "date"});
+      },
+    }).then(db => {
+      console.log("#2:\t", new Date-abcd);
+      this.db = db;
+      window.dispatchEvent(new Event("db-opened"));
+    }).catch(err => {
+      console.error(err);
     });
+    console.log("#3:\t", new Date-abcd);
     this.socket.on("connect", () => {
+      console.log("#3.1:\t", new Date-abcd);
       this.io.connected = true;
       console.log(this.socket.id);
       this.socket.emit("schedule request", {
         start: this.calendar.dates[0],
         end: this.calendar.dates[this.calendar.dates.length-1]
       }, schedules => {
-        console.log("SCHEDULES");
-        console.log(this.schedules = schedules);
+        console.log("#3.2:\t", new Date-abcd);
+        this.schedules = schedules;
         console.log(this.db);
         // might get this data back before this.db is even opened, so consider using eventlisteners to wait until the db is initialized before storing schedules.
       });
@@ -297,6 +308,14 @@ export default {
       this.lastConnected = now;
       localStorage.setItem("lastConnected", now.getTime());
     });
+    console.log("#4:\t", new Date-abcd);
+    this.setCalendar(this.$route);
+    console.log("#5:\t", new Date-abcd);
+    window.addEventListener("keyup", event => {
+      if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
+      else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
+    });
+    console.log("#6:\t", new Date-abcd);
   },
   methods: {
     /**
@@ -413,6 +432,7 @@ export default {
      * @param {Route} route the current route object
      */
     async setCalendar(route) {
+      console.log("#7:\t", new Date-abcd);
       if (this.$route.name == "month" && this.mode != "month")
         this.saveMode(this.mode = "month");
       else if (this.$route.name == "day" && !["day", "week"].includes(this.mode))
@@ -465,19 +485,15 @@ export default {
       }
       this.calendar.dates = dates;
       this.changeTitle();
-      if (!this.db && this.features.indexedDB)
-        this.db = await openDB("harker-bell-db", 1, {
-          upgrade(db) {
-            db.createObjectStore("schedules", {keyPath: "date"});
-          },
-        });
-        console.log(this.db);
+      console.log("#8:\t", new Date-abcd);
       let schedules = [];
+      if (!this.features.indexedDB) return;
       await Promise.all(dates.map(async date => {
         let schedule = await this.db.get("schedules", date);
         if (schedule) schedules.push(schedule);
       }));
       this.schedules = schedules;
+      console.log("#9:\t", new Date-abcd);
     },
     /**
      * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
