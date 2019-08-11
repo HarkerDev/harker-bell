@@ -121,7 +121,6 @@ export default {
       let computedSchedules = {};
       this.schedules.forEach(entry => {
         let schedule = entry.schedule;
-        schedule.date = new Date(schedule.date);
         schedule[0].start = new Date(schedule[0].start);
         schedule[0].end = new Date(schedule[0].end);
         let result = [[[{ // create result array with first period (including its duration) as first element

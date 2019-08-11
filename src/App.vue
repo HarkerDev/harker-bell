@@ -271,11 +271,15 @@ export default {
       upgrade(db) {
         db.createObjectStore("schedules", {keyPath: "date"});
       },
-    }).then(db => {
+    }).then(async db => {
       console.log("#2:\t", new Date-abcd);
-      this.db = db;
-      window.dispatchEvent(new Event("db-opened"));
+      window.db = this.db = db; // TODO: REMOVE
+      window.dispatchEvent(new Event("db-init"));
+      let schedules = await this.getFromIndexedDB();
+      if (schedules.length != 0) this.schedules = schedules;
+      console.log("->", schedules);
     }).catch(err => {
+      this.features.indexedDB = false;
       console.error(err);
     });
     console.log("#3:\t", new Date-abcd);
@@ -283,15 +287,16 @@ export default {
       console.log("#3.1:\t", new Date-abcd);
       this.io.connected = true;
       console.log(this.socket.id);
-      this.socket.emit("schedule request", {
+      /*this.socket.emit("schedule request", {
         start: this.calendar.dates[0],
         end: this.calendar.dates[this.calendar.dates.length-1]
       }, schedules => {
         console.log("#3.2:\t", new Date-abcd);
         this.schedules = schedules;
+        window.schedules = schedules;
         console.log(this.db);
         // might get this data back before this.db is even opened, so consider using eventlisteners to wait until the db is initialized before storing schedules.
-      });
+      });*/
     });
     this.socket.on("disconnect", reason => {
       this.io.connected = false;
@@ -368,6 +373,22 @@ export default {
     closeSettings() {
       if (this.prevRoute) this.$router.back();
       else this.$router.push("/");
+    },
+    /**
+     * 
+     * @return {Array}  array of schedules retrieved from IndexedDB, or an empty array if not available
+     */
+    async getFromIndexedDB() {
+      let schedules = [];
+      if (this.db) {
+        await Promise.all(this.calendar.dates.map(async date => {
+          let schedule = await this.db.get("schedules", date.toISOString());
+          if (schedule) schedules.push(schedule);
+        }));
+      }
+      console.log("GET", schedules);
+      console.log(this.calendar.dates);
+      return schedules;
     },
     /**
      * Calculates the start of the current day, which is defined as the last midnight on or before the current
@@ -486,13 +507,18 @@ export default {
       this.calendar.dates = dates;
       this.changeTitle();
       console.log("#8:\t", new Date-abcd);
-      let schedules = [];
-      if (!this.features.indexedDB) return;
-      await Promise.all(dates.map(async date => {
-        let schedule = await this.db.get("schedules", date);
-        if (schedule) schedules.push(schedule);
-      }));
-      this.schedules = schedules;
+      if (this.db)
+        console.log(this.schedules = await this.getFromIndexedDB());
+      else if (!this.features.indexedDB)
+        this.socket.emit("schedule request", {
+          start: this.calendar.dates[0],
+          end: this.calendar.dates[this.calendar.dates.length-1]
+        }, schedules => {
+          console.log("#3.2:\t", new Date-abcd);
+          this.schedules = schedules;
+          window.schedules = schedules;
+          console.log(this.db);
+        });
       console.log("#9:\t", new Date-abcd);
     },
     /**
