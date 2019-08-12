@@ -163,7 +163,7 @@
 
 <script>
 import io from "socket.io-client";
-import {openDB} from "idb";
+import {openDB} from "idb"; // TODO: REMOVE
 var abcd = new Date;
 export default {
   name: "App",
@@ -176,7 +176,7 @@ export default {
         lastConnected: localStorage.getItem("lastConnected") || null,
         lastUpdated: localStorage.getItem("lastUpdated") || null,
       },
-      db: null,
+      db: window.db,
       mode: localStorage.getItem("calendarMode") || "week",
       schedules: [],
       calendar: {
@@ -257,7 +257,7 @@ export default {
       else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
     },
   },
-  async created() {
+  created() {
     console.log(new Date-abcd);
     console.log(new Date-abcd);
     /** Number of milliseconds in a day */
@@ -282,26 +282,16 @@ export default {
       this.features.indexedDB = false;
       console.error(err);
     });*/
-    window.db = this.db = await openDB("harker-bell-db", 1, {
+    /*window.db = this.db = await openDB("harker-bell-db", 1, {
       upgrade(db) {
         db.createObjectStore("schedules", {keyPath: "date"});
       },
     });
-    console.log("IDB OPEN:\t", new Date-abcd);
-    this.socket.on("connect", () => {
+    console.log("IDB OPEN:\t", new Date-abcd);*/
+    /*this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
       console.log(this.socket.id);
-      /*this.socket.emit("schedule request", {
-        start: this.calendar.dates[0],
-        end: this.calendar.dates[this.calendar.dates.length-1]
-      }, schedules => {
-        console.log("#3.2:\t", new Date-abcd);
-        this.schedules = schedules;
-        window.schedules = schedules;
-        console.log(this.db);
-        // might get this data back before this.db is even opened, so consider using eventlisteners to wait until the db is initialized before storing schedules.
-      });*/
     });
     this.socket.on("disconnect", reason => {
       this.io.connected = false;
@@ -317,7 +307,7 @@ export default {
       let now = new Date();
       this.lastConnected = now;
       localStorage.setItem("lastConnected", now.getTime());
-    });
+    });*/
     this.setCalendar(this.$route);
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
@@ -386,9 +376,10 @@ export default {
       console.log("GET IDB:\t", new Date-abcd);
       if (this.db) {
         await Promise.all(dates.map(async date => {
-          let d1=new Date;
+          console.log("GETTING:\t", new Date-abcd);
           let schedule = await this.db.get("schedules", date.toISOString());
           if (schedule) schedules.push(schedule);
+          console.log("GOTTEN:\t", new Date-abcd);
         }));
       }
       console.log("GOT IDB:\t", new Date-abcd);

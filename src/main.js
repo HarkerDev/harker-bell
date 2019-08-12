@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import "./registerServiceWorker";
 import vuetify from "./plugins/vuetify";
+import {openDB} from "idb";
 //import "roboto-fontface/css/roboto/roboto-fontface.css";
 //import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "typeface-roboto";
@@ -11,9 +12,29 @@ import "./material-icons.css";
 
 Vue.config.productionTip = false;
 
-var app = new Vue({
-  router,
-  vuetify,
-  render: h => h(App)
-}).$mount("#app");
-window.app = app;
+let timestamp = new Date();
+openDB("harker-bell-db", 1, {
+  upgrade(db) {
+    db.createObjectStore("schedules", {keyPath: "date"});
+  },
+}).then(db => {
+  console.log("==> DB: ", new Date()-timestamp);
+  window.db = db;
+  db.get("schedules", "2019-06-21T00:00:00.000Z").then(data =>{
+    console.log("==> DATA: ", new Date()-timestamp);
+    initVue();
+    console.log("==> VUE: ", new Date()-timestamp);
+  })
+}).catch(err => {
+  console.error(err);
+  window.db = null;
+  initVue();
+});
+function initVue() {
+  var app = new Vue({
+    router,
+    vuetify,
+    render: h => h(App)
+  }).$mount("#app");
+  window.app = app;
+}
