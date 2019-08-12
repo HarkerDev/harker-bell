@@ -180,7 +180,7 @@ export default {
       mode: localStorage.getItem("calendarMode") || "week",
       schedules: [],
       calendar: {
-        currentDate: null,
+        currentDate: this.getCurrentUTCMidnight(), // TODO: this or null?
         currentMonth: null,
         dates: [],
         keepCurrentDate: false,
@@ -257,17 +257,17 @@ export default {
       else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
     },
   },
-  created() {
+  async created() {
+    console.log(new Date-abcd);
     console.log(new Date-abcd);
     /** Number of milliseconds in a day */
     this.$MS_PER_DAY = 24*60*60*1000;
-    console.log("#0:\t", new Date-abcd);
     if (localStorage.getItem("darkTheme") == "true") {
       this.$vuetify.theme.dark = true;
       document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
     }
-    console.log("#1:\t", new Date-abcd);
-    openDB("harker-bell-db", 1, {
+    console.log("STARTING:\t", new Date-abcd);
+    /*openDB("harker-bell-db", 1, {
       upgrade(db) {
         db.createObjectStore("schedules", {keyPath: "date"});
       },
@@ -275,16 +275,21 @@ export default {
       console.log("#2:\t", new Date-abcd);
       window.db = this.db = db; // TODO: REMOVE
       window.dispatchEvent(new Event("db-init"));
-      let schedules = await this.getFromIndexedDB();
+      let schedules = await this.getFromIndexedDB(this.calendar.dates);
       if (schedules.length != 0) this.schedules = schedules;
       console.log("->", schedules);
     }).catch(err => {
       this.features.indexedDB = false;
       console.error(err);
+    });*/
+    window.db = this.db = await openDB("harker-bell-db", 1, {
+      upgrade(db) {
+        db.createObjectStore("schedules", {keyPath: "date"});
+      },
     });
-    console.log("#3:\t", new Date-abcd);
+    console.log("IDB OPEN:\t", new Date-abcd);
     this.socket.on("connect", () => {
-      console.log("#3.1:\t", new Date-abcd);
+      console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
       console.log(this.socket.id);
       /*this.socket.emit("schedule request", {
@@ -313,14 +318,12 @@ export default {
       this.lastConnected = now;
       localStorage.setItem("lastConnected", now.getTime());
     });
-    console.log("#4:\t", new Date-abcd);
     this.setCalendar(this.$route);
-    console.log("#5:\t", new Date-abcd);
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
     });
-    console.log("#6:\t", new Date-abcd);
+    console.log("INIT DONE:\t", new Date-abcd);
   },
   methods: {
     /**
@@ -378,16 +381,17 @@ export default {
      * 
      * @return {Array}  array of schedules retrieved from IndexedDB, or an empty array if not available
      */
-    async getFromIndexedDB() {
+    async getFromIndexedDB(dates) {
       let schedules = [];
+      console.log("GET IDB:\t", new Date-abcd);
       if (this.db) {
-        await Promise.all(this.calendar.dates.map(async date => {
+        await Promise.all(dates.map(async date => {
+          let d1=new Date;
           let schedule = await this.db.get("schedules", date.toISOString());
           if (schedule) schedules.push(schedule);
         }));
       }
-      console.log("GET", schedules);
-      console.log(this.calendar.dates);
+      console.log("GOT IDB:\t", new Date-abcd);
       return schedules;
     },
     /**
@@ -453,7 +457,6 @@ export default {
      * @param {Route} route the current route object
      */
     async setCalendar(route) {
-      console.log("#7:\t", new Date-abcd);
       if (this.$route.name == "month" && this.mode != "month")
         this.saveMode(this.mode = "month");
       else if (this.$route.name == "day" && !["day", "week"].includes(this.mode))
@@ -504,22 +507,21 @@ export default {
           dates.push(startDate);
         startDate = new Date(+startDate+this.$MS_PER_DAY); // add 1 day
       }
-      this.calendar.dates = dates;
-      this.changeTitle();
-      console.log("#8:\t", new Date-abcd);
       if (this.db)
-        console.log(this.schedules = await this.getFromIndexedDB());
+        console.log(this.schedules = await this.getFromIndexedDB(dates));
       else if (!this.features.indexedDB)
         this.socket.emit("schedule request", {
           start: this.calendar.dates[0],
           end: this.calendar.dates[this.calendar.dates.length-1]
         }, schedules => {
-          console.log("#3.2:\t", new Date-abcd);
+          console.log("GOT SOCK:\t", new Date-abcd);
           this.schedules = schedules;
           window.schedules = schedules;
           console.log(this.db);
         });
-      console.log("#9:\t", new Date-abcd);
+      this.calendar.dates = dates;
+      this.changeTitle();
+      console.log("SET CAL:\t", new Date-abcd);
     },
     /**
      * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
