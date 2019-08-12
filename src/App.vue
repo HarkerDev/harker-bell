@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app v-if="calendar.dates.length != 0">
     <v-app-bar app elevate-on-scroll>
       <v-spacer></v-spacer>
       <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
@@ -314,6 +314,9 @@ export default {
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
     });
     console.log("INIT DONE:\t", new Date-abcd);
+  },
+  beforeMount() {
+    console.log("beforeMount", new Date-abcd);
   },
   methods: {
     /**
