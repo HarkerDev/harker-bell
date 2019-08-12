@@ -82,6 +82,7 @@
         "error",
         {
           "html": {
+            "normal": "never",
             "component": "never"
           }
         }

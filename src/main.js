@@ -18,13 +18,9 @@ openDB("harker-bell-db", 1, {
     db.createObjectStore("schedules", {keyPath: "date"});
   },
 }).then(db => {
-  console.log("==> DB: ", new Date()-timestamp);
   window.db = db;
-  db.get("schedules", "2019-06-21T00:00:00.000Z").then(data =>{
-    console.log("==> DATA: ", new Date()-timestamp);
-    initVue();
-    console.log("==> VUE: ", new Date()-timestamp);
-  })
+  initVue();
+  console.log("==> VUE: ", new Date()-timestamp);
 }).catch(err => {
   console.error(err);
   window.db = null;

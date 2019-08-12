@@ -204,7 +204,7 @@ export default {
   overflow: hidden;
 }
 .day-container {
-  border: 1px solid #5F6368 !important;
+  border: 1px solid var(--v-secondary-base) !important;
   margin: 0 -1px -1px 0;
   /*-webkit-transition: width 300ms, max-width 300ms, max-height 300ms;
           transition: width 300ms, max-width 300ms, max-height 300ms;*/
@@ -225,7 +225,7 @@ export default {
   line-height: normal;
 }
 .period {
-  border: 1px solid #5F6368 !important;
+  border: 1px solid var(--v-secondary-base) !important;
   margin: 0 -1px -1px;
 }
 .lunch {

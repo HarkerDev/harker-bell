@@ -21,7 +21,7 @@
             <span>Select a date</span>
           </v-tooltip>
         </template>
-        <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false">
+        <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false">
           
         </v-date-picker>
       </v-menu>
@@ -110,12 +110,18 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
+      <div v-html="message" class="caption text-center"></div>
+      <v-btn color="accent" class="ml-2">btn</v-btn>
+      <v-btn color="error" class="ml-2">btn</v-btn>
+      <v-btn color="warning" class="ml-2">btn</v-btn>
+      <v-btn color="success" class="ml-2">btn</v-btn>
+      <v-btn color="info" class="ml-2">btn</v-btn>
       <router-view :calendar="calendar" :mode="mode" :schedules="schedules" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu($event)"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" eager :fullscreen="$vuetify.breakpoint.xsOnly" width="480" @input="closeSettings">
       <v-card>
         <v-app-bar elevate-on-scroll>
-          <v-btn icon @click="closeSettings()">
+          <v-btn icon @click="closeSettings">
             <v-icon>close</v-icon>
           </v-btn>
           <v-toolbar-title class="font-family pt-sans font-weight-bold">Settings</v-toolbar-title>
@@ -146,7 +152,7 @@
         <v-card-text>what's not for lunch</v-card-text>
       </v-card>
     </v-menu>
-    <v-footer app color="white" elevation="2" fixed padless>
+    <v-footer class="hidden-print-only" app color="primary" elevation="2" fixed padless>
       <div class="caption mx-2">
         <span>Last connected </span>
         <span :class="{'success--text': io.connected}">{{io.connected ? "just now" : io.lastConnected || "never"}}</span>
@@ -170,7 +176,7 @@ export default {
   data() {
     return {
       env: process.env,
-      socket: io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000}),
+      socket: null,//io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000}),
       io: {
         connected: false,
         lastConnected: localStorage.getItem("lastConnected") || null,
@@ -187,6 +193,7 @@ export default {
         changing: false,
         timeout: null,
       },
+      message: "",
       menu: {
         open: false,
         openTracker: 0,
@@ -257,7 +264,7 @@ export default {
       else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
     },
   },
-  created() {
+  async created() {
     console.log(new Date-abcd);
     console.log(new Date-abcd);
     /** Number of milliseconds in a day */
@@ -288,7 +295,10 @@ export default {
       },
     });
     console.log("IDB OPEN:\t", new Date-abcd);*/
-    /*this.socket.on("connect", () => {
+    await this.setCalendar(this.$route);
+    this.socket = io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000});
+    // ^ other method was to initialize socket in data() and not await setCalendar
+    this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
       console.log(this.socket.id);
@@ -296,6 +306,9 @@ export default {
     this.socket.on("disconnect", reason => {
       this.io.connected = false;
       console.log(reason);
+    });
+    this.socket.on("message update", message => {
+      this.message = message;
     });
     this.socket.on("test", value => {
       console.log(value);
@@ -307,8 +320,7 @@ export default {
       let now = new Date();
       this.lastConnected = now;
       localStorage.setItem("lastConnected", now.getTime());
-    });*/
-    this.setCalendar(this.$route);
+    });
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);

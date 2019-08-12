@@ -1,6 +1,6 @@
 {
-  "name": "harker-bell",
-  "short_name": "harker-bell",
+  "name": "Harker Bell Schedule",
+  "short_name": "Harker Bell",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",
@@ -15,6 +15,6 @@
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#4DBA87"
+  "background_color": "#FFFFFF",
+  "theme_color": "#005841"
 }
