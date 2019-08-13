@@ -7,9 +7,9 @@
       </v-layout>
       <v-layout v-for="(n, i) in Math.ceil(calendar.dates.length/5)" :key="calendar.dates[i*5].getTime()" justify-center>
         <!-- DAY CONTAINER -->
-        <v-sheet v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()" ref="day" :class="['day-container', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
+        <v-sheet v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()" ref="day" :class="['day-container', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 515">
           <!-- DAY HEADER -->
-          <v-sheet class="day-header" :height="mode == 'month' ? 36 : 48" tile>
+          <v-sheet :class="['day-header', {month: mode == 'month'}]" :height="mode == 'month' ? 36 : 48" tile>
             <v-layout align-center>
               <v-flex xs3>
                 <v-layout column align-center>
@@ -230,7 +230,7 @@ export default {
   -webkit-transition: all 300ms;
           transition: all 300ms;
 }
-.day-header {
+.day-header:not(.month) {
   border-bottom: 1px solid var(--v-secondary-base);
   margin-bottom: -1px;
 }
