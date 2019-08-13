@@ -2,14 +2,9 @@
   <v-app v-if="calendar.dates.length != 0">
     <v-app-bar app elevate-on-scroll>
       <v-spacer></v-spacer>
-      <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
-        <template v-slot:activator="{on}">
-          <v-btn class="hidden-print-only" icon v-on="on" @click.native.stop.prevent="clickEvent();nextOrPrevious(false)">
-            <v-icon>chevron_left</v-icon>
-          </v-btn>
-        </template>
-        <span>Previous {{mode}}</span>
-      </v-tooltip>
+      <v-btn :key="arrow.left" class="hidden-print-only" icon v-on="on" @click.once="nextOrPrevious(false, 'left')">
+        <v-icon>chevron_left</v-icon>
+      </v-btn>
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on: menu}">
           <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
@@ -25,14 +20,9 @@
           
         </v-date-picker>
       </v-menu>
-      <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
-        <template v-slot:activator="{on}">
-          <v-btn class="hidden-print-only mr-2" icon v-on="on" @click.native.stop.prevent="clickEvent();nextOrPrevious(true)">
-            <v-icon>chevron_right</v-icon>
-          </v-btn>
-        </template>
-        <span>Next {{mode}}</span>
-      </v-tooltip>
+      <v-btn :key="arrow.right" class="hidden-print-only mr-2" icon v-on="on" @click.once="nextOrPrevious(true, 'right')">
+        <v-icon>chevron_right</v-icon>
+      </v-btn>
       <transition name="fade" mode="out-in">
         <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '142px'}">
           <template v-if="$vuetify.breakpoint.smAndUp">
@@ -199,6 +189,10 @@ export default {
         y: 0,
       },
       datePicker: false,
+      arrow: {
+        left: 0,
+        right: 0,
+      },
       settings: {
         dialog: this.$route.name == "settings",
       },
@@ -318,9 +312,6 @@ export default {
     console.log("beforeMount", new Date-abcd);
   },
   methods: {
-    clickEvent() {
-      console.log("CLICK EVENT");
-    },
     /**
      * Determines if the date represented by a given ISO date is allowed in the date picker.
      * @param {string} dateString date as an ISO date string (YYYY-MM-DD format)
@@ -432,7 +423,7 @@ export default {
      * Navigates to the next or previous view, depending on the current calendar mode selected.
      * @param isNext {boolean}  true if next; false if previous
      */
-    nextOrPrevious(isNext) {
+    nextOrPrevious(isNext, arrow) {
       console.log("NEXTORPREVIOUS: ", isNext);
       let sign = isNext ? 1 : -1;
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
@@ -453,6 +444,8 @@ export default {
         this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}`);
       else
         this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
+      if (arrow == "left") this.arrow.left++;
+      else if (arrow == "right") this.arrow.right++;
     },
     /** Prints the current view of the bell schedule. */
     print() {
