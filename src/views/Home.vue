@@ -9,7 +9,7 @@
         <!-- DAY CONTAINER -->
         <v-sheet v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()" ref="day" :class="['day-container', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :max-height="mode == 'month' ? 84 : 500" min-height="84">
           <!-- DAY HEADER -->
-          <v-sheet :height="mode == 'month' ? 36 : 48" tile>
+          <v-sheet class="day-header" :height="mode == 'month' ? 36 : 48" tile>
             <v-layout align-center>
               <v-flex xs3>
                 <v-layout column align-center>
@@ -31,6 +31,21 @@
           <div v-if="mode == 'month'" class="body-2">
             Events
           </div>
+          <content-loader v-else-if="calendar.loading" :height="515" :width="180" :speed="0.6" secondary-color="#F1F3F4">
+            <rect x="75" y="25" rx="2" ry="2" width="30" height="12"></rect>
+            <rect x="50" y="45" rx="2" ry="2" width="80" height="12"></rect>
+            <rect x="0" y="85" rx="0" ry="0" width="180" height="10"></rect>
+            <rect x="75" y="120" rx="2" ry="2" width="30" height="12"></rect>
+            <rect x="50" y="140" rx="2" ry="2" width="80" height="12"></rect>
+            <rect x="0" y="180" rx="0" ry="0" width="180" height="10"></rect>
+            <rect x="20" y="200" rx="2" ry="2" width="50" height="12"></rect>
+            <rect x="10" y="215" rx="2" ry="2" width="70" height="12"></rect>
+            <rect x="110" y="195" rx="2" ry="2" width="50" height="12"></rect>
+            <rect x="100" y="212" rx="2" ry="2" width="70" height="15"></rect>
+            <rect x="0" y="235" rx="0" ry="0" width="180" height="7"></rect>
+            <rect x="75" y="270" rx="2" ry="2" width="30" height="12"></rect>
+            <rect x="50" y="290" rx="2" ry="2" width="80" height="12"></rect>
+          </content-loader>
           <!-- WEEK DAY CONTENT -->
           <template v-else>
             <v-layout v-for="(group, gIndex) in computedSchedules[date.toISOString()]" :key="gIndex" class="group">
@@ -66,7 +81,11 @@
 </template>
 
 <script>
+import {ContentLoader} from "vue-content-loader";
 export default {
+  components: {
+    ContentLoader,
+  },
   filters: {
     /**
      * Returns a human-readable time from a Date object in H:MM format.
@@ -204,12 +223,16 @@ export default {
   overflow: hidden;
 }
 .day-container {
-  border: 1px solid var(--v-secondary-base) !important;
+  border: 1px solid var(--v-secondary-base);
   margin: 0 -1px -1px 0;
   /*-webkit-transition: width 300ms, max-width 300ms, max-height 300ms;
           transition: width 300ms, max-width 300ms, max-height 300ms;*/
   -webkit-transition: all 300ms;
           transition: all 300ms;
+}
+.day-header {
+  border-bottom: 1px solid var(--v-secondary-base);
+  margin-bottom: -1px;
 }
 .column:not(:first-child) > .period {
   margin-left: 0;

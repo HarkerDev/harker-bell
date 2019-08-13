@@ -34,7 +34,7 @@
         <span>Next {{mode}}</span>
       </v-tooltip>
       <transition name="fade" mode="out-in">
-        <v-toolbar-title v-if="calendar.changing" key="changing" class="title font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '142px'}">
+        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '142px'}">
           <template v-if="$vuetify.breakpoint.smAndUp">
             <span v-if="mode == 'month'">{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
             <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
@@ -110,12 +110,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <div v-html="message" class="caption text-center"></div>
-      <v-btn color="accent" class="ml-2">btn</v-btn>
-      <v-btn color="error" class="ml-2">btn</v-btn>
-      <v-btn color="warning" class="ml-2">btn</v-btn>
-      <v-btn color="success" class="ml-2">btn</v-btn>
-      <v-btn color="info" class="ml-2">btn</v-btn>
+      <div class="caption text-center" v-html="message"></div>
       <router-view :calendar="calendar" :mode="mode" :schedules="schedules" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu($event)"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" eager :fullscreen="$vuetify.breakpoint.xsOnly" width="480" @input="closeSettings">
@@ -169,7 +164,6 @@
 
 <script>
 import io from "socket.io-client";
-import {openDB} from "idb"; // TODO: REMOVE
 var abcd = new Date;
 export default {
   name: "App",
@@ -190,8 +184,9 @@ export default {
         currentMonth: null,
         dates: [],
         keepCurrentDate: false,
-        changing: false,
-        timeout: null,
+        titleChanging: false,
+        titleTimeout: null,
+        loading: false,
       },
       message: "",
       menu: {
@@ -274,30 +269,9 @@ export default {
       document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
     }
     console.log("STARTING:\t", new Date-abcd);
-    /*openDB("harker-bell-db", 1, {
-      upgrade(db) {
-        db.createObjectStore("schedules", {keyPath: "date"});
-      },
-    }).then(async db => {
-      console.log("#2:\t", new Date-abcd);
-      window.db = this.db = db; // TODO: REMOVE
-      window.dispatchEvent(new Event("db-init"));
-      let schedules = await this.getFromIndexedDB(this.calendar.dates);
-      if (schedules.length != 0) this.schedules = schedules;
-      console.log("->", schedules);
-    }).catch(err => {
-      this.features.indexedDB = false;
-      console.error(err);
-    });*/
-    /*window.db = this.db = await openDB("harker-bell-db", 1, {
-      upgrade(db) {
-        db.createObjectStore("schedules", {keyPath: "date"});
-      },
-    });
-    console.log("IDB OPEN:\t", new Date-abcd);*/
     await this.setCalendar(this.$route);
     this.socket = io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000});
-    // ^ other method was to initialize socket in data() and not await setCalendar
+    // ^ other approach was to initialize socket in data() and not await setCalendar
     this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
@@ -309,6 +283,9 @@ export default {
     });
     this.socket.on("message update", message => {
       this.message = message;
+      let now = new Date();
+      this.lastUpdated = now;
+      localStorage.setItem("lastUpdated", now.getTime());
     });
     this.socket.on("test", value => {
       console.log(value);
@@ -321,6 +298,7 @@ export default {
       this.lastConnected = now;
       localStorage.setItem("lastConnected", now.getTime());
     });
+    if (this.schedules.length == 0) this.getFromSocket(this.calendar.dates);
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
@@ -371,11 +349,11 @@ export default {
     },
     /** Changes the bell schedule title to briefly show the current date range. */
     changeTitle() {
-      if (this.calendar.timeout) {
-        this.calendar.changing = true;
-        clearTimeout(this.calendar.timeout);
-        this.calendar.timeout = setTimeout(() => {this.calendar.changing = false;}, 2000);
-      } else this.calendar.timeout = true;
+      if (this.calendar.titleTimeout) {
+        this.calendar.titleChanging = true;
+        clearTimeout(this.calendar.titleTimeout);
+        this.calendar.titleTimeout = setTimeout(() => {this.calendar.titleChanging = false;}, 2000);
+      } else this.calendar.titleTimeout = true;
     },
     /** Closes the settings dialog by either navigating back in history or going to the home page. */
     closeSettings() {
@@ -384,7 +362,8 @@ export default {
     },
     /**
      * 
-     * @return {Array}  array of schedules retrieved from IndexedDB, or an empty array if not available
+     * @param {Array} dates array of
+     * @return {Array}      array of schedules retrieved from IndexedDB, or an empty array if not available
      */
     async getFromIndexedDB(dates) {
       let schedules = [];
@@ -399,6 +378,22 @@ export default {
       }
       console.log("GOT IDB:\t", new Date-abcd);
       return schedules;
+    },
+    /**
+     * 
+     * @param {Array} dates array of
+     */
+    getFromSocket(dates) {
+      this.calendar.loading = true;
+      this.socket.emit("schedule request", {
+        start: dates[0],
+        end: dates[dates.length-1]
+      }, schedules => {
+        console.log("GOT SOCK:\t", new Date-abcd);
+        this.schedules = schedules;
+        this.calendar.loading = false;
+        console.log(this.db);
+      });
     },
     /**
      * Calculates the start of the current day, which is defined as the last midnight on or before the current
@@ -513,18 +508,8 @@ export default {
           dates.push(startDate);
         startDate = new Date(+startDate+this.$MS_PER_DAY); // add 1 day
       }
-      if (this.db)
-        console.log(this.schedules = await this.getFromIndexedDB(dates));
-      else if (!this.features.indexedDB)
-        this.socket.emit("schedule request", {
-          start: this.calendar.dates[0],
-          end: this.calendar.dates[this.calendar.dates.length-1]
-        }, schedules => {
-          console.log("GOT SOCK:\t", new Date-abcd);
-          this.schedules = schedules;
-          window.schedules = schedules;
-          console.log(this.db);
-        });
+      if (this.db) console.log(this.schedules = await this.getFromIndexedDB(dates));
+      if (this.socket && this.schedules.length == 0) this.getFromSocket(dates);
       this.calendar.dates = dates;
       this.changeTitle();
       console.log("SET CAL:\t", new Date-abcd);

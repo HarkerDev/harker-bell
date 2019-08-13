@@ -17,9 +17,9 @@ export default new Vuetify({
         anchor: "#1A73E8",
       },
       dark: {
-        primary: "#202124",
+        primary: "#37383B",
         secondary: "#9AA0A6",
-        accent: "#1b9474",
+        accent: "#098060",
         error: "#EA4335",
         warning: "#FBBC04",
         success: "#34A853",
