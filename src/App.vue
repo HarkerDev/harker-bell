@@ -270,27 +270,22 @@ export default {
     }
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000});
-    // ^ other approach was to initialize socket in data() and not await setCalendar
+    this.socket = io("https://bell.dev.harker.org", {timeout: 10000});
     this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
-      console.log(this.socket.id);
     });
     this.socket.on("disconnect", reason => {
       this.io.connected = false;
       console.log(reason);
     });
-    this.socket.on("message update", message => {
+    this.socket.on("update message", message => {
       this.message = message;
       let now = new Date();
       this.lastUpdated = now;
       localStorage.setItem("lastUpdated", now.getTime());
     });
-    this.socket.on("test", value => {
-      console.log(value);
-    });
-    this.socket.on("schedule update", details => {
+    this.socket.on("update schedule", details => {
       
     });
     this.socket.on("pong", () => {
@@ -302,6 +297,9 @@ export default {
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
+    });
+    this.socket.emit("request update", localStorage.getItem("snapshotVersion"), data => {
+      console.log("request update");
     });
     console.log("INIT DONE:\t", new Date-abcd);
   },
@@ -385,7 +383,7 @@ export default {
      */
     getFromSocket(dates) {
       this.calendar.loading = true;
-      this.socket.emit("schedule request", {
+      this.socket.emit("request schedule", {
         start: dates[0],
         end: dates[dates.length-1]
       }, schedules => {
@@ -508,7 +506,7 @@ export default {
           dates.push(startDate);
         startDate = new Date(+startDate+this.$MS_PER_DAY); // add 1 day
       }
-      if (this.db) console.log(this.schedules = await this.getFromIndexedDB(dates));
+      if (this.db) this.schedules = await this.getFromIndexedDB(dates);
       if (this.socket && this.schedules.length == 0) this.getFromSocket(dates);
       this.calendar.dates = dates;
       this.changeTitle();
