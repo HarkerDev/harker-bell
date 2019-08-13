@@ -18,10 +18,10 @@
                   <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
                 </v-layout>
               </v-flex>
-              <v-flex xs8>
+              <v-flex v-if="schedules[date.toISOString()]" xs8>
                 <v-layout wrap justify-end align-center>
-                  <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">Adj.</span>
-                  <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'pt-sans', 'text--disabled', 'font-weight-bold', 'font-transition']">B</span>
+                  <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">{{schedules[date.toISOString()].variant}}</span>
+                  <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'pt-sans', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</span>
                 </v-layout>
               </v-flex>
               <v-flex xs1></v-flex>
@@ -54,7 +54,7 @@
                   <!-- LUNCH PERIOD -->
                   <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
                     <!-- TODO: Find a way to extract id logic somewhere -->
-                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-xs-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex)">
+                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-xs-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
                       <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
                         <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
@@ -107,8 +107,12 @@ export default {
       },
       required: true
     },
-    schedules: {
+    rawSchedules: {
       type: Array,
+      required: true
+    },
+    schedules: {
+      type: Object,
       required: true
     },
     sheetId: {
@@ -138,7 +142,7 @@ export default {
      */
     computedSchedules() {
       let computedSchedules = {};
-      this.schedules.forEach(entry => {
+      this.rawSchedules.forEach(entry => {
         let schedule = entry.schedule;
         schedule[0].start = new Date(schedule[0].start);
         schedule[0].end = new Date(schedule[0].end);
@@ -197,9 +201,10 @@ export default {
     /**
      * Shows the lunch menu for the lunch period element at the provided ID
      * @param {string} id ID of the lunch period element
+     * @param {Date} date date of the lunch menu being shown
      */
-    showMenu(id) {
-      this.$emit('show-menu', id);
+    showMenu(id, date) {
+      this.$emit('show-menu', id, date);
       this.open = this.stayOpen = true;
     },
     /** TODO: DOCUMENT THIS */

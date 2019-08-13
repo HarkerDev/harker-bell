@@ -110,8 +110,10 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <div class="caption text-center" v-html="message"></div>
-      <router-view :calendar="calendar" :mode="mode" :schedules="schedules" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu($event)"></router-view>
+      <div id="message-wrapper" style="height: 16px;">
+        <div id="message" class="caption text-center" v-html="message"></div>
+      </div>
+      <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" eager :fullscreen="$vuetify.breakpoint.xsOnly" width="480" @input="closeSettings">
       <v-card>
@@ -178,7 +180,7 @@ export default {
       },
       db: window.db,
       mode: localStorage.getItem("calendarMode") || "week",
-      schedules: [],
+      rawSchedules: [],
       calendar: {
         currentDate: this.getCurrentUTCMidnight(), // TODO: this or null?
         currentMonth: null,
@@ -233,7 +235,13 @@ export default {
         else
           this.$router.push(`/${value.substring(0, 4)}/${+value.substring(5, 7)}/${+value.substring(8, 10)}`);
       }
-    }
+    },
+    /** Converts the raw schedule array into an object. */
+    schedules() {
+      let obj = {};
+      for (const schedule of this.rawSchedules) obj[schedule.date] = schedule;
+      return obj;
+    },
   },
   watch: {
     /** Responds to route changes. */
@@ -270,7 +278,7 @@ export default {
     }
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://bell.dev.harker.org", {timeout: 10000});
+    this.socket = io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000});
     this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
@@ -284,6 +292,9 @@ export default {
       let now = new Date();
       this.lastUpdated = now;
       localStorage.setItem("lastUpdated", now.getTime());
+      this.$nextTick(() => {
+        document.getElementById("message-wrapper").style.height = document.getElementById("message").clientHeight+"px";
+      });
     });
     this.socket.on("update schedule", details => {
       
@@ -293,7 +304,7 @@ export default {
       this.lastConnected = now;
       localStorage.setItem("lastConnected", now.getTime());
     });
-    if (this.schedules.length == 0) this.getFromSocket(this.calendar.dates);
+    if (this.rawSchedules.length == 0) this.getFromSocket(this.calendar.dates);
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
@@ -382,13 +393,14 @@ export default {
      * @param {Array} dates array of
      */
     getFromSocket(dates) {
+      console.log("getFromSocket");
       this.calendar.loading = true;
       this.socket.emit("request schedule", {
         start: dates[0],
         end: dates[dates.length-1]
       }, schedules => {
         console.log("GOT SOCK:\t", new Date-abcd);
-        this.schedules = schedules;
+        this.rawSchedules = schedules;
         this.calendar.loading = false;
         console.log(this.db);
       });
@@ -418,6 +430,7 @@ export default {
      * @param isNext {boolean}  true if next; false if previous
      */
     nextOrPrevious(isNext) {
+      console.log("NEXTORPREVIOUS: ", isNext);
       let sign = isNext ? 1 : -1;
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (this.mode == "month")
@@ -429,6 +442,7 @@ export default {
         date.setUTCDate(date.getUTCDate()+sign*3);
       else // day mode
         date.setUTCDate(date.getUTCDate()+sign*1);
+      console.log("NOP DATE: ", date);
       if (+date == +today ||
           this.mode == "month" && new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
         this.$router.push("/");
@@ -456,6 +470,7 @@ export default {
      * @param {Route} route the current route object
      */
     async setCalendar(route) {
+      console.log("SETCALENDAR: ", route);
       if (this.$route.name == "month" && this.mode != "month")
         this.saveMode(this.mode = "month");
       else if (this.$route.name == "day" && !["day", "week"].includes(this.mode))
@@ -506,17 +521,19 @@ export default {
           dates.push(startDate);
         startDate = new Date(+startDate+this.$MS_PER_DAY); // add 1 day
       }
-      if (this.db) this.schedules = await this.getFromIndexedDB(dates);
-      if (this.socket && this.schedules.length == 0) this.getFromSocket(dates);
+      if (this.db) this.rawSchedules = await this.getFromIndexedDB(dates);
+      if (this.socket && this.rawSchedules.length == 0) this.getFromSocket(dates);
       this.calendar.dates = dates;
       this.changeTitle();
       console.log("SET CAL:\t", new Date-abcd);
     },
     /**
      * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
-     * @param {VueComponent} a v-sheet component corresponding to the lunch date whose menu should be shown
+     * @param {string} id ID of the lunch period element
+     * @param {Date} date date of the lunch menu being shown
      */
-    showMenu(id) {
+    showMenu(id, date) {
+      console.log(date);
       this.menu.sheetId = id;
       if (this.menu.open) {
         this.menu.openTracker = 2;
@@ -542,6 +559,13 @@ export default {
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+#message {
+  position: fixed;
+  width: 90%;
+  left: 50%;
+  transform: translateX(-50%);
+  line-height: normal;
 }
 @media print {
   @page {
