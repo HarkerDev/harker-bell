@@ -27,7 +27,7 @@
       </v-menu>
       <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
         <template v-slot:activator="{on}">
-          <v-btn class="hidden-print-only mr-2" icon v-on="on" @click="clickEvent();nextOrPrevious(true)">
+          <v-btn class="hidden-print-only mr-2" icon v-on="on" @click.once="clickEvent();nextOrPrevious(true)">
             <v-icon>chevron_right</v-icon>
           </v-btn>
         </template>
