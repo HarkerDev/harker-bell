@@ -2,7 +2,7 @@
   <v-app v-if="calendar.dates.length != 0">
     <v-app-bar app elevate-on-scroll>
       <v-spacer></v-spacer>
-      <v-btn class="hidden-print-only" icon v-on="on" @click="nextOrPrevious(false)">
+      <v-btn class="hidden-print-only" icon @click="nextOrPrevious(false)">
         <v-icon>chevron_left</v-icon>
       </v-btn>
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
@@ -20,11 +20,11 @@
           
         </v-date-picker>
       </v-menu>
-      <v-btn class="hidden-print-only mr-2" icon v-on="on" @click="nextOrPrevious(true)">
+      <v-btn class="hidden-print-only mr-2" icon @click="nextOrPrevious(true)">
         <v-icon>chevron_right</v-icon>
       </v-btn>
       <transition name="fade" mode="out-in">
-        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '142px'}">
+        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '144px'}">
           <template v-if="$vuetify.breakpoint.smAndUp">
             <span v-if="mode == 'month'">{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
             <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
@@ -35,7 +35,7 @@
             <span v-else>{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
           </template>
         </v-toolbar-title>
-        <v-toolbar-title v-else key="title" class="headline font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '142px', cursor: 'pointer'}" @click="changeTitle">
+        <v-toolbar-title v-else key="title" class="headline font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '144px', cursor: 'pointer'}" @click="changeTitle">
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
         </v-toolbar-title>
       </transition>
@@ -190,10 +190,6 @@ export default {
       },
       datePicker: false,
       arrowAllowed: true,
-      arrow: {
-        left: 0,
-        right: 0,
-      },
       settings: {
         dialog: this.$route.name == "settings",
       },
@@ -424,8 +420,7 @@ export default {
      * Navigates to the next or previous view, depending on the current calendar mode selected.
      * @param isNext {boolean}  true if next; false if previous
      */
-    nextOrPrevious(isNext, arrow) {
-      console.log("NEXTORPREVIOUS: ", isNext);
+    nextOrPrevious(isNext) {
       if (!this.arrowAllowed) return;
       this.arrowAllowed = false;
       let sign = isNext ? 1 : -1;
@@ -439,7 +434,6 @@ export default {
         date.setUTCDate(date.getUTCDate()+sign*3);
       else // day mode
         date.setUTCDate(date.getUTCDate()+sign*1);
-      console.log("NOP DATE: ", date);
       if (+date == +today ||
           this.mode == "month" && new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
         this.$router.push("/");
@@ -448,8 +442,6 @@ export default {
       else
         this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
       this.arrowAllowed = true;
-      /*if (arrow == "left") this.arrow.left++;
-      else if (arrow == "right") this.arrow.right++;*/
     },
     /** Prints the current view of the bell schedule. */
     print() {
