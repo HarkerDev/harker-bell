@@ -2,7 +2,7 @@
   <v-app v-if="calendar.dates.length != 0">
     <v-app-bar app elevate-on-scroll>
       <v-spacer></v-spacer>
-      <v-btn :key="arrow.left" class="hidden-print-only" icon v-on="on" @click.once="nextOrPrevious(false, 'left')">
+      <v-btn class="hidden-print-only" icon v-on="on" @click="nextOrPrevious(false)">
         <v-icon>chevron_left</v-icon>
       </v-btn>
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
@@ -20,7 +20,7 @@
           
         </v-date-picker>
       </v-menu>
-      <v-btn :key="arrow.right" class="hidden-print-only mr-2" icon v-on="on" @click.once="nextOrPrevious(true, 'right')">
+      <v-btn class="hidden-print-only mr-2" icon v-on="on" @click="nextOrPrevious(true)">
         <v-icon>chevron_right</v-icon>
       </v-btn>
       <transition name="fade" mode="out-in">
@@ -189,6 +189,7 @@ export default {
         y: 0,
       },
       datePicker: false,
+      arrowAllowed: true,
       arrow: {
         left: 0,
         right: 0,
@@ -425,6 +426,8 @@ export default {
      */
     nextOrPrevious(isNext, arrow) {
       console.log("NEXTORPREVIOUS: ", isNext);
+      if (!this.arrowAllowed) return;
+      this.arrowAllowed = false;
       let sign = isNext ? 1 : -1;
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (this.mode == "month")
@@ -444,8 +447,9 @@ export default {
         this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}`);
       else
         this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
-      if (arrow == "left") this.arrow.left++;
-      else if (arrow == "right") this.arrow.right++;
+      this.arrowAllowed = true;
+      /*if (arrow == "left") this.arrow.left++;
+      else if (arrow == "right") this.arrow.right++;*/
     },
     /** Prints the current view of the bell schedule. */
     print() {
