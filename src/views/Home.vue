@@ -15,13 +15,13 @@
                 <v-layout column align-center>
                   <span v-if="mode != 'month' && date.getUTCDate() != 1" class="overline">{{weekdays[date.getUTCDay()-1]}}</span>
                   <span v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}]">{{months[date.getUTCMonth()]}}</span>
-                  <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'pt-sans', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
+                  <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'gilroy', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
                 </v-layout>
               </v-flex>
               <v-flex v-if="schedules[date.toISOString()]" xs8>
                 <v-layout wrap justify-end align-center>
                   <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">{{schedules[date.toISOString()].variant}}</span>
-                  <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'pt-sans', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</span>
+                  <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'gilroy', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</span>
                 </v-layout>
               </v-flex>
               <v-flex xs1></v-flex>

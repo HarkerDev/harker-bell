@@ -6,8 +6,9 @@ import vuetify from "./plugins/vuetify";
 import {openDB} from "idb";
 //import "roboto-fontface/css/roboto/roboto-fontface.css";
 //import "material-design-icons-iconfont/dist/material-design-icons.css";
-import "typeface-roboto";
-import "typeface-pt-sans";
+//import "typeface-roboto";
+//import "typeface-pt-sans";
+import "./fonts.css";
 import "./material-icons.css";
 
 Vue.config.productionTip = false;

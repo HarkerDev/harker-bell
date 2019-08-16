@@ -24,7 +24,7 @@
         <v-icon>chevron_right</v-icon>
       </v-btn>
       <transition name="fade" mode="out-in">
-        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '144px'}">
+        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-family gilroy font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '144px'}">
           <template v-if="$vuetify.breakpoint.smAndUp">
             <span v-if="mode == 'month'">{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
             <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
@@ -35,7 +35,7 @@
             <span v-else>{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
           </template>
         </v-toolbar-title>
-        <v-toolbar-title v-else key="title" class="headline font-family pt-sans font-weight-bold text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '144px', cursor: 'pointer'}" @click="changeTitle">
+        <v-toolbar-title v-else key="title" class="headline font-family gilroy font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '144px', cursor: 'pointer'}" @click="changeTitle">
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
         </v-toolbar-title>
       </transition>
@@ -111,7 +111,7 @@
           <v-btn icon @click="closeSettings">
             <v-icon>close</v-icon>
           </v-btn>
-          <v-toolbar-title class="font-family pt-sans font-weight-bold">Settings</v-toolbar-title>
+          <v-toolbar-title class="font-family gilroy font-weight-medium">Settings</v-toolbar-title>
           <v-spacer></v-spacer>
           <div class="overline">Version {{env.VUE_APP_VERSION}}</div>
         </v-app-bar>
@@ -273,6 +273,9 @@ export default {
     this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
+      this.socket.emit("request update", localStorage.getItem("snapshotVersion"), data => {
+        console.log("request update");
+      });
     });
     this.socket.on("disconnect", reason => {
       this.io.connected = false;
@@ -299,9 +302,6 @@ export default {
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
-    });
-    this.socket.emit("request update", localStorage.getItem("snapshotVersion"), data => {
-      console.log("request update");
     });
     console.log("INIT DONE:\t", new Date-abcd);
   },
@@ -362,8 +362,8 @@ export default {
     },
     /**
      * 
-     * @param {Array} dates array of
-     * @return {Array}      array of schedules retrieved from IndexedDB, or an empty array if not available
+     * @param {Date[]} dates array of
+     * @return {Object[]}      array of schedules retrieved from IndexedDB, or an empty array if not available
      */
     async getFromIndexedDB(dates) {
       let schedules = [];
@@ -381,7 +381,7 @@ export default {
     },
     /**
      * 
-     * @param {Array} dates array of
+     * @param {Date[]} dates array of
      */
     getFromSocket(dates) {
       console.log("getFromSocket");
@@ -543,8 +543,8 @@ export default {
 </script>
 
 <style>
-.v-application .font-family.pt-sans {
-  font-family: "PT Sans", sans-serif !important;
+.v-application .font-family.gilroy {
+  font-family: Gilroy, Roboto, sans-serif !important;
 }
 .fade-enter-active, .fade-leave-active {
   transition: opacity 250ms;

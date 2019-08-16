@@ -1,12 +1,12 @@
-@charset "UTF-8";
 @font-face {
   font-family: "Material Icons Outlined";
   font-style: normal;
+  font-display: block;
   font-weight: 400;
   src: local("Material Icons Outlined"),
     local("MaterialIcons-Outlined"),
-    url(assets/MaterialIcons-Outlined.woff2) format("woff2"), /* Modern browsers */
-    url(assets/MaterialIcons-Outlined.woff) format("woff"); /* IE11 */
+    url(assets/fonts/MaterialIcons-Outlined.woff2) format("woff2"), /* Modern browsers */
+    url(assets/fonts/MaterialIcons-Outlined.woff) format("woff"); /* IE11 */
 }
 .material-icons {
   font-family: "Material Icons Outlined";
