@@ -41,14 +41,9 @@
       </transition>
       <v-menu offset-y>
         <template v-slot:activator="{on: menu}">
-          <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
-            <template v-slot:activator="{on: tooltip}">
-              <v-btn class="hidden-print-only ml-2" icon v-on="{...tooltip, ...menu}">
-                <v-icon>settings</v-icon>
-              </v-btn>
-            </template>
-            <span>Settings</span>
-          </v-tooltip>
+          <v-btn class="hidden-print-only ml-2" icon v-on="{...menu}">
+            <v-icon>settings</v-icon>
+          </v-btn>
         </template>
         <v-list>
           <v-list-item @click="$router.push('/settings')">
@@ -89,11 +84,13 @@
         <v-divider></v-divider>
         <v-list>
           <v-list-item @click="print">
+            <v-list-item-icon style="margin-top: 10px; margin-bottom: 10px;">
+              <v-icon>print</v-icon>
+            </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Print</v-list-item-title>
               <v-list-item-subtitle v-if="$vuetify.theme.dark">Light theme recommended</v-list-item-subtitle>
             </v-list-item-content>
-            <v-list-item-action class="text--secondary">&#8984;P</v-list-item-action>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -101,11 +98,16 @@
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
       <div id="message-wrapper" style="height: 16px;">
-        <div id="message" class="caption text-center" v-html="message"></div>
+        <div id="message" class="caption text-center hidden-print-only" v-html="message"></div>
+      </div>
+      <div class="text-center hidden-screen-only">
+        <span v-if="mode == 'month'">{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
+        <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
+        <span v-else>{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
       </div>
       <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu"></router-view>
     </v-content>
-    <v-dialog v-model="settings.dialog" eager :fullscreen="$vuetify.breakpoint.xsOnly" width="480" @input="closeSettings">
+    <v-dialog v-model="settings.dialog" eager :fullscreen="$vuetify.breakpoint.xsOnly" :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="480" @input="closeSettings">
       <v-card>
         <v-app-bar elevate-on-scroll>
           <v-btn icon @click="closeSettings">
@@ -150,7 +152,10 @@
         <span>{{io.lastUpdated || "never"}}</span>
       </div>
     </v-footer>
-    <v-snackbar v-model="snackbars.offlineReady">hi</v-snackbar>
+    <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
+      A new version is available! Reload the page to update.
+      <v-btn text @click="refreshPwa">Reload</v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -194,7 +199,8 @@ export default {
         dialog: this.$route.name == "settings",
       },
       snackbars: {
-        offlineReady: true
+        offlineReady: true,
+        pwaUpdated: false,
       },
       prevRoute: null,
       features: {
@@ -267,15 +273,16 @@ export default {
       this.$vuetify.theme.dark = true;
       document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
     }
+    window.addEventListener("pwaUpdated", () => {
+      this.snackbars.pwaUpdated = true;
+    });
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://bell.dev.harker.org", {timeout: 10000});
+    this.socket = io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000});
     this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
-      this.socket.emit("request update", localStorage.getItem("snapshotVersion"), data => {
-        console.log("request update");
-      });
+      if (this.db) this.socket.emit("request update", localStorage.getItem("scheduleRevision"));
     });
     this.socket.on("disconnect", reason => {
       this.io.connected = false;
@@ -290,8 +297,13 @@ export default {
         document.getElementById("message-wrapper").style.height = document.getElementById("message").clientHeight+"px";
       });
     });
-    this.socket.on("update schedule", details => {
-      
+    if (this.db) this.socket.on("update schedule", async (schedules, revision) => {
+      if (revision) {
+        for (const schedule of schedules)
+          await this.db.put("schedules", schedule);
+        localStorage.setItem("scheduleRevision", revision);
+        await this.setCalendar(this.$route);
+      }
     });
     this.socket.on("pong", () => {
       let now = new Date();
@@ -449,6 +461,11 @@ export default {
         window.print();
       }, 100);
     },
+    /** Reloads the page when the user clicks on the PWA update snackbar. */
+    refreshPwa() {
+      this.snackbars.pwaUpdated = false;
+      window.location.reload(false);
+    },
     /**
      * Saves the calendar mode to local storage.
      * @param {string} mode the current calendar view mode
@@ -545,6 +562,9 @@ export default {
 <style>
 .v-application .font-family.gilroy {
   font-family: Gilroy, Roboto, sans-serif !important;
+}
+.v-snack__wrapper {
+  border-radius: 3px !important;
 }
 .fade-enter-active, .fade-leave-active {
   transition: opacity 250ms;

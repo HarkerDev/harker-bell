@@ -1,6 +1,6 @@
 @import "~vuetify/src/styles/styles.sass";
 
-$heading-font-family: "PT Sans" !important; /* doesn't work */
+$heading-font-family: Gilroy !important; /* doesn't work */
 $material-light: map-merge($material-light, (
   "background": map-get($shades, "white"),
 ));
@@ -9,8 +9,10 @@ $material-dark: map-merge($material-dark, (
   "cards": #202124,
 ));
 $btn-border-radius: 2px;
+$btn-outline-border-width: 1px;
 $tooltip-border-radius: 2px;
 $tooltip-font-size: 12px;
 $sheet-border-radius: 2px;
 $dialog-border-radius: 2px;
 $icon-outlined-border-width: 1px;
+$list-item-min-height: 36px;

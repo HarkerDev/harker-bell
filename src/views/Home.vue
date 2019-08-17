@@ -30,11 +30,7 @@
               <v-flex xs1></v-flex>
             </v-layout>
           </v-sheet>
-          <!-- MONTH DAY CONTENT -->
-          <div v-if="mode == 'month'" class="body-2">
-            Events
-          </div>
-          <content-loader v-else-if="calendar.loading" :height="515" :width="180" :speed="0.6" secondary-color="#F1F3F4">
+          <content-loader v-if="calendar.loading" :height="515" :width="180" :speed="0.6" secondary-color="#F1F3F4">
             <rect x="75" y="25" rx="2" ry="2" width="30" height="12"></rect>
             <rect x="50" y="45" rx="2" ry="2" width="80" height="12"></rect>
             <rect x="0" y="85" rx="0" ry="0" width="180" height="10"></rect>
@@ -49,6 +45,13 @@
             <rect x="75" y="270" rx="2" ry="2" width="30" height="12"></rect>
             <rect x="50" y="290" rx="2" ry="2" width="80" height="12"></rect>
           </content-loader>
+          <v-layout v-else-if="schedules[date.toISOString()] && schedules[date.toISOString()].holiday" class="body-2 text-center" align-center justify-center>
+            {{schedules[date.toISOString()].holiday}}
+          </v-layout>
+          <!-- MONTH DAY CONTENT -->
+          <div v-else-if="mode == 'month'" class="body-2">
+            Events
+          </div>
           <!-- WEEK DAY CONTENT -->
           <template v-else>
             <v-layout v-for="(group, gIndex) in computedSchedules[date.toISOString()]" :key="gIndex" class="group">
@@ -57,23 +60,23 @@
                   <!-- LUNCH PERIOD -->
                   <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
                     <!-- TODO: Find a way to extract id logic somewhere -->
-                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-xs-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
-                      <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
+                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
+                      <v-layout :class="{content: true, short: period.duration <= 50 || group.length > 1}" column align-center justify-center>
                         <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
-                        <div v-if="period.start && period.duration >= 30">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+                        <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
                       </v-layout>
                     </v-sheet>
                   </v-hover>
                   <!-- REGULAR PERIOD -->
-                  <v-sheet v-else :key="pIndex" class="period caption text-xs-center d-flex" :height="period.duration+1" tile>
-                    <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
+                  <v-sheet v-else :key="pIndex" class="period caption text-center d-flex" :height="period.duration+1" tile>
+                    <v-layout :class="{content: true, short: period.duration <= 50 || group.length > 1}" column align-center justify-center>
                       <div ref="periodNames">
                         {{period.name}}
-                        <span v-if="period.start && period.duration < 30 && column.length <= 1"> {{period.start|formatTime}}&ndash;{{period.end|formatTime}}</span>
+                        <span v-if="period.start && period.duration < 30 && column.length <= 1" class="text-no-wrap"> {{period.start|formatTime}}&ndash;{{period.end|formatTime}}</span>
                       </div>
                       <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
-                      <div v-if="period.start && period.duration >= 30">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+                      <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
                     </v-layout>
                   </v-sheet>
                 </template>
@@ -176,7 +179,7 @@ export default {
           else if (+period.start == +prevPeriod.end) // start a new period group if period starts after the previous group
             result.push([[period]]);
           else if (period.start < latestEnd) // insert placeholder in current column if there's a gap between two periods
-            lastGroup[lastGroup.length-1].push([[{duration: (period.start-prevPeriod.end)/this.$MS_PER_MIN}]], [[period]]);
+            lastGroup[lastGroup.length-1].push({duration: (period.start-prevPeriod.end)/this.$MS_PER_MIN}, period); // I CHANGED THIS AFTER A BUG; IF I BROKE ANYTHING LATER IT'S PROBABLY FROM THIS!
           else // insert placeholder in a new period group otherwise
             result.push([[{duration: (period.start-latestEnd)/this.$MS_PER_MIN}]], [[period]]);
           latestEnd = Math.max(latestEnd, period.end);
@@ -265,6 +268,9 @@ export default {
 .period {
   border: 1px solid var(--v-secondary-base) !important;
   margin: 0 -1px -1px;
+}
+.group, .column, .period {
+  transition: all 100ms;
 }
 .lunch {
   cursor: pointer;
