@@ -162,7 +162,7 @@ export default {
   data() {
     return {
       env: process.env,
-      socket: null,//io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000}),
+      socket: null,
       io: {
         connected: false,
         lastConnected: localStorage.getItem("lastConnected") || null,
@@ -269,7 +269,7 @@ export default {
     }
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://bell.dev.harker.org", {timeout: 10000});
+    this.socket = io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000});
     this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;

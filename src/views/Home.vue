@@ -20,7 +20,10 @@
               </v-flex>
               <v-flex v-if="schedules[date.toISOString()]" xs8>
                 <v-layout wrap justify-end align-center>
-                  <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">{{schedules[date.toISOString()].variant}}</span>
+                  <!-- <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">{{schedules[date.toISOString()].variant}}</span> -->
+                  <v-chip v-if="schedules[date.toISOString()].variant" color="warning" :input-value="true" outlined x-small>
+                    {{schedules[date.toISOString()].variant}}
+                  </v-chip>
                   <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'gilroy', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</span>
                 </v-layout>
               </v-flex>
@@ -145,7 +148,8 @@ export default {
      */
     computedSchedules() {
       let computedSchedules = {};
-      this.rawSchedules.forEach(entry => {
+      for (const entry of this.rawSchedules) {
+        if (entry.schedule.length == 0) continue;
         let schedule = entry.schedule;
         schedule[0].start = new Date(schedule[0].start);
         schedule[0].end = new Date(schedule[0].end);
@@ -178,7 +182,7 @@ export default {
           latestEnd = Math.max(latestEnd, period.end);
         }
         computedSchedules[entry.date] = result;
-      });
+      }
       return computedSchedules;
     },
     /** Keeps track of whether the current calendar mode is set to month view. */
@@ -221,6 +225,9 @@ export default {
 </script>
 
 <style scoped>
+.v-chip {
+  padding: 0 6px;
+}
 .schedule-transition-move {
   /*-webkit-transition: -webkit-transform 300ms;
           transition: transform 300ms;*/
