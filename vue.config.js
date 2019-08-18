@@ -19,8 +19,17 @@ module.exports = {
       short_name: "Harker Bell"
     },
     workboxOptions: {
-      skipWaiting: true,
+      cleanupOutdatedCaches: true,
+      clientsClaim: true,
       offlineGoogleAnalytics: true,
+      runtimeCaching: [{
+        urlPattern: /[0-9]+\/[0-9]+/,
+        handler: "CacheFirst"
+      }, {
+        urlPattern: /settings/,
+        handler: "CacheFirst"
+      }],
+      skipWaiting: true,
     },
   },
 };
