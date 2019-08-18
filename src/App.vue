@@ -144,12 +144,12 @@
     <v-footer class="hidden-print-only" app color="primary" elevation="2" fixed padless>
       <div class="caption mx-2">
         <span>Last connected </span>
-        <span :class="{'success--text': io.connected}">{{io.connected ? "just now" : io.lastConnected || "never"}}</span>
+        <span :class="{'success--text': io.connected}">{{io.connected ? "just now" : formattedLastConnected || "never"}}</span>
       </div>
       <v-spacer></v-spacer>
       <div class="caption mx-2">
         <span>Last updated </span>
-        <span>{{io.lastUpdated || "never"}}</span>
+        <span>{{formattedLastUpdated || "never"}}</span>
       </div>
     </v-footer>
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
@@ -233,6 +233,12 @@ export default {
           this.$router.push(`/${value.substring(0, 4)}/${+value.substring(5, 7)}/${+value.substring(8, 10)}`);
       }
     },
+    formattedLastConnected() {
+      return this.formatDate(this.io.lastConnected);
+    },
+    formattedLastUpdated() {
+      return this.formatDate(this.io.lastUpdated);
+    },
     /** Converts the raw schedule array into an object. */
     schedules() {
       let obj = {};
@@ -278,7 +284,7 @@ export default {
     });
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://bell.dev.harker.org", {timeout: 10000});
+    this.socket = io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000});
     this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
@@ -290,9 +296,7 @@ export default {
     });
     this.socket.on("update message", message => {
       this.message = message;
-      let now = new Date();
-      this.lastUpdated = now;
-      localStorage.setItem("lastUpdated", now.getTime());
+      this.lastUpdated = new Date();
       this.$nextTick(() => {
         document.getElementById("message-wrapper").style.height = document.getElementById("message").clientHeight+"px";
       });
@@ -302,6 +306,7 @@ export default {
         for (const schedule of schedules)
           await this.db.put("schedules", schedule);
         localStorage.setItem("scheduleRevision", revision);
+        localStorage.setItem("lastUpdated", new Date().getTime());
         await this.setCalendar(this.$route);
       }
     });
@@ -371,6 +376,17 @@ export default {
     closeSettings() {
       if (this.prevRoute) this.$router.back();
       else this.$router.push("/");
+    },
+    /**
+     * 
+     * @param {Date} date date to be formatted
+     */
+    formatDate(timestamp) {
+      if (!timestamp) return null;
+      let date = new Date(+timestamp);
+      if (new Date().setHours(0, 0, 0, 0) == new Date(+timestamp).setHours(0, 0, 0, 0))
+        return date.toLocaleTimeString(undefined, {timeStyle: "short", hour: "numeric", minute: "2-digit"});
+      return date.toLocaleDateString(undefined, {dateStyle: "short", timeStyle: "short", month: "numeric", day: "numeric", year: "2-digit", hour: "numeric", minute: "2-digit"});
     },
     /**
      * 
@@ -531,7 +547,7 @@ export default {
         startDate = new Date(+startDate+this.$MS_PER_DAY); // add 1 day
       }
       if (this.db) this.rawSchedules = await this.getFromIndexedDB(dates);
-      if (this.socket && this.rawSchedules.length == 0) this.getFromSocket(dates);
+      else if (this.socket) this.getFromSocket(dates);
       this.calendar.dates = dates;
       this.changeTitle();
       console.log("SET CAL:\t", new Date-abcd);

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
@@ -10,6 +11,11 @@ import {openDB} from "idb";
 //import "typeface-pt-sans";
 import "./fonts.css";
 import "./material-icons.css";
+import "./assets/analytics.js";
+import "autotrack/lib/plugins/event-tracker";
+import "autotrack/lib/plugins/outbound-link-tracker";
+import "autotrack/lib/plugins/page-visibility-tracker";
+import "autotrack/lib/plugins/url-change-tracker";
 
 Vue.config.productionTip = false;
 
@@ -36,3 +42,8 @@ function initVue() {
   }).$mount("#app");
   window.app = app;
 }
+
+ga("require", "eventTracker");
+ga("require", "outboundLinkTracker", {events: ["click", "contextmenu", "auxclick"]});
+ga("require", "pageVisibilityTracker", {visibleThreshold: 1000});
+ga("require", "urlChangeTracker");
