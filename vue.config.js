@@ -20,7 +20,7 @@ module.exports = {
     },
     workboxOptions: {
       clientsClaim: true,
-      navigateFallback: "/index.html",
+      navigateFallback: "/",
       offlineGoogleAnalytics: true,
       skipWaiting: true,
     },
