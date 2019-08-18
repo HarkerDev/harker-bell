@@ -20,14 +20,8 @@ module.exports = {
     },
     workboxOptions: {
       clientsClaim: true,
+      navigateFallback: "/",
       offlineGoogleAnalytics: true,
-      runtimeCaching: [{
-        urlPattern: /[0-9]+\/[0-9]+/,
-        handler: "cacheFirst"
-      }, {
-        urlPattern: /settings/,
-        handler: "cacheFirst"
-      }],
       skipWaiting: true,
     },
   },
