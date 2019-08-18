@@ -19,7 +19,8 @@ module.exports = {
       short_name: "Harker Bell"
     },
     workboxOptions: {
-      skipWaiting: true
+      skipWaiting: true,
+      offlineGoogleAnalytics: true,
     },
   },
 };
