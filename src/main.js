@@ -11,7 +11,6 @@ import {openDB} from "idb";
 //import "typeface-pt-sans";
 import "./fonts.css";
 import "./material-icons.css";
-import "./assets/analytics.js";
 import "autotrack/lib/plugins/event-tracker";
 import "autotrack/lib/plugins/outbound-link-tracker";
 import "autotrack/lib/plugins/page-visibility-tracker";
