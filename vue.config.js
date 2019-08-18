@@ -23,6 +23,13 @@ module.exports = {
       navigateFallback: "/index.html",
       navigateFallbackBlacklist: [/api/, /docs/, /admin/],
       offlineGoogleAnalytics: true,
+      runtimeCaching: [{
+        urlPattern: "https://www.google-analytics.com/analytics.js",
+        handler: "staleWhileRevalidate"
+      }, {
+        urlPattern: "https://qbw8rkkv7x0h.statuspage.io/embed/script.js",
+        handler: "staleWhileRevalidate"
+      }],
       skipWaiting: true,
     },
   },
