@@ -315,7 +315,7 @@ export default {
       this.lastConnected = now;
       localStorage.setItem("lastConnected", now.getTime());
     });
-    if (this.rawSchedules.length == 0) this.getFromSocket(this.calendar.dates);
+    if (!localStorage.getItem("scheduleRevision")) this.getFromSocket(this.calendar.dates);
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
