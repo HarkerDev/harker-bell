@@ -30,7 +30,7 @@
               <v-flex xs1></v-flex>
             </v-layout>
           </v-sheet>
-          <content-loader v-if="calendar.loading" :height="515" :width="180" :speed="0.6" secondary-color="#F1F3F4">
+          <content-loader v-if="calendar.loading" :height="515" :width="180" :speed="0.5" :primary-color="$vuetify.theme.dark ? '#3C4043' : '#F1F3F4'" :secondary-color="$vuetify.theme.dark ? '#4E4F52' : '#E8EAED'">
             <rect x="75" y="25" rx="2" ry="2" width="30" height="12"></rect>
             <rect x="50" y="45" rx="2" ry="2" width="80" height="12"></rect>
             <rect x="0" y="85" rx="0" ry="0" width="180" height="10"></rect>
@@ -44,6 +44,10 @@
             <rect x="0" y="235" rx="0" ry="0" width="180" height="7"></rect>
             <rect x="75" y="270" rx="2" ry="2" width="30" height="12"></rect>
             <rect x="50" y="290" rx="2" ry="2" width="80" height="12"></rect>
+            <rect x="0" y="330" rx="0" ry="0" width="180" height="10"></rect>
+            <rect x="75" y="365" rx="2" ry="2" width="30" height="12"></rect>
+            <rect x="50" y="385" rx="2" ry="2" width="80" height="12"></rect>
+            <rect x="30" y="440" rx="2" ry="2" width="120" height="12"></rect>
           </content-loader>
           <v-layout v-else-if="schedules[date.toISOString()] && schedules[date.toISOString()].holiday" class="body-2 text-center" align-center justify-center>
             {{schedules[date.toISOString()].holiday}}

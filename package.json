@@ -9,6 +9,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@sentry/browser": "^5.6.1",
+    "@sentry/integrations": "^5.6.1",
     "autotrack": "^2.4.1",
     "core-js": "^2.6.5",
     "idb": "^4.0.4",

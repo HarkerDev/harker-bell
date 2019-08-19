@@ -13,7 +13,7 @@ module.exports = {
   pwa: {
     name: "Harker Bell Schedule",
     themeColor: "#FFFFFF",
-    msTileColor: "#FFFFFF",
+    msTileColor: "#005841",
     appleMobileWebAppCapable: "yes",
     manifestOptions: {
       short_name: "Harker Bell"
