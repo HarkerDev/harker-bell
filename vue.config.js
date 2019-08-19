@@ -2,7 +2,7 @@ process.env.VUE_APP_VERSION = require("./package.json").version;
 
 module.exports = {
   productionSourceMap: false,
-  transpileDependencies: ["vuetify"],
+  transpileDependencies: ["idb", "vuetify"],
   css: {
     loaderOptions: {
       sass: {
