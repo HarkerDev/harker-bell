@@ -245,6 +245,7 @@ export default {
   overflow: hidden;
 }
 .day-container {
+  border: 1px solid #9AA0A6;
   border: 1px solid var(--v-secondary-base);
   margin: 0 -1px -1px 0;
   /*-webkit-transition: width 300ms, max-width 300ms, max-height 300ms;
@@ -253,6 +254,7 @@ export default {
           transition: all 300ms;
 }
 .day-header:not(.month) {
+  border-bottom: 1px solid #9AA0A6;
   border-bottom: 1px solid var(--v-secondary-base);
   margin-bottom: -1px;
 }
@@ -270,6 +272,7 @@ export default {
   line-height: normal;
 }
 .period {
+  border: 1px solid #9AA0A6 !important;
   border: 1px solid var(--v-secondary-base) !important;
   margin: 0 -1px -1px;
 }

@@ -210,8 +210,8 @@
   src:
     local("Gilroy Light Italic"),
     local("Gilroy-LightItalic"),
-    url("assets/fonts/Gilroy-LightItalic.woff") format("woff2"),
-    url("assets/fonts/Gilroy-LightItalic.woff2") format("woff");
+    url("assets/fonts/Gilroy-LightItalic.woff2") format("woff2"),
+    url("assets/fonts/Gilroy-LightItalic.woff") format("woff");
 }
 
 /* Gilroy-400normal - latin */
