@@ -1,2 +1,3 @@
 /docs/* https://harker-bell-docs.netlify.com/:splat 200
+/api/*  https://bell.dev.harker.org/api/:splat      200
 /*      /index.html                                 200
