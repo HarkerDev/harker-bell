@@ -44,5 +44,5 @@ function initVue() {
 
 ga("require", "eventTracker");
 ga("require", "outboundLinkTracker", {events: ["click", "contextmenu", "auxclick"]});
-ga("require", "pageVisibilityTracker", {visibleThreshold: 1000});
+ga("require", "pageVisibilityTracker", {visibleThreshold: 1000, visibleMetricIndex: 1});
 ga("require", "urlChangeTracker");

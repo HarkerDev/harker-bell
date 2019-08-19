@@ -24,10 +24,10 @@ module.exports = {
       navigateFallbackBlacklist: [/api/, /docs/, /admin/],
       offlineGoogleAnalytics: true,
       runtimeCaching: [{
-        urlPattern: /.*www\.google-analytics\.com/,
+        urlPattern: "https://www.google-analytics.com/analytics.js",
         handler: "staleWhileRevalidate"
       }, {
-        urlPattern: /.*qbw8rkkv7x0h\.statuspage\.io/,
+        urlPattern: "https://qbw8rkkv7x0h.statuspage.io/embed/script.js",
         handler: "staleWhileRevalidate"
       }],
       skipWaiting: true,
