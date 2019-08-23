@@ -64,7 +64,7 @@
                   <!-- LUNCH PERIOD -->
                   <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
                     <!-- TODO: Find a way to extract id logic somewhere -->
-                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
+                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)" ga-on="click" ga-event-category="Lunch Menu" ga-event-action="click">
                       <v-layout :class="{content: true, short: period.duration <= 50 || group.length > 1}" column align-center justify-center>
                         <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
@@ -87,6 +87,28 @@
               </v-flex>
             </v-layout>
           </template>
+          <v-timeline align-top dense>
+            <v-timeline-item class="caption short" color="info" fill-dot small>
+              <span class="text-top text--secondary">12:50&ndash;1:20 • </span>
+              <span class="text-top">Event</span>
+            </v-timeline-item>
+            <v-timeline-item class="caption short" color="warning" fill-dot small>
+              <span class="text-top text--secondary">3:00&ndash;3:30 • </span>
+              <span class="text-top">Event</span>
+            </v-timeline-item>
+            <v-timeline-item class="caption short" color="success" fill-dot small>
+              <span class="text-top text--secondary">3:45&ndash;5:00 • </span>
+              <span class="text-top">Event</span>
+            </v-timeline-item>
+          </v-timeline>
+          <div>
+            <v-tooltip top :key="j">
+              <template v-slot:activator="{on}">
+                <v-avatar v-on="on" color="secondary" size="6"></v-avatar>
+              </template>
+              <span>Category</span>
+            </v-tooltip>
+          </div>
         </v-sheet>
       </v-layout>
     </transition-group>
@@ -266,7 +288,7 @@ export default {
   overflow-y: hidden;
 }
 .short {
-  line-height: 1.2;
+  line-height: 1.2 !important;
 }
 .normal {
   line-height: normal;
@@ -282,8 +304,18 @@ export default {
 .lunch {
   cursor: pointer;
 }
+.text-top {
+  vertical-align: text-top;
+}
 .font-transition {
   -webkit-transition: all 300ms;
           transition: all 300ms;
+}
+</style>
+<style>
+.v-timeline-item__dot {
+  margin-top: 5px;
+  -webkit-box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12) !important;
+          box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12) !important;
 }
 </style>

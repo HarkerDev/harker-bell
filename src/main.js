@@ -49,7 +49,7 @@ function initVue() {
   }).$mount("#app");
   window.app = app;
 }
-ga("require", "eventTracker");
+ga("require", "eventTracker", {events: ["click", "contextmenu"]});
 ga("require", "outboundLinkTracker", {events: ["click", "contextmenu", "auxclick"]});
-ga("require", "pageVisibilityTracker", {visibleThreshold: 1000, visibleMetricIndex: 1});
+ga("require", "pageVisibilityTracker", {visibleThreshold: 500, visibleMetricIndex: 1});
 ga("require", "urlChangeTracker");

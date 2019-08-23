@@ -2,14 +2,14 @@
   <v-app v-if="calendar.dates.length != 0">
     <v-app-bar app elevate-on-scroll>
       <v-spacer></v-spacer>
-      <v-btn class="hidden-print-only" icon @click="nextOrPrevious(false)">
+      <v-btn class="hidden-print-only" icon @click="nextOrPrevious(false)" ga-on="click" ga-event-category="Previous" ga-event-action="click">
         <v-icon>chevron_left</v-icon>
       </v-btn>
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on: menu}">
-          <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center">
+          <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center" key="datePicker">
             <template v-slot:activator="{on: tooltip}">
-              <v-btn class="hidden-print-only" icon v-on="{...tooltip, ...menu}">
+              <v-btn class="hidden-print-only" icon v-on="{...tooltip, ...menu}" ga-on="click, contextmenu" ga-event-category="Date Picker Icon" ga-event-action="click">
                 <v-icon>date_range</v-icon>
               </v-btn>
             </template>
@@ -20,7 +20,7 @@
           
         </v-date-picker>
       </v-menu>
-      <v-btn class="hidden-print-only mr-2" icon @click="nextOrPrevious(true)">
+      <v-btn class="hidden-print-only mr-2" icon @click="nextOrPrevious(true)" ga-on="click" ga-event-category="Next" ga-event-action="click">
         <v-icon>chevron_right</v-icon>
       </v-btn>
       <transition name="fade" mode="out-in">
@@ -35,13 +35,13 @@
             <span v-else>{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
           </template>
         </v-toolbar-title>
-        <v-toolbar-title v-else key="title" class="headline font-family gilroy font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '144px', cursor: 'pointer'}" @click="changeTitle">
+        <v-toolbar-title v-else key="title" class="headline font-family gilroy font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '144px', cursor: 'pointer'}" @click="changeTitle" ga-on="click" ga-event-category="Title" ga-event-action="click">
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
         </v-toolbar-title>
       </transition>
       <v-menu offset-y>
         <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only ml-2" icon v-on="{...menu}">
+          <v-btn class="hidden-print-only ml-2" icon v-on="{...menu}" ga-on="click, contextmenu" ga-event-category="Settings Icon" ga-event-action="click">
             <v-icon>settings</v-icon>
           </v-btn>
         </template>
@@ -55,16 +55,15 @@
         <v-divider></v-divider>
         <v-list dense subheader>
           <v-subheader>Change view</v-subheader>
-          <v-list-item :disabled="false&&$vuetify.breakpoint.smAndUp" @click="(true||$vuetify.breakpoint.xsOnly) ? changeMode('day') : ''">
+          <v-list-item @click="changeMode('day')" ga-on="click" ga-event-category="Day" ga-event-action="click">
             <v-list-item-icon>
               <v-icon v-if="mode == 'day'">check</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Day</v-list-item-title>
-              <v-list-item-subtitle>Mobile devices only</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="changeMode('week')">
+          <v-list-item @click="changeMode('week')" ga-on="click" ga-event-category="Week" ga-event-action="click">
             <v-list-item-icon>
               <v-icon v-if="mode == 'week'">check</v-icon>
             </v-list-item-icon>
@@ -72,7 +71,7 @@
               <v-list-item-title>Week</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="changeMode('month')">
+          <v-list-item @click="changeMode('month')" ga-on="click" ga-event-category="Month" ga-event-action="click">
             <v-list-item-icon>
               <v-icon v-if="mode == 'month'">check</v-icon>
             </v-list-item-icon>
@@ -83,7 +82,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list>
-          <v-list-item @click="print">
+          <v-list-item @click="print" ga-on="click" ga-event-category="Print" ga-event-action="click">
             <v-list-item-icon style="margin-top: 10px; margin-bottom: 10px;">
               <v-icon>print</v-icon>
             </v-list-item-icon>
@@ -137,8 +136,22 @@
       </v-card>
     </v-dialog>
     <v-menu v-model="menu.open" absolute :close-on-content-click="false" offset-x :position-x="menu.x" :position-y="menu.y">
-      <v-card height="100">
-        <v-card-text>what's not for lunch</v-card-text>
+      <v-card min-height="100" max-width="480">
+        <v-simple-table v-if="schedules[menu.date.toISOString()] && schedules[menu.date.toISOString()].lunch.length > 0" dense fixed-header height="240">
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>Menu Item</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in schedules[menu.date.toISOString()].lunch" :key="item.place">
+              <td class="subtitle-2" style="word-break: normal;">{{item.place}}</td>
+              <td class="body-2" style="white-space: pre-wrap;">{{item.food}}</td>
+            </tr>
+          </tbody>
+        </v-simple-table>
+        <v-card-text v-else>No lunch menu available<br>for this day.</v-card-text>
       </v-card>
     </v-menu>
     <v-footer class="hidden-print-only" app color="primary" elevation="2" fixed padless>
@@ -189,6 +202,7 @@ export default {
       menu: {
         open: false,
         openTracker: 0,
+        date: new Date(),
         sheetId: null,
         x: 0,
         y: 0,
@@ -558,7 +572,7 @@ export default {
      * @param {Date} date date of the lunch menu being shown
      */
     showMenu(id, date) {
-      console.log(date);
+      this.menu.date = date;
       this.menu.sheetId = id;
       if (this.menu.open) {
         this.menu.openTracker = 2;
@@ -581,6 +595,9 @@ export default {
 }
 .v-snack__wrapper {
   border-radius: 3px !important;
+}
+.v-menu__content {
+  max-width: 95% !important;
 }
 .fade-enter-active, .fade-leave-active {
   transition: opacity 250ms;
