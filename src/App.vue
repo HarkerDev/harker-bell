@@ -298,7 +298,7 @@ export default {
     });
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://bell.dev.harker.org", {timeout: 10000});
+    this.socket = io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000});
     this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
@@ -612,9 +612,13 @@ export default {
   transform: translateX(-50%);
   line-height: normal;
 }
+.blink {
+  animation: blink 1.5s step-start infinite;
+}
+@keyframes blink {
+  50% {opacity: 0;}
+}
 @media print {
-  @page {
-    size: landscape;
-  }
+  @page {size: landscape;}
 }
 </style>
