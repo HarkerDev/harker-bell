@@ -1,6 +1,12 @@
 @import "~vuetify/src/styles/styles.sass";
 
 $heading-font-family: Gilroy !important; /* doesn't work */
+$headings: map-merge($headings, (
+  caption: map-merge(
+    map-get($headings, "caption"),
+    ("letter-spacing": 0.01rem)
+  )
+));
 $material-light: map-merge($material-light, (
   "background": map-get($shades, "white"),
 ));

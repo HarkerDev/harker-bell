@@ -8,15 +8,15 @@
       <v-layout v-for="(n, i) in Math.ceil(calendar.dates.length/5)" :key="calendar.dates[i*5].getTime()" justify-center>
         <div v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()">
           <!-- DAY CONTAINER -->
-          <v-sheet ref="day" :class="['day-container', 'border', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 559" tile>
+          <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 558">
             <!-- DAY HEADER -->
-            <v-sheet :class="['day-header', {month: mode == 'month'}]" :height="mode == 'month' ? 36 : 48" tile>
+            <v-sheet :class="['day-header', {month: mode == 'month'}]" :height="mode == 'month' ? 36 : 44" tile>
               <v-layout align-center>
                 <v-flex xs3>
                   <v-layout column align-center>
                     <span v-if="mode != 'month' && date.getUTCDate() != 1" class="overline">{{weekdays[date.getUTCDay()-1]}}</span>
                     <span v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}]">{{months[date.getUTCMonth()]}}</span>
-                    <span :class="[mode == 'month' ? 'title' : 'headline', 'short', 'font-family', 'gilroy', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
+                    <span :class="[mode == 'month' ? 'subtitle-1' : 'headline', 'short', 'font-family', 'gilroy', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
                   </v-layout>
                 </v-flex>
                 <v-flex v-if="schedules[date.toISOString()]" xs8>
@@ -31,7 +31,7 @@
                 <v-flex xs1></v-flex>
               </v-layout>
             </v-sheet>
-            <content-loader v-if="calendar.loading" :height="559" :width="180" :speed="0.5" :primary-color="$vuetify.theme.dark ? '#3C4043' : '#F1F3F4'" :secondary-color="$vuetify.theme.dark ? '#4E4F52' : '#E8EAED'">
+            <content-loader v-if="calendar.loading" :height="558" :width="180" :speed="0.5" :primary-color="$vuetify.theme.dark ? '#3C4043' : '#F1F3F4'" :secondary-color="$vuetify.theme.dark ? '#4E4F52' : '#E8EAED'">
               <rect x="75" y="25" rx="2" ry="2" width="30" height="12"></rect>
               <rect x="50" y="45" rx="2" ry="2" width="80" height="12"></rect>
               <rect x="0" y="85" rx="0" ry="0" width="180" height="10"></rect>
@@ -62,7 +62,7 @@
                     <!-- LUNCH PERIOD -->
                     <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
                       <!-- TODO: Find a way to extract id logic somewhere -->
-                      <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)" ga-on="click" ga-event-category="Lunch Menu" ga-event-action="click">
+                      <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" ga-on="click" ga-event-category="Lunch Menu" ga-event-action="click" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
                         <v-layout :class="{content: true, short: period.duration <= 50 || group.length > 1}" column align-center justify-center>
                           <div ref="periodNames">{{period.name}}</div>
                           <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
@@ -89,9 +89,9 @@
               {{schedules[date.toISOString()].name}}
             </v-layout>
           </v-sheet>
-          <v-timeline v-if="schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border" align-top dense>
-            <v-timeline-item v-for="event in schedules[date.toISOString()].events" :key="event.name" class="caption short" color="info" fill-dot small>
-              <span class="text-top text--secondary">{{event.start|formatTime}}&ndash;{{event.end|formatTime}} • </span>
+          <v-timeline v-if="mode != 'month' && schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick" align-top dense>
+            <v-timeline-item v-for="event in schedules[date.toISOString()].events" :key="event.name" class="caption short" :color="colors[event.category]" fill-dot small>
+              <span class="text-top text--secondary">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span>
               <span class="text-top">{{event.name}}</span>
             </v-timeline-item>
           </v-timeline>
@@ -150,6 +150,18 @@ export default {
       stayOpen: true,
       weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
       months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      colors: {
+        important: "yellow",
+        schoolwide: "red",
+        academics: "orange",
+        athletics: "green",
+        spirit: "teal",
+        perfarts: "blue",
+        clubs: "purple",
+        special: "pink",
+        info: "blue-grey",
+        other: "brown",
+      },
     };
   },
   computed: {
@@ -257,13 +269,17 @@ export default {
   border: 1px solid #9AA0A6 !important; /* for IE11 */
   border: 1px solid var(--v-secondary-base) !important;
 }
+.border-thick {
+  border: 2px solid #9AA0A6 !important; /* for IE11 */
+  border: 2px solid var(--v-secondary-base) !important;
+}
 .events {
-  margin-top: 1px;
-  margin-right: -1px;
+  margin-right: -2px;
   width: 180px;
+  border-radius: 2px;
 }
 .day-container {
-  margin: 0 -1px -1px 0;
+  margin: 0 -2px -2px 0;
   /*-webkit-transition: width 300ms, max-width 300ms, max-height 300ms;
           transition: width 300ms, max-width 300ms, max-height 300ms;*/
   -webkit-transition: all 300ms;
@@ -272,7 +288,6 @@ export default {
 .day-header:not(.month) {
   border-bottom: 1px solid #9AA0A6;
   border-bottom: 1px solid var(--v-secondary-base);
-  margin-bottom: -1px;
 }
 .column:not(:first-child) > .period {
   margin-left: 0;

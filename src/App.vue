@@ -2,29 +2,28 @@
   <v-app v-if="calendar.dates.length != 0">
     <v-app-bar app elevate-on-scroll>
       <v-spacer></v-spacer>
-      <v-btn class="hidden-print-only" icon @click="nextOrPrevious(false)" ga-on="click" ga-event-category="Previous" ga-event-action="click">
+      <v-btn class="hidden-print-only" icon ga-on="click" ga-event-category="Previous" ga-event-action="click" @click="nextOrPrevious(false)">
         <v-icon>chevron_left</v-icon>
       </v-btn>
-      <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
+      <!-- TODO: Figure out why offset-y stopped working after commit 6161b44 (8/19) -->
+      <v-menu v-model="datePicker" :close-on-content-click="false" nudge-bottom="24">
         <template v-slot:activator="{on: menu}">
-          <v-tooltip bottom open-delay="500" transition="scale-transition" origin="top center" key="datePicker">
+          <v-tooltip key="datePicker" bottom open-delay="500" transition="scale-transition" origin="top center">
             <template v-slot:activator="{on: tooltip}">
-              <v-btn class="hidden-print-only" icon v-on="{...tooltip, ...menu}" ga-on="click, contextmenu" ga-event-category="Date Picker Icon" ga-event-action="click">
+              <v-btn class="hidden-print-only" icon ga-on="click, contextmenu" ga-event-category="Date Picker Icon" ga-event-action="click" v-on="{...tooltip, ...menu}">
                 <v-icon>date_range</v-icon>
               </v-btn>
             </template>
             <span>Select a date</span>
           </v-tooltip>
         </template>
-        <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false">
-          
-        </v-date-picker>
+        <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false"></v-date-picker>
       </v-menu>
-      <v-btn class="hidden-print-only mr-2" icon @click="nextOrPrevious(true)" ga-on="click" ga-event-category="Next" ga-event-action="click">
+      <v-btn class="hidden-print-only mr-2" icon ga-on="click" ga-event-category="Next" ga-event-action="click" @click="nextOrPrevious(true)">
         <v-icon>chevron_right</v-icon>
       </v-btn>
       <transition name="fade" mode="out-in">
-        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-family gilroy font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '144px'}">
+        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-family gilroy font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px'}">
           <template v-if="$vuetify.breakpoint.smAndUp">
             <span v-if="mode == 'month'">{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
             <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
@@ -35,13 +34,13 @@
             <span v-else>{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
           </template>
         </v-toolbar-title>
-        <v-toolbar-title v-else key="title" class="headline font-family gilroy font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '215px' : '144px', cursor: 'pointer'}" @click="changeTitle" ga-on="click" ga-event-category="Title" ga-event-action="click">
+        <v-toolbar-title v-else key="title" class="headline font-family gilroy font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px', cursor: 'pointer'}" ga-on="click" ga-event-category="Title" ga-event-action="click" @click="changeTitle">
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
         </v-toolbar-title>
       </transition>
-      <v-menu offset-y>
+      <v-menu offset-y min-width="160">
         <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only ml-2" icon v-on="{...menu}" ga-on="click, contextmenu" ga-event-category="Settings Icon" ga-event-action="click">
+          <v-btn class="hidden-print-only ml-2" icon ga-on="click, contextmenu" ga-event-category="Settings Icon" ga-event-action="click" v-on="{...menu}">
             <v-icon>settings</v-icon>
           </v-btn>
         </template>
@@ -55,7 +54,7 @@
         <v-divider></v-divider>
         <v-list dense subheader>
           <v-subheader>Change view</v-subheader>
-          <v-list-item @click="changeMode('day')" ga-on="click" ga-event-category="Day" ga-event-action="click">
+          <v-list-item ga-on="click" ga-event-category="Day" ga-event-action="click" @click="changeMode('day')">
             <v-list-item-icon>
               <v-icon v-if="mode == 'day'">check</v-icon>
             </v-list-item-icon>
@@ -63,7 +62,7 @@
               <v-list-item-title>Day</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="changeMode('week')" ga-on="click" ga-event-category="Week" ga-event-action="click">
+          <v-list-item ga-on="click" ga-event-category="Week" ga-event-action="click" @click="changeMode('week')">
             <v-list-item-icon>
               <v-icon v-if="mode == 'week'">check</v-icon>
             </v-list-item-icon>
@@ -71,7 +70,7 @@
               <v-list-item-title>Week</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="changeMode('month')" ga-on="click" ga-event-category="Month" ga-event-action="click">
+          <v-list-item ga-on="click" ga-event-category="Month" ga-event-action="click" @click="changeMode('month')">
             <v-list-item-icon>
               <v-icon v-if="mode == 'month'">check</v-icon>
             </v-list-item-icon>
@@ -82,7 +81,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list>
-          <v-list-item @click="print" ga-on="click" ga-event-category="Print" ga-event-action="click">
+          <v-list-item ga-on="click" ga-event-category="Print" ga-event-action="click" @click="print">
             <v-list-item-icon style="margin-top: 10px; margin-bottom: 10px;">
               <v-icon>print</v-icon>
             </v-list-item-icon>
@@ -298,7 +297,7 @@ export default {
     });
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://bell.dev.harker.org", {timeout: 10000});
+    this.socket = io("http://localhost:5000"/*"https://bell.dev.harker.org"*/, {timeout: 10000});
     this.socket.on("connect", () => {
       console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
@@ -592,6 +591,7 @@ export default {
 <style>
 .v-application .font-family.gilroy {
   font-family: Gilroy, Roboto, sans-serif !important;
+  letter-spacing: -0.02rem !important;
 }
 .v-snack__wrapper {
   border-radius: 3px !important;
@@ -614,6 +614,9 @@ export default {
 }
 .blink {
   animation: blink 1.5s step-start infinite;
+}
+.v-list-item__icon:first-child {
+  margin-right: 18px !important;
 }
 @keyframes blink {
   50% {opacity: 0;}
