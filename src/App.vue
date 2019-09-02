@@ -1,6 +1,6 @@
 <template>
   <v-app v-if="calendar.dates.length != 0">
-    <v-app-bar app elevate-on-scroll style="overflow-x: scroll;">
+    <v-app-bar app elevate-on-scroll style="overflow-x: auto;">
       <v-spacer></v-spacer>
       <v-btn class="hidden-print-only" icon ga-on="click" ga-event-category="Previous" ga-event-action="click" @click="nextOrPrevious(false)">
         <v-icon>chevron_left</v-icon>
