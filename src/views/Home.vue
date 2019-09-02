@@ -71,8 +71,8 @@
                       </v-sheet>
                     </v-hover>
                     <!-- REGULAR PERIOD -->
-                    <v-sheet v-else :key="pIndex" class="period border caption text-center d-flex" :height="period.duration+1" tile>
-                      <v-layout :class="{content: true, short: period.duration <= 50 || group.length > 1}" column align-center justify-center>
+                    <v-sheet v-else :key="pIndex" class="period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile>
+                      <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}, getColor(period.name) && getColor(period.name)+'--text text--darken-4']" column align-center justify-center>
                         <div ref="periodNames">
                           {{period.name}}
                           <span v-if="period.start && period.duration < 30 && column.length <= 1" class="text-no-wrap"> {{period.start|formatTime}}&ndash;{{period.end|formatTime}}</span>
@@ -134,6 +134,10 @@ export default {
       required: true
     },
     schedules: {
+      type: Object,
+      required: true
+    },
+    settings: {
       type: Object,
       required: true
     },
@@ -234,6 +238,14 @@ export default {
   },
   methods: {
     /**
+     * 
+     */
+    getColor(period) {
+      if (this.settings.showColors && period && /^P[1-7]/.test(period))
+        return this.settings.periodColors[+period.substring(1, 2)-1];
+      return undefined;
+    },
+    /**
      * Shows the lunch menu for the lunch period element at the provided ID
      * @param {string} id ID of the lunch period element
      * @param {Date} date date of the lunch menu being shown
@@ -265,11 +277,11 @@ export default {
 .schedule-transition-move .day-container {
   overflow: hidden;
 }
-.border {
+.v-application div.border {
   border: 1px solid #9AA0A6 !important; /* for IE11 */
   border: 1px solid var(--v-secondary-base) !important;
 }
-.border-thick {
+.v-application div.border-thick {
   border: 2px solid #9AA0A6 !important; /* for IE11 */
   border: 2px solid var(--v-secondary-base) !important;
 }
@@ -286,8 +298,8 @@ export default {
           transition: all 300ms;
 }
 .day-header:not(.month) {
-  border-bottom: 1px solid #9AA0A6;
-  border-bottom: 1px solid var(--v-secondary-base);
+  border-bottom: 1px solid #9AA0A6 !important;
+  border-bottom: 1px solid var(--v-secondary-base) !important;
 }
 .column:not(:first-child) > .period {
   margin-left: 0;
@@ -295,9 +307,6 @@ export default {
 .content {
   padding: 0 2px 2px;
   overflow-y: hidden;
-}
-.short {
-  line-height: 1.2 !important;
 }
 .normal {
   line-height: normal;

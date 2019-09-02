@@ -1,7 +1,25 @@
+$spacer: 2px;
+$heading-font-family: Gilroy, Roboto, sans-serif;
+
 @import "~vuetify/src/styles/styles.sass";
 
-$heading-font-family: Gilroy !important; /* doesn't work */
 $headings: map-merge($headings, (
+  h5: map-merge(
+    map-get($headings, "h5"),
+    ("letter-spacing": -.02rem)
+  ),
+  h6: map-merge(
+    map-get($headings, "h6"),
+    ("letter-spacing": -.02rem)
+  ),
+  "body-1": map-merge(
+    map-get($headings, "body-1"),
+    ("size": .875rem)
+  ),
+  "body-2": map-merge(
+    map-get($headings, "body-2"),
+    ("size": .8125rem)
+  ),
   caption: map-merge(
     map-get($headings, "caption"),
     ("letter-spacing": 0.01rem)

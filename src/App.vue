@@ -1,6 +1,6 @@
 <template>
   <v-app v-if="calendar.dates.length != 0">
-    <v-app-bar app elevate-on-scroll>
+    <v-app-bar app elevate-on-scroll style="overflow-x: scroll;">
       <v-spacer></v-spacer>
       <v-btn class="hidden-print-only" icon ga-on="click" ga-event-category="Previous" ga-event-action="click" @click="nextOrPrevious(false)">
         <v-icon>chevron_left</v-icon>
@@ -23,7 +23,7 @@
         <v-icon>chevron_right</v-icon>
       </v-btn>
       <transition name="fade" mode="out-in">
-        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-family gilroy font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px'}">
+        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px'}">
           <template v-if="$vuetify.breakpoint.smAndUp">
             <span v-if="mode == 'month'">{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
             <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
@@ -34,7 +34,7 @@
             <span v-else>{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
           </template>
         </v-toolbar-title>
-        <v-toolbar-title v-else key="title" class="headline font-family gilroy font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px', cursor: 'pointer'}" ga-on="click" ga-event-category="Title" ga-event-action="click" @click="changeTitle">
+        <v-toolbar-title v-else key="title" class="headline font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px', cursor: 'pointer'}" ga-on="click" ga-event-category="Title" ga-event-action="click" @click="changeTitle">
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
         </v-toolbar-title>
       </transition>
@@ -95,7 +95,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content style="overflow-x: scroll;">
-      <div id="message-wrapper" style="height: 16px;">
+      <div id="message-wrapper" class="mb-2" style="height: 16px;">
         <div id="message" class="caption text-center hidden-print-only" v-html="message"></div>
       </div>
       <div class="text-center hidden-screen-only">
@@ -103,50 +103,68 @@
         <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
         <span v-else>{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
       </div>
-      <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu"></router-view>
+      <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules" :settings="settings" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu"></router-view>
     </v-content>
-    <v-dialog v-model="settings.dialog" eager :fullscreen="$vuetify.breakpoint.xsOnly" :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="480" @input="closeSettings">
+    <v-dialog v-model="settings.dialog" eager :fullscreen="$vuetify.breakpoint.xsOnly" :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="420" @input="closeSettings">
       <v-card>
         <v-app-bar elevate-on-scroll>
           <v-btn icon @click="closeSettings">
             <v-icon>close</v-icon>
           </v-btn>
-          <v-toolbar-title class="font-family gilroy font-weight-medium">Settings</v-toolbar-title>
+          <v-toolbar-title class="title font-weight-medium">Settings</v-toolbar-title>
           <v-spacer></v-spacer>
           <div class="overline">Version {{env.VUE_APP_VERSION}}</div>
         </v-app-bar>
-        <v-list>
+        <v-list subheader>
           <v-list-item>
-            <v-list-item-content>
-              Use dark theme
-            </v-list-item-content>
+            <v-list-item-content>Use dark theme</v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="$vuetify.theme.dark"></v-switch>
+              <v-switch v-model="$vuetify.theme.dark" :inset="features.ios"></v-switch>
             </v-list-item-action>
           </v-list-item>
         </v-list>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-item>
+            <v-list-item-content>Show period colors</v-list-item-content>
+            <v-list-item-action>
+              <v-switch v-model="settings.showColors" :inset="features.ios"></v-switch>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+        <v-card-text>
+          <v-row>
+            <v-col>
+              <color-setting v-for="i in 4" :key="i" :num="i" :settings="settings"></color-setting>
+            </v-col>
+            <v-divider vertical></v-divider>
+            <v-col>
+              <color-setting v-for="i in 3" :key="i+4" :num="i+4" :settings="settings"></color-setting>
+            </v-col>
+          </v-row>
+        </v-card-text>
         <v-card-actions>
           <v-layout justify-center>
-            <a href="https://www.netlify.com" target="_blank">
+            <!--<a href="https://www.netlify.com" target="_blank">
               <v-img height="51" :src="require('./assets/'+($vuetify.theme.dark?'netlify-dark.svg':'netlify-light.svg'))"></v-img>
-            </a>
+            </a>-->
           </v-layout>
         </v-card-actions>
       </v-card>
     </v-dialog>
     <v-menu v-model="menu.open" absolute :close-on-content-click="false" offset-x :position-x="menu.x" :position-y="menu.y">
       <v-card min-height="100" max-width="480">
-        <v-simple-table v-if="schedules[menu.date.toISOString()] && schedules[menu.date.toISOString()].lunch.length > 0" dense fixed-header height="240">
+        <v-simple-table v-if="schedules[menu.date.toISOString()] && schedules[menu.date.toISOString()].lunch.length > 0" dense fixed-header height="250">
           <thead>
             <tr>
-              <th>Location</th>
-              <th>Menu Item</th>
+              <th class="px-5">Location</th>
+              <th class="px-5">Menu Item</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in schedules[menu.date.toISOString()].lunch" :key="item.place">
-              <td class="subtitle-2" style="word-break: normal;">{{item.place}}</td>
-              <td class="body-2" style="white-space: pre-wrap;">{{item.food}}</td>
+              <td class="subtitle-2 px-5" style="word-break: normal;">{{item.place}}</td>
+              <td class="body-2 short py-2 px-5" style="white-space: pre-wrap;">{{item.food}}</td>
             </tr>
           </tbody>
         </v-simple-table>
@@ -173,9 +191,13 @@
 
 <script>
 import io from "socket.io-client";
+import ColorSetting from "./components/ColorSetting";
 var abcd = new Date;
 export default {
   name: "App",
+  components: {
+    ColorSetting
+  },
   data() {
     return {
       env: process.env,
@@ -210,6 +232,9 @@ export default {
       arrowAllowed: true,
       settings: {
         dialog: this.$route.name == "settings",
+        showColors: localStorage.getItem("showPeriodColors") || false,
+        periodColors: JSON.parse(localStorage.getItem("periodColors")) || ["blue2", "red2", "green2", "yellow2", "orange2", "teal2", "purple2"],
+        colors: ["red2", "deeporange2", "orange2", "yellow2", "lightgreen2", "green2", "teal2", "lightblue2", "blue2", "indigo2", "purple2", "pink2", "bluegrey2", "grey2"],
       },
       snackbars: {
         offlineReady: true,
@@ -218,6 +243,7 @@ export default {
       prevRoute: null,
       features: {
         indexedDB: window.indexedDB ? true : false,
+        ios: window.navigator.platform.toLowerCase().includes("ios") || window.navigator.platform.toLowerCase().includes("ipad")
       },
       longMonths: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -281,6 +307,10 @@ export default {
       localStorage.setItem("darkTheme", dark);
       if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
       else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
+    },
+    /** Handles changes to the period colors toggle setting. */
+    "settings.showColors"(showColors) {
+      localStorage.setItem("showPeriodColors", showColors);
     },
   },
   async created() {
@@ -589,12 +619,15 @@ export default {
 </script>
 
 <style>
-.v-application .font-family.gilroy {
+/*.v-application .font-family.gilroy {
   font-family: Gilroy, Roboto, sans-serif !important;
   letter-spacing: -0.02rem !important;
-}
+}*/
 .v-snack__wrapper {
   border-radius: 3px !important;
+}
+.v-date-picker-title__date {
+  font-size: 26px !important;
 }
 .v-menu__content {
   max-width: 95% !important;
@@ -604,6 +637,9 @@ export default {
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+.short {
+  line-height: 1.2 !important;
 }
 #message {
   position: fixed;
