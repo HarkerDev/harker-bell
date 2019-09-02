@@ -27,20 +27,22 @@ Sentry.init({
 Vue.config.productionTip = false;
 
 let timestamp = new Date();
-openDB("harker-bell-db", 1, {
-  upgrade(db) {
-    db.createObjectStore("schedules", {keyPath: "date"});
-  },
-}).then(db => {
-  console.log("==> DB: ", new Date()-timestamp);
-  window.db = db;
-  initVue();
-  console.log("==> VUE: ", new Date()-timestamp);
-}).catch(err => {
-  console.error(err);
-  window.db = null;
-  initVue();
-});
+if (window.indexedDB)
+  openDB("harker-bell-db", 1, {
+    upgrade(db) {
+      db.createObjectStore("schedules", {keyPath: "date"});
+    },
+  }).then(db => {
+    console.log("==> DB: ", new Date()-timestamp);
+    window.db = db;
+    initVue();
+    console.log("==> VUE: ", new Date()-timestamp);
+  }).catch(err => {
+    console.error(err);
+    window.db = null;
+    initVue();
+  });
+else initVue();
 function initVue() {
   var app = new Vue({
     router,
