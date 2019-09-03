@@ -15,7 +15,7 @@ export default new Vuetify({
         success: "#1E8E3E",
         info: "#4285F4",
         anchor: "#1A73E8",
-        red2: {lighten5: "#FAEAEA", darken4: "#CF2035"},
+        red2: {lighten5: "#FAEAEE", darken4: "#CF2035"},
         deeporange2: {lighten5: "#FEEDE8", darken4: "#FA7B17"},
         orange2: {lighten5: "#FEEFE3", darken4: "#B36600"},
         yellow2: {lighten5: "#FEF7E0", darken4: "#B06000"},
