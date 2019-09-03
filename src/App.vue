@@ -184,7 +184,7 @@
     </v-footer>
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
       A new version is available! Reload the page to update.
-      <v-btn text @click="refreshPwa">Reload</v-btn>
+      <v-btn text @click="refreshPWA">Reload</v-btn>
     </v-snackbar>
   </v-app>
 </template>
@@ -307,10 +307,12 @@ export default {
       localStorage.setItem("darkTheme", dark);
       if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
       else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
+      if (window.ga) window.ga("set", "dimension1", dark);
     },
     /** Handles changes to the period colors toggle setting. */
     "settings.showColors"(showColors) {
       localStorage.setItem("showPeriodColors", showColors);
+      if (window.ga) window.ga("set", "dimension2", showColors);
     },
   },
   async created() {
@@ -364,9 +366,6 @@ export default {
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
     });
     console.log("INIT DONE:\t", new Date-abcd);
-  },
-  beforeMount() {
-    console.log("beforeMount", new Date-abcd);
   },
   methods: {
     /**
@@ -521,7 +520,7 @@ export default {
       }, 100);
     },
     /** Reloads the page when the user clicks on the PWA update snackbar. */
-    refreshPwa() {
+    refreshPWA() {
       this.snackbars.pwaUpdated = false;
       window.location.reload(false);
     },
@@ -531,6 +530,7 @@ export default {
      */
     saveMode(mode) {
       localStorage.setItem("calendarMode", mode);
+      if (window.ga) window.ga("set", "dimension3", mode);
     },
     /**
      * Sets the calendar dates that will be displayed to the user based on the current view setting

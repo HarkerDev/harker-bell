@@ -55,3 +55,7 @@ ga("require", "eventTracker", {events: ["click", "contextmenu"]});
 ga("require", "outboundLinkTracker", {events: ["click", "contextmenu", "auxclick"]});
 ga("require", "pageVisibilityTracker", {visibleThreshold: 500, visibleMetricIndex: 1});
 ga("require", "urlChangeTracker");
+ga("set", "dimension1", localStorage.getItem("darkTheme"));
+ga("set", "dimension2", localStorage.getItem("showPeriodColors"));
+ga("set", "dimension3", localStorage.getItem("calendarMode"));
+ga("set", "dimension4", localStorage.getItem("scheduleRevision"));
