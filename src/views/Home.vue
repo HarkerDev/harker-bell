@@ -91,8 +91,8 @@
           </v-sheet>
           <v-timeline v-if="mode != 'month' && schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick" align-top dense>
             <v-timeline-item v-for="event in schedules[date.toISOString()].events" :key="event.name" class="caption short" :color="colors[event.category]" fill-dot small>
-              <span class="text-top text--secondary">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span>
-              <span class="text-top">{{event.name}}</span>
+              <span class="text-bottom text--secondary">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span>
+              <span class="text-bottom">{{event.name}}</span>
             </v-timeline-item>
           </v-timeline>
         </div>
@@ -155,15 +155,15 @@ export default {
       weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
       months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
       colors: {
-        important: "yellow",
-        schoolwide: "red",
-        academics: "orange",
-        athletics: "green",
-        spirit: "teal",
-        perfarts: "blue",
-        clubs: "purple",
-        special: "pink",
-        info: "blue-grey",
+        important: "yellow2",
+        schoolwide: "red2",
+        academics: "orange2",
+        athletics: "green2",
+        spirit: "teal2",
+        perfarts: "blue2",
+        clubs: "purple2",
+        special: "pink2",
+        info: "bluegrey2",
         other: "brown",
       },
     };
@@ -320,8 +320,8 @@ export default {
 .lunch {
   cursor: pointer;
 }
-.text-top {
-  vertical-align: text-top;
+.text-bottom {
+  vertical-align: text-bottom;
 }
 .font-transition {
   -webkit-transition: all 300ms;
