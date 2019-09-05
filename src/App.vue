@@ -243,7 +243,9 @@ export default {
       prevRoute: null,
       features: {
         indexedDB: window.indexedDB ? true : false,
-        ios: window.navigator.platform.toLowerCase().includes("ios") || window.navigator.platform.toLowerCase().includes("ipad")
+        ios: window.navigator.platform.toLowerCase().includes("ios") ||
+             window.navigator.platform.toLowerCase().includes("iphone") ||
+             window.navigator.platform.toLowerCase().includes("ipad"),
       },
       longMonths: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
