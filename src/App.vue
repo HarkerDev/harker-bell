@@ -343,7 +343,7 @@ export default {
     });
     this.socket.on("update message", message => {
       this.message = message;
-      this.lastUpdated = new Date();
+      this.io.lastUpdated = new Date();
       this.$nextTick(() => {
         document.getElementById("message-wrapper").style.height = document.getElementById("message").clientHeight+"px";
       });
@@ -352,6 +352,7 @@ export default {
       if (revision) {
         for (const schedule of schedules)
           await this.db.put("schedules", schedule);
+        this.io.lastUpdated = new Date();
         localStorage.setItem("scheduleRevision", revision);
         localStorage.setItem("lastUpdated", new Date().getTime());
         await this.setCalendar(this.$route);
