@@ -163,7 +163,7 @@
           </thead>
           <tbody>
             <tr v-for="item in schedules[menu.date.toISOString()].lunch" :key="item.place">
-              <td class="subtitle-2 px-5" style="word-break: normal;">{{item.place}}</td>
+              <td class="body-2 font-weight-medium px-5" style="word-break: normal;">{{item.place}}</td>
               <td class="body-2 short py-2 px-5" style="white-space: pre-wrap;">{{item.food}}</td>
             </tr>
           </tbody>
@@ -275,10 +275,10 @@ export default {
       }
     },
     formattedLastConnected() {
-      return this.formatDate(this.io.lastConnected);
+      return this.formatDate(this.io.lastConnected, true);
     },
     formattedLastUpdated() {
-      return this.formatDate(this.io.lastUpdated);
+      return this.formatDate(this.io.lastUpdated, false);
     },
     /** Converts the raw schedule array into an object. */
     schedules() {
@@ -295,6 +295,7 @@ export default {
       if (this.mode != "month" && route.name == "month") this.saveMode(this.mode = "month");
       else if (this.mode == "month" && route.name == "day") this.saveMode(this.mode = "week");
       if (["home", "day", "month"].includes(route.name)) this.setCalendar(route);
+      this.changeTitle();
     },
     /** Responds to lunch menu changes by keeping it open when choosing a different date. */
     "menu.open"(open) {
@@ -343,9 +344,9 @@ export default {
     });
     this.socket.on("update message", message => {
       this.message = message;
-      this.io.lastUpdated = new Date();
       this.$nextTick(() => {
-        document.getElementById("message-wrapper").style.height = document.getElementById("message").clientHeight+"px";
+        const el = document.getElementById("message-wrapper");
+        if (el) el.style.height = document.getElementById("message").clientHeight+"px";
       });
     });
     if (this.db) this.socket.on("update schedule", async (schedules, revision) => {
@@ -423,20 +424,24 @@ export default {
       else this.$router.push("/");
     },
     /**
-     * 
-     * @param {Date} date date to be formatted
+     * Formats a date into a human-readable representation. Can optionally omit the time portion.
+     * @param {Date} date         date to be formatted
+     * @param {boolean} showTime  whether or not to include the time portion of the date
+     * @return {string}           formatted date string, based on locale
      */
-    formatDate(timestamp) {
+    formatDate(timestamp, showTime) {
       if (!timestamp) return null;
       let date = new Date(+timestamp);
       if (new Date().setHours(0, 0, 0, 0) == new Date(+timestamp).setHours(0, 0, 0, 0))
         return date.toLocaleTimeString(undefined, {timeStyle: "short", hour: "numeric", minute: "2-digit"});
+      if (!showTime)
+        return date.toLocaleDateString(undefined, {dateStyle: "short", month: "numeric", day: "numeric", year: "2-digit"});
       return date.toLocaleDateString(undefined, {dateStyle: "short", timeStyle: "short", month: "numeric", day: "numeric", year: "2-digit", hour: "numeric", minute: "2-digit"});
     },
     /**
-     * 
-     * @param {Date[]} dates array of
-     * @return {Object[]}      array of schedules retrieved from IndexedDB, or an empty array if not available
+     * Retrives local schedules from IndexedDB if available.
+     * @param {Date[]} dates  array of dates
+     * @return {Object[]}     array of schedules retrieved from IndexedDB, or an empty array if not available
      */
     async getFromIndexedDB(dates) {
       let schedules = [];
@@ -453,8 +458,8 @@ export default {
       return schedules;
     },
     /**
-     * 
-     * @param {Date[]} dates array of
+     * Retrives remote schedules using the websocket.
+     * @param {Date[]} dates  array of dates
      */
     getFromSocket(dates) {
       console.log("getFromSocket");
@@ -542,6 +547,7 @@ export default {
      */
     async setCalendar(route) {
       console.log("SETCALENDAR: ", route);
+      console.log("BEGINCAL:\t", new Date-abcd);
       if (this.$route.name == "month" && this.mode != "month")
         this.saveMode(this.mode = "month");
       else if (this.$route.name == "day" && !["day", "week"].includes(this.mode))
@@ -586,6 +592,15 @@ export default {
         startDate = endDate = new Date(Date.UTC(year, month-1, day)); // date specified in URL
       else // if no date specified in URL path
         startDate = endDate = new Date(+this.calendar.currentDate);
+      if (this.mode == "day") {
+        let date = this.calendar.currentDate;
+        if (date.getUTCDay() == 0) date = new Date(+date+this.$MS_PER_DAY);
+        else if (date.getUTCDay() == 6) date = new Date(date-this.$MS_PER_DAY);
+        if (+date != +this.calendar.currentDate) {
+          this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
+          return;
+        }
+      }
       let dates = [];
       while (startDate <= endDate) {
         if (startDate.getUTCDay() > 0 && startDate.getUTCDay() < 6) // if date is a weekday
@@ -595,7 +610,6 @@ export default {
       if (this.db) this.rawSchedules = await this.getFromIndexedDB(dates);
       else if (this.socket) this.getFromSocket(dates);
       this.calendar.dates = dates;
-      this.changeTitle();
       console.log("SET CAL:\t", new Date-abcd);
     },
     /**
@@ -622,10 +636,6 @@ export default {
 </script>
 
 <style>
-/*.v-application .font-family.gilroy {
-  font-family: Gilroy, Roboto, sans-serif !important;
-  letter-spacing: -0.02rem !important;
-}*/
 .v-snack__wrapper {
   border-radius: 3px !important;
 }
