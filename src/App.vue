@@ -46,8 +46,19 @@
         </template>
         <v-list>
           <v-list-item @click="$router.push('/settings')">
+            <v-list-item-icon class="list-item-icon">
+              <v-icon>tune</v-icon>
+            </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Settings</v-list-item-title>
+              <v-list-item-title class="list-item-text">Settings</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="">
+            <v-list-item-icon class="list-item-icon">
+              <v-icon>open_in_new</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="list-item-text">Submit an Event</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -82,11 +93,11 @@
         <v-divider></v-divider>
         <v-list>
           <v-list-item ga-on="click" ga-event-category="Print" ga-event-action="click" @click="print">
-            <v-list-item-icon style="margin-top: 10px; margin-bottom: 10px;">
+            <v-list-item-icon class="list-item-icon">
               <v-icon>print</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Print</v-list-item-title>
+              <v-list-item-title class="list-item-text">Print</v-list-item-title>
               <v-list-item-subtitle v-if="$vuetify.theme.dark">Light theme recommended</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -661,16 +672,26 @@ export default {
   transform: translateX(-50%);
   line-height: normal;
 }
-.blink {
-  animation: blink 1.5s step-start infinite;
-}
 .v-list-item__icon:first-child {
   margin-right: 18px !important;
+}
+.list-item-icon {
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+.list-item-text {
+  font-size: 15px;
+}
+.blink {
+  animation: blink 1.5s step-start infinite;
 }
 @keyframes blink {
   50% {opacity: 0;}
 }
 @media print {
   @page {size: landscape;}
+}
+body {
+  -webkit-print-color-adjust: exact !important;
 }
 </style>
