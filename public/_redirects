@@ -1,3 +1,4 @@
-/docs/* https://harker-bell-docs.netlify.com/:splat 200
-/api/*  https://bell.dev.harker.org/api/:splat      200
-/*      /index.html                                 200
+/docs/*       https://harker-bell-docs.netlify.com/:splat 200
+/api/*        https://bell.dev.harker.org/api/:splat      200
+/*            /index.html                                 200
+/submitevent  https://docs.google.com/forms/d/e/1FAIpQLSeWUzPcr079_ZhXHlRcwKwsoMjJL5O_ZsWVulzMjqVxHOb7Fg/viewform

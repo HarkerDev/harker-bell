@@ -53,12 +53,12 @@
               <v-list-item-title class="list-item-text">Settings</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="">
+          <v-list-item href="https://bell.harker.org/submitevent" target="_blank">
             <v-list-item-icon class="list-item-icon">
               <v-icon>open_in_new</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title class="list-item-text">Submit an Event</v-list-item-title>
+              <v-list-item-title class="list-item-text">Submit an event</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -243,7 +243,7 @@ export default {
       arrowAllowed: true,
       settings: {
         dialog: this.$route.name == "settings",
-        showColors: localStorage.getItem("showPeriodColors") || false,
+        showColors: localStorage.getItem("showPeriodColors") || true,
         periodColors: JSON.parse(localStorage.getItem("periodColors")) || ["blue2", "red2", "green2", "yellow2", "orange2", "teal2", "purple2"],
         colors: ["red2", "deeporange2", "orange2", "yellow2", "lightgreen2", "green2", "teal2", "lightblue2", "blue2", "indigo2", "purple2", "pink2", "bluegrey2", "grey2"],
       },
@@ -648,7 +648,7 @@ export default {
 
 <style>
 .v-snack__wrapper {
-  border-radius: 3px !important;
+  border-radius: 2px !important;
 }
 .v-date-picker-title__date {
   font-size: 26px !important;
