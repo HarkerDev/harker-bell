@@ -56,6 +56,10 @@
             </div>
             <!-- WEEK DAY CONTENT -->
             <template v-else>
+              <div v-if="time.today.getTime() == date.getTime() && showIndicator(time.utcNow, date)">
+                <div class="error" :style="{position: 'absolute', borderTopWidth: '2px', borderTopStyle: 'solid', marginTop: '44px', top: indicatorTop(time.utcNow, date)+'px', left: 0, right: '-2px', zIndex: 3}"></div>
+                <div class="error" :style="{position: 'absolute', borderRadius: '50%', height: '10px', width: '10px', marginTop: '40px', marginLeft: '-6px', top: indicatorTop(time.utcNow, date)+'px', zIndex: 3}"></div>
+              </div>
               <v-layout v-for="(group, gIndex) in computedSchedules[date.toISOString()]" :key="gIndex" class="group">
                 <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
                   <template v-for="(period, pIndex) in column">
@@ -67,6 +71,7 @@
                           <div ref="periodNames">{{period.name}}</div>
                           <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                           <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+                          <div v-if="period.duration >= 45 && time.utcNow >= period.start && time.utcNow <= period.end" class="overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                         </v-layout>
                       </v-sheet>
                     </v-hover>
@@ -79,6 +84,7 @@
                         </div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                         <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+                        <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                       </v-layout>
                     </v-sheet>
                   </template>
@@ -116,7 +122,7 @@ export default {
       if (typeof date == "string") date = new Date(date);
       return (date.getUTCHours()+11)%12+1+":"+ // convert hours to 12-hour time
              ("0"+date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
-    }
+    },
   },
   props: {
     calendar: {
@@ -144,6 +150,10 @@ export default {
     sheetId: {
       type: String,
       default: null
+    },
+    time: {
+      type: Object,
+      required: true
     },
   },
   data() {
@@ -254,6 +264,26 @@ export default {
       this.$emit('show-menu', id, date);
       this.open = this.stayOpen = true;
     },
+    /**
+     * Determines whether to show the current time indicator for a certain date.
+     * @param {Date} now  current time, adjusted to UTC
+     * @param {Date} date date of the schedule in question
+     * @return {boolean}  true if the current falls within the schedule range; otherwise, false
+     */
+    showIndicator(now, date) {
+      console.log("DATUM: "+date);
+      let schedule = this.schedules[date.toISOString()];
+      if (!schedule || schedule.schedule.length == 0) return false;
+      schedule = schedule.schedule;
+      return now >= schedule[0].start && now <= schedule[schedule.length-1].end;
+    },
+    /**
+     * 
+     */
+    indicatorTop(now, date) {
+      console.log("INDICTOP: "+(now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN)
+      return (now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN;
+    },
     /** TODO: DOCUMENT THIS */
     transitionEnd() {
       this.ref.removeEventListener("transitionend", this.transitionEnd);
@@ -322,6 +352,9 @@ export default {
 }
 .text-bottom {
   vertical-align: text-bottom;
+}
+.short .overline {
+  line-height: 1.3;
 }
 .font-transition {
   -webkit-transition: all 300ms;

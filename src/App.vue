@@ -114,7 +114,7 @@
         <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
         <span v-else>{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
       </div>
-      <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules" :settings="settings" :sheet-id="menu.open ? menu.sheetId : null" @show-menu="showMenu"></router-view>
+      <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules" :settings="settings" :sheet-id="menu.open ? menu.sheetId : null" :time="time" @show-menu="showMenu"></router-view>
     </v-content>
     <v-dialog v-model="settings.dialog" :fullscreen="$vuetify.breakpoint.xsOnly" :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="420" @input="closeSettings">
       <v-card>
@@ -203,6 +203,7 @@
 <script>
 import io from "socket.io-client";
 import ColorSetting from "./components/ColorSetting";
+import { setInterval } from 'timers';
 var abcd = new Date;
 export default {
   name: "App",
@@ -222,7 +223,7 @@ export default {
       mode: localStorage.getItem("calendarMode") || "week",
       rawSchedules: [],
       calendar: {
-        currentDate: this.getCurrentUTCMidnight(), // TODO: this or null?
+        currentDate: null,
         currentMonth: null,
         dates: [],
         keepCurrentDate: false,
@@ -231,6 +232,8 @@ export default {
         loading: false,
       },
       message: "",
+      datePicker: false,
+      arrowAllowed: true,
       menu: {
         open: false,
         openTracker: 0,
@@ -239,13 +242,16 @@ export default {
         x: 0,
         y: 0,
       },
-      datePicker: false,
-      arrowAllowed: true,
       settings: {
         dialog: this.$route.name == "settings",
         showColors: localStorage.getItem("showPeriodColors") || true,
         periodColors: JSON.parse(localStorage.getItem("periodColors")) || ["blue2", "red2", "green2", "yellow2", "orange2", "teal2", "purple2"],
         colors: ["red2", "deeporange2", "orange2", "yellow2", "lightgreen2", "green2", "teal2", "lightblue2", "blue2", "indigo2", "purple2", "pink2", "bluegrey2", "grey2"],
+      },
+      time: {
+        now: new Date(),
+        utcNow: new Date(new Date()-new Date().getTimezoneOffset()*60000),
+        today: null,
       },
       snackbars: {
         offlineReady: true,
@@ -332,8 +338,9 @@ export default {
   async created() {
     console.log(new Date-abcd);
     console.log(new Date-abcd);
-    /** Number of milliseconds in a day */
-    this.$MS_PER_DAY = 24*60*60*1000;
+    /** Number of milliseconds per minute and day */
+    this.$MS_PER_MIN = 60*1000;
+    this.$MS_PER_DAY = this.$MS_PER_MIN*60*24;
     if (localStorage.getItem("darkTheme") == "true") {
       this.$vuetify.theme.dark = true;
       document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
@@ -341,6 +348,7 @@ export default {
     window.addEventListener("pwaUpdated", () => {
       this.snackbars.pwaUpdated = true;
     });
+    this.time.today = this.getCurrentUTCMidnight();
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
     this.socket = io("https://bell.dev.harker.org", {timeout: 10000});
@@ -376,11 +384,18 @@ export default {
       localStorage.setItem("lastConnected", now.getTime());
     });
     if (!localStorage.getItem("scheduleRevision")) this.getFromSocket(this.calendar.dates);
+    console.log("INIT DONE:\t", new Date-abcd);
+  },
+  mounted() {
+    setInterval(() => {
+      this.time.now = new Date();
+      this.time.utcNow = new Date(this.time.now-this.time.now.getTimezoneOffset()*this.$MS_PER_MIN);
+      this.time.today = this.getCurrentUTCMidnight();
+    }, this.$MS_PER_MIN);
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
     });
-    console.log("INIT DONE:\t", new Date-abcd);
   },
   methods: {
     /**
@@ -492,7 +507,7 @@ export default {
      */
     getCurrentUTCMidnight() {
       let now = new Date();
-      let date = new Date(now-now.getTimezoneOffset()*60*1000);
+      let date = new Date(now-now.getTimezoneOffset()*this.$MS_PER_MIN);
       date.setUTCHours(0, 0, 0, 0);
       return date;
     },

@@ -21,7 +21,7 @@ module.exports = {
     workboxOptions: {
       clientsClaim: true,
       navigateFallback: "/index.html",
-      navigateFallbackBlacklist: [/api/, /docs/, /admin/],
+      navigateFallbackBlacklist: [/api/, /docs/, /admin/, /submitevent/],
       offlineGoogleAnalytics: true,
       runtimeCaching: [{
         urlPattern: "https://www.google-analytics.com/analytics.js",
