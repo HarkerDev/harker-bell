@@ -502,6 +502,7 @@ export default {
      * @return {Date}     the latest sunday on or before date
      */
     getSunday(date) {
+      date = new Date(date);
       date.setUTCDate(date.getUTCDate()-date.getUTCDay());
       return date;
     },
@@ -516,14 +517,15 @@ export default {
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (this.mode == "month")
         date.setUTCMonth(date.getUTCMonth()+sign*1);
-      else if (this.mode == "week")
-        date.setUTCDate(date.getUTCDate()+sign*7);
+      else if (this.mode == "week") {
+        date = this.getSunday(new Date(+date+sign*7*this.$MS_PER_DAY));
+        date.setUTCDate(date.getUTCDate()+1);
       // if going next and it's a friday, then skip directly to monday, and vice versa
-      else if (isNext && date.getUTCDay() == 5 || !isNext && date.getUTCDay() == 1)
+      } else if (isNext && date.getUTCDay() == 5 || !isNext && date.getUTCDay() == 1)
         date.setUTCDate(date.getUTCDate()+sign*3);
       else // day mode
         date.setUTCDate(date.getUTCDate()+sign*1);
-      if (+date == +today ||
+      if (+date == +today || this.mode == "week" && +this.getSunday(date) == +this.getSunday(today) ||
           this.mode == "month" && new Date(+date).setUTCDate(1) == new Date(+today).setUTCDate(1))
         this.$router.push("/");
       else if (this.mode == "month")
