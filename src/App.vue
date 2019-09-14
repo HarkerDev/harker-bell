@@ -387,11 +387,10 @@ export default {
     console.log("INIT DONE:\t", new Date-abcd);
   },
   mounted() {
-    setInterval(() => {
-      this.time.now = new Date();
-      this.time.utcNow = new Date(this.time.now-this.time.now.getTimezoneOffset()*this.$MS_PER_MIN);
-      this.time.today = this.getCurrentUTCMidnight();
-    }, this.$MS_PER_MIN);
+    setInterval(this.updateTime(), this.$MS_PER_MIN);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) this.updateTime();
+    });
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
@@ -658,6 +657,12 @@ export default {
       this.$nextTick(() => {
         this.menu.open = true;
       });
+    },
+    /**  */
+    updateTime() {
+      this.time.now = new Date();
+      this.time.utcNow = new Date(this.time.now-this.time.now.getTimezoneOffset()*this.$MS_PER_MIN);
+      this.time.today = this.getCurrentUTCMidnight();
     },
   },
 };
