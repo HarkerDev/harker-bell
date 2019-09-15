@@ -105,13 +105,6 @@
       </v-menu>
       <v-spacer></v-spacer>
     </v-app-bar>
-    <v-banner>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent cursus nec sem id malesuada.
-      Curabitur lacinia sem et turpis euismod, eget elementum ex pretium.
-      <template v-slot:actions>
-        hi
-      </template>
-    </v-banner>
     <v-content style="overflow-x: scroll;">
       <div id="message-wrapper" class="mb-2" style="height: 16px;">
         <div id="message" class="caption text-center hidden-print-only" v-html="message"></div>
