@@ -10,13 +10,13 @@
           <!-- DAY CONTAINER -->
           <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 558">
             <!-- DAY HEADER -->
-            <v-sheet :class="['day-header', {month: mode == 'month'}]" :height="mode == 'month' ? 36 : 44" tile>
+            <v-sheet :class="['day-header', {month: mode == 'month'}]" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" :height="mode == 'month' ? 36 : 44" tile>
               <v-layout align-center>
                 <v-flex xs3>
                   <v-layout column align-center>
-                    <span v-if="mode != 'month' && date.getUTCDate() != 1" class="overline">{{weekdays[date.getUTCDay()-1]}}</span>
-                    <span v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}]">{{months[date.getUTCMonth()]}}</span>
-                    <span :class="[mode == 'month' ? 'subtitle-1' : 'headline', 'short', 'font-family', 'gilroy', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition']">{{date.getUTCDate()}}</span>
+                    <span v-if="mode != 'month' && date.getUTCDate() != 1" :class="['overline', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{weekdays[date.getUTCDay()-1]}}</span>
+                    <span v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}, {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{months[date.getUTCMonth()]}}</span>
+                    <span :class="[mode == 'month' ? 'subtitle-1' : 'headline', 'short', 'font-family', 'gilroy', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{date.getUTCDate()}}</span>
                   </v-layout>
                 </v-flex>
                 <v-flex v-if="schedules[date.toISOString()]" xs8>
@@ -327,9 +327,10 @@ export default {
   -webkit-transition: all 300ms;
           transition: all 300ms;
 }
-.day-header:not(.month) {
+.v-application .day-header:not(.month) {
   border-bottom: 1px solid #9AA0A6 !important;
   border-bottom: 1px solid var(--v-secondary-base) !important;
+  border-color: var(--v-secondary-base) !important;
 }
 .column:not(:first-child) > .period {
   margin-left: 0;
