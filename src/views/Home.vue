@@ -8,7 +8,7 @@
       <v-layout v-for="(n, i) in Math.ceil(calendar.dates.length/5)" :key="calendar.dates[i*5].getTime()" justify-center>
         <div v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()">
           <!-- DAY CONTAINER -->
-          <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 558">
+          <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 498">
             <!-- DAY HEADER -->
             <v-sheet :class="['day-header', {month: mode == 'month'}]" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" :height="mode == 'month' ? 36 : 44" tile>
               <v-layout align-center>
@@ -31,7 +31,7 @@
                 <v-flex xs1></v-flex>
               </v-layout>
             </v-sheet>
-            <content-loader v-if="calendar.loading" :height="558" :width="180" :speed="0.5" :primary-color="$vuetify.theme.dark ? '#3C4043' : '#F1F3F4'" :secondary-color="$vuetify.theme.dark ? '#4E4F52' : '#E8EAED'">
+            <content-loader v-if="calendar.loading" :height="498" :width="180" :speed="0.5" :primary-color="$vuetify.theme.dark ? '#3C4043' : '#F1F3F4'" :secondary-color="$vuetify.theme.dark ? '#4E4F52' : '#E8EAED'">
               <rect x="75" y="25" rx="2" ry="2" width="30" height="12"></rect>
               <rect x="50" y="45" rx="2" ry="2" width="80" height="12"></rect>
               <rect x="0" y="85" rx="0" ry="0" width="180" height="10"></rect>
