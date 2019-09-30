@@ -183,12 +183,12 @@
       </v-card>
     </v-menu>
     <v-footer class="hidden-print-only" app color="primary" elevation="2" fixed padless>
-      <div class="caption mx-2">
+      <div class="caption no-select mx-2">
         <span>Last connected </span>
         <span :class="{'success--text': io.connected}">{{io.connected ? "just now" : formattedLastConnected || "never"}}</span>
       </div>
       <v-spacer></v-spacer>
-      <div class="caption mx-2">
+      <div class="caption no-select mx-2">
         <span>Last updated </span>
         <span>{{formattedLastUpdated || "never"}}</span>
       </div>
@@ -394,6 +394,11 @@ export default {
     window.addEventListener("keyup", event => {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
+      else if (event.key == "ArrowDown" || event.keyCode == 40 ||
+               event.key == "KeyT" || event.keyCode == 84) this.$router.push("/").catch(() => {});
+      else if (event.key == "KeyD" || event.keyCode == 68) this.changeMode("day");
+      else if (event.key == "KeyW" || event.keyCode == 87) this.changeMode("week");
+      else if (event.key == "KeyD" || event.keyCode == 77) this.changeMode("month");
     });
   },
   methods: {
@@ -693,6 +698,12 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   line-height: normal;
+}
+.no-select {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 .v-list-item__icon:first-child {
   margin-right: 18px !important;
