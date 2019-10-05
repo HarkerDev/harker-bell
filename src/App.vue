@@ -53,6 +53,14 @@
               <v-list-item-title class="list-item-text">Settings</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item href="https://bell.harker.org/docs/shortcuts" target="_blank">
+            <v-list-item-icon class="list-item-icon">
+              <v-icon>keyboard</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="list-item-text">Keyboard shortcuts</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item href="https://bell.harker.org/submitevent" target="_blank">
             <v-list-item-icon class="list-item-icon">
               <v-icon>open_in_new</v-icon>
@@ -716,7 +724,7 @@ export default {
   font-size: 15px;
 }
 .blink {
-  animation: blink 1.5s step-start infinite;
+  animation: blink 1s step-start infinite;
 }
 @keyframes blink {
   50% {opacity: 0;}

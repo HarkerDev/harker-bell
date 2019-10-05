@@ -14,11 +14,11 @@
     "autotrack": "^2.4.1",
     "idb": "^4.0.4",
     "register-service-worker": "^1.6.2",
-    "socket.io-client": "^2.2.0",
+    "socket.io-client": "^2.3.0",
     "vue": "^2.6.10",
     "vue-content-loader": "^0.2.2",
     "vue-router": "^3.1.3",
-    "vuetify": "^2.0.16"
+    "vuetify": "^2.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",
@@ -30,7 +30,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.3",
     "fibers": "^4.0.1",
-    "sass": "^1.22.10",
+    "sass": "^1.22.12",
     "sass-loader": "^7.3.1",
     "vue-cli-plugin-vuetify": "^0.6.3",
     "vue-template-compiler": "^2.6.10",

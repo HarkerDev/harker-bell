@@ -298,6 +298,9 @@ export default {
 .v-chip {
   padding: 0 6px;
 }
+.v-sheet {
+  position: relative;
+}
 .schedule-transition-move {
   /*-webkit-transition: -webkit-transform 300ms;
           transition: transform 300ms;*/
