@@ -202,7 +202,7 @@
       </div>
     </v-footer>
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
-      A new version is available! Reload the page to update.
+      A new version is available! Refresh the page to update.
       <v-btn text @click="refreshPWA">Reload</v-btn>
     </v-snackbar>
   </v-app>
@@ -724,7 +724,7 @@ export default {
   font-size: 15px;
 }
 .blink {
-  animation: blink 1s step-start infinite;
+  animation: blink 1.25s step-start infinite;
 }
 @keyframes blink {
   50% {opacity: 0;}
