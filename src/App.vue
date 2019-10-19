@@ -332,15 +332,15 @@ export default {
     },
     /** Handles changes to the dark mode setting. */
     "$vuetify.theme.dark"(dark) {
-      localStorage.setItem("darkTheme", dark);
+      localStorage.setItem("darkTheme", dark.toString());
       if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
       else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
-      if (window.ga) window.ga("set", "dimension1", dark);
+      if (window.ga) window.ga("set", "dimension1", dark.toString());
     },
     /** Handles changes to the period colors toggle setting. */
     "settings.showColors"(showColors) {
-      localStorage.setItem("showPeriodColors", showColors);
-      if (window.ga) window.ga("set", "dimension2", showColors);
+      localStorage.setItem("showPeriodColors", showColors.toString());
+      if (window.ga) window.ga("set", "dimension2", showColors.toString());
     },
   },
   async created() {
