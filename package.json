@@ -21,10 +21,10 @@
     "vuetify": "^2.1.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.11.0",
-    "@vue/cli-plugin-eslint": "^3.11.0",
-    "@vue/cli-plugin-pwa": "^3.11.0",
-    "@vue/cli-service": "^3.11.0",
+    "@vue/cli-plugin-babel": "^3.12.1",
+    "@vue/cli-plugin-eslint": "^3.12.1",
+    "@vue/cli-plugin-pwa": "^3.12.1",
+    "@vue/cli-service": "^3.12.1",
     "babel-eslint": "^10.0.3",
     "deepmerge": "^3.3.0",
     "eslint": "^5.16.0",
