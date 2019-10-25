@@ -10,6 +10,9 @@ module.exports = {
       }
     }
   },
+  devServer: {
+    overlay: false
+  },
   pwa: {
     name: "Harker Bell Schedule",
     themeColor: "#FFFFFF",
