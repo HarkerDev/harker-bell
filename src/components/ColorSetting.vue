@@ -1,10 +1,7 @@
 <template>
   <v-row no-gutters>
     <v-col>
-      <v-subheader class="body-1">P{{num}}</v-subheader>
-    </v-col>
-    <v-col cols="auto">
-      <v-text-field v-model="settings.periodNames[num-1]" color="accent" counter="20" dense placeholder="Custom Name"></v-text-field>
+      <v-subheader :class="['body-1', 'flex-end', {'text--disabled': !settings.showColors}]">P{{num}}</v-subheader>
     </v-col>
     <v-col cols="auto">
       <v-select v-model="settings.periodColors[num-1]" class="mx-8" color="accent" dense :disabled="!settings.showColors" hide-details :items="settings.colors" :menu-props="{'max-width': 56}" style="width: 52px;" @input="onChange">
@@ -64,5 +61,7 @@ export default {
 </script>
 
 <style scoped>
-
+.flex-end {
+  align-items: flex-end;
+}
 </style>

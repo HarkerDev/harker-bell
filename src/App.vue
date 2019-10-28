@@ -154,7 +154,11 @@
         <v-card-text>
           <v-row>
             <v-col>
-              <period-setting v-for="i in 7" :key="i" :num="i" :settings="settings"></period-setting>
+              <color-setting v-for="i in 4" :key="i" :num="i" :settings="settings"></color-setting>
+            </v-col>
+            <v-divider vertical></v-divider>
+            <v-col>
+              <color-setting v-for="i in 3" :key="i+4" :num="i+4" :settings="settings"></color-setting>
             </v-col>
           </v-row>
         </v-card-text>
@@ -206,13 +210,13 @@
 
 <script>
 import io from "socket.io-client";
-import PeriodSetting from "./components/PeriodSetting";
-
+import ColorSetting from "./components/ColorSetting";
+import { setInterval } from 'timers';
 var abcd = new Date;
 export default {
   name: "App",
   components: {
-    PeriodSetting
+    ColorSetting
   },
   data() {
     return {
@@ -250,7 +254,6 @@ export default {
         dialog: this.$route.name == "settings",
         showColors: localStorage.getItem("showPeriodColors") || false,
         periodColors: JSON.parse(localStorage.getItem("periodColors")) || ["blue2", "red2", "green2", "yellow2", "orange2", "teal2", "purple2"],
-        periodNames: JSON.parse(localStorage.getItem("periodNames")) || [],
         colors: ["red2", "deeporange2", "orange2", "yellow2", "lightgreen2", "green2", "teal2", "lightblue2", "blue2", "indigo2", "purple2", "pink2", "bluegrey2", "grey2"],
       },
       time: {
@@ -397,7 +400,6 @@ export default {
       if (!document.hidden) this.updateTime();
     });
     window.addEventListener("keyup", event => {
-      if (this.settings.dialog) return;
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
       else if (event.key == "ArrowDown" || event.keyCode == 40 ||
