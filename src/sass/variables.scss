@@ -32,10 +32,13 @@ $material-dark: map-merge($material-dark, (
   "background": #202124,
   "cards": #202124,
 ));
-$border-radius-root: 2px;
+$btn-border-radius: 2px;
 $btn-outline-border-width: 1px;
+$tooltip-border-radius: 2px;
 $tooltip-font-size: 12px;
 $sheet-border-radius: 2px;
+$menu-content-border-radius: 2px;
+$dialog-border-radius: 2px;
 $icon-outlined-border-width: 1px;
 $list-item-min-height: 36px;
 $timeline-dot-small-size: 7px;
