@@ -6,7 +6,7 @@
         <v-icon>chevron_left</v-icon>
       </v-btn>
       <!-- TODO: Figure out why offset-y stopped working after commit 6161b44 (8/19) -->
-      <v-menu v-model="datePicker" :close-on-content-click="false" bottom offset-y>
+      <v-menu v-model="datePicker" :close-on-content-click="false" nudge-bottom="24">
         <template v-slot:activator="{on: menu}">
           <v-tooltip key="datePicker" bottom open-delay="500" transition="scale-transition" origin="top center">
             <template v-slot:activator="{on: tooltip}">
