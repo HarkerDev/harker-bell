@@ -3,6 +3,13 @@ process.env.VUE_APP_VERSION = require("./package.json").version;
 module.exports = {
   productionSourceMap: true,
   transpileDependencies: ["autotrack", "dom-utils", "idb", "vuetify"],
+  css: {
+    loaderOptions: {
+      sass: {
+        data: `@import "~@/sass/main.scss"`
+      }
+    }
+  },
   devServer: {
     overlay: false
   },
@@ -12,24 +19,7 @@ module.exports = {
     msTileColor: "#005841",
     appleMobileWebAppCapable: "yes",
     manifestOptions: {
-      name: "Harker Bell Schedule",
-      short_name: "Harker Bell",
-      icons: [
-        {
-          src: "./img/icons/android-chrome-192x192.png",
-          sizes: "192x192",
-          type: "image/png"
-        },
-        {
-          src: "./img/icons/android-chrome-512x512.png",
-          sizes: "512x512",
-          type: "image/png"
-        }
-      ],
-      start_url: "./?utm_source=a2hs",
-      display: "standalone",
-      background_color: "#FFFFFF",
-      theme_color: "#005841"
+      short_name: "Harker Bell"
     },
     workboxOptions: {
       clientsClaim: true,
