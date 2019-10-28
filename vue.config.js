@@ -11,7 +11,6 @@ module.exports = {
     themeColor: "#FFFFFF",
     msTileColor: "#005841",
     appleMobileWebAppCapable: "yes",
-    manifestPath: "manifest.json",
     workboxOptions: {
       clientsClaim: true,
       navigateFallback: "/index.html",
