@@ -6,16 +6,11 @@
         <v-icon>chevron_left</v-icon>
       </v-btn>
       <!-- TODO: Figure out why offset-y stopped working after commit 6161b44 (8/19) -->
-      <v-menu v-model="datePicker" :close-on-content-click="false" bottom offset-y>
-        <template v-slot:activator="{on: menu}">
-          <v-tooltip key="datePicker" bottom open-delay="500" transition="scale-transition" origin="top center">
-            <template v-slot:activator="{on: tooltip}">
-              <v-btn class="hidden-print-only" icon ga-on="click, contextmenu" ga-event-category="Date Picker Icon" ga-event-action="click" v-on="{...tooltip, ...menu}">
-                <v-icon>date_range</v-icon>
-              </v-btn>
-            </template>
-            <span>Select a date</span>
-          </v-tooltip>
+      <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
+        <template v-slot:activator="{on}">
+          <v-btn class="hidden-print-only" icon ga-on="click, contextmenu" ga-event-category="Date Picker Icon" ga-event-action="click" v-on="on">
+            <v-icon>date_range</v-icon>
+          </v-btn>
         </template>
         <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false"></v-date-picker>
       </v-menu>
