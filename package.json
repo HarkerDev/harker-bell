@@ -49,7 +49,7 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "no-console": 1,
+      "no-console": "warning",
       "vue/no-multi-spaces": "warning"
     }
   },
