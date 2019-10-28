@@ -5,7 +5,7 @@
   "author": "Bowen Yin",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --modern --silent",
+    "build": "vue-cli-service build --modern",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -50,7 +50,7 @@
     },
     "rules": {
       "no-console": 1,
-      "vue/no-multi-spaces": "warning"
+      "vue/no-multi-spaces": 1
     }
   },
   "postcss": {
