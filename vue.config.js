@@ -16,7 +16,6 @@ module.exports = {
     msTileColor: "#005841",
     appleMobileWebAppCapable: "yes",
     workboxOptions: {
-      cleanupOutdatedCaches: true,
       clientsClaim: true,
       navigateFallback: "/index.html",
       navigateFallbackBlacklist: [/api/, /docs/, /admin/, /submitevent/],
