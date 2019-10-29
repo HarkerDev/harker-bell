@@ -123,19 +123,6 @@ export default {
       return (date.getUTCHours()+11)%12+1+":"+ // convert hours to 12-hour time
              ("0"+date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
     },
-    /**
-     * Returns a custom period name if the period is one of the seven academic periods
-     * and the user has set a custom name.
-     * @return {String} the original period name or the user's custom period name, if applicable
-     */
-    periodName(period) {
-      if (period.length != 2 || period.substring(0, 1) != "P") // or regex: /^P[1-7]$/
-        return period;
-      let num = +period.substring(1, 1);
-      if (this.periodNames[num])
-        return this.periodNames[num]+" ("+period+")";
-      return period;
-    },
   },
   props: {
     calendar: {
