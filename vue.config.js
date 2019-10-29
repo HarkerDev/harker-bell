@@ -15,10 +15,8 @@ module.exports = {
     themeColor: "#FFFFFF",
     msTileColor: "#005841",
     appleMobileWebAppCapable: "yes",
-    manifestOptions: {
-      short_name: "Harker Bell"
-    },
     workboxOptions: {
+      cleanupOutdatedCaches: true,
       clientsClaim: true,
       navigateFallback: "/index.html",
       navigateFallbackBlacklist: [/api/, /docs/, /admin/, /submitevent/],
