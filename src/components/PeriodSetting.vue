@@ -4,10 +4,10 @@
       <v-subheader class="body-1">P{{num}}</v-subheader>
     </v-col>
     <v-col cols="auto">
-      <v-text-field v-model="settings.periodNames[num-1]" color="accent" counter="20" dense placeholder="Custom Name"></v-text-field>
+      <v-text-field v-model="settings.periodNames[num-1]" color="accent" counter="20" maxlength="20" dense placeholder="Custom Name" @input="changeName"></v-text-field>
     </v-col>
     <v-col cols="auto">
-      <v-select v-model="settings.periodColors[num-1]" class="mx-8" color="accent" dense :disabled="!settings.showColors" hide-details :items="settings.colors" :menu-props="{'max-width': 56}" style="width: 52px;" @input="onChange">
+      <v-select v-model="settings.periodColors[num-1]" class="mx-8" color="accent" dense :disabled="!settings.showColors" hide-details :items="settings.colors" :menu-props="{'max-width': 56}" style="width: 52px;" @input="changeColors">
         <template v-slot:item="{item}">
           <v-avatar size="24" :color="item+' lighten-5'" :class="[item+'--text', 'text--darken-4', 'caption']">
             {{colorNames[item]}}
@@ -56,9 +56,12 @@ export default {
     };
   },
   methods: {
-    onChange() {
+    changeColors() {
       localStorage.setItem("periodColors", JSON.stringify(this.settings.periodColors));
-    }
+    },
+    changeName() {
+      localStorage.setItem("periodNames", JSON.stringify(this.settings.periodNames));
+    },
   },
 }
 </script>

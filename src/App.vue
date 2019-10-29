@@ -164,7 +164,7 @@
     </v-dialog>
     <v-menu v-model="menu.open" absolute :close-on-content-click="false" offset-x :position-x="menu.x" :position-y="menu.y">
       <v-card min-height="100" max-width="480">
-        <v-simple-table v-if="schedules[menu.date.toISOString()] && schedules[menu.date.toISOString()].lunch.length > 0" dense fixed-header height="250">
+        <v-simple-table v-if="schedules[menu.date.toISOString()] && schedules[menu.date.toISOString()].lunch.length > 0" dense fixed-header height="260">
           <thead>
             <tr>
               <th class="px-5">Location</th>
