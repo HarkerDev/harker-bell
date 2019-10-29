@@ -4,7 +4,7 @@
       <v-subheader class="body-1">P{{num}}</v-subheader>
     </v-col>
     <v-col cols="auto">
-      <v-text-field v-model="settings.periodNames[num-1]" color="accent" counter="20" maxlength="20" dense placeholder="Custom Name" ga-on="click" :ga-event-category="'Period '+num+' Name'" ga-event-action="input" @blur="changeName" @focus="$event.target.select()"></v-text-field>
+      <v-text-field v-model="settings.periodNames[num-1]" color="accent" dense counter="20" maxlength="20" placeholder="Custom Name" ga-on="click" :ga-event-category="'Period '+num+' Name'" ga-event-action="input" @blur="changeName" @focus="$event.target.select()"></v-text-field>
     </v-col>
     <v-col cols="auto">
       <v-select v-model="settings.periodColors[num-1]" class="mx-8" color="accent" dense :disabled="!settings.showColors" hide-details :items="settings.colors" :menu-props="{'max-width': 56}" style="width: 52px;" @input="changeColors">
@@ -17,6 +17,11 @@
           <v-avatar size="24" :color="item+' lighten-5'" :class="[item+'--text', 'text--darken-4', 'caption']" :style="{opacity: disabled ? 0.5 : 1}">
             {{colorNames[item]}}
           </v-avatar>
+        </template>
+        <template v-slot:append>
+          <div class="v-input__icon v-input__icon--append">
+            <v-icon class="material-icons-outlined">arrow_drop_down</v-icon>
+          </div>
         </template>
       </v-select>
     </v-col>

@@ -24,6 +24,19 @@ module.exports = {
       navigateFallbackBlacklist: [/api/, /docs/, /admin/, /submitevent/],
       offlineGoogleAnalytics: true,
       runtimeCaching: [{
+        urlPattern: /^https:\/\/fonts\.googleapis\.com/,
+        handler: "staleWhileRevalidate",
+      }, {
+        urlPattern: /^https:\/\/fonts\.gstatic\.com/,
+        handler: "cacheFirst",
+        options: {
+          cacheName: "google-fonts-files",
+          expiration: {
+            maxAgeSeconds: 60*60*24*365,
+            maxEntries: 30
+          }
+        }
+      }, {
         urlPattern: "https://www.google-analytics.com/analytics.js",
         handler: "staleWhileRevalidate"
       }, {

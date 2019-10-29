@@ -12,7 +12,7 @@ import * as Integrations from "@sentry/integrations";
 //import "typeface-roboto";
 //import "typeface-pt-sans";
 import "./fonts.css";
-import "./material-icons.css";
+//import "./material-icons.css";
 import "autotrack/lib/plugins/event-tracker";
 import "autotrack/lib/plugins/outbound-link-tracker";
 import "autotrack/lib/plugins/page-visibility-tracker";

@@ -3,19 +3,19 @@
     <v-app-bar app elevate-on-scroll style="overflow-x: auto;">
       <v-spacer></v-spacer>
       <v-btn class="hidden-print-only" icon ga-on="click" ga-event-category="Previous" ga-event-action="click" @click="nextOrPrevious(false)">
-        <v-icon>chevron_left</v-icon>
+        <v-icon class="material-icons-outlined">chevron_left</v-icon>
       </v-btn>
       <!-- TODO: Figure out why offset-y stopped working after commit 6161b44 (8/19) -->
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on}">
           <v-btn class="hidden-print-only" icon ga-on="click, contextmenu" ga-event-category="Date Picker Icon" ga-event-action="click" v-on="on">
-            <v-icon>date_range</v-icon>
+            <v-icon class="material-icons-outlined">date_range</v-icon>
           </v-btn>
         </template>
         <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false"></v-date-picker>
       </v-menu>
       <v-btn class="hidden-print-only mr-2" icon ga-on="click" ga-event-category="Next" ga-event-action="click" @click="nextOrPrevious(true)">
-        <v-icon>chevron_right</v-icon>
+        <v-icon class="material-icons-outlined">chevron_right</v-icon>
       </v-btn>
       <transition name="fade" mode="out-in">
         <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px'}">
@@ -36,13 +36,13 @@
       <v-menu offset-y min-width="160">
         <template v-slot:activator="{on: menu}">
           <v-btn class="hidden-print-only ml-2" icon ga-on="click, contextmenu" ga-event-category="Settings Icon" ga-event-action="click" v-on="{...menu}">
-            <v-icon>settings</v-icon>
+            <v-icon class="material-icons-outlined">settings</v-icon>
           </v-btn>
         </template>
         <v-list>
           <v-list-item @click="$router.push('/settings')">
             <v-list-item-icon class="list-item-icon">
-              <v-icon>tune</v-icon>
+              <v-icon class="material-icons-outlined">tune</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="list-item-text">Settings</v-list-item-title>
@@ -50,7 +50,7 @@
           </v-list-item>
           <v-list-item href="https://bell.harker.org/docs/shortcuts" target="_blank">
             <v-list-item-icon class="list-item-icon">
-              <v-icon>keyboard</v-icon>
+              <v-icon class="material-icons-outlined">keyboard</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="list-item-text">Keyboard shortcuts</v-list-item-title>
@@ -58,7 +58,7 @@
           </v-list-item>
           <v-list-item href="https://bell.harker.org/submitevent" target="_blank">
             <v-list-item-icon class="list-item-icon">
-              <v-icon>open_in_new</v-icon>
+              <v-icon class="material-icons-outlined">open_in_new</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="list-item-text">Submit an event</v-list-item-title>
@@ -70,7 +70,7 @@
           <v-subheader>Change view</v-subheader>
           <v-list-item ga-on="click" ga-event-category="Day" ga-event-action="click" @click="changeMode('day')">
             <v-list-item-icon>
-              <v-icon v-if="mode == 'day'">check</v-icon>
+              <v-icon v-if="mode == 'day'" class="material-icons-outlined">check</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Day</v-list-item-title>
@@ -78,7 +78,7 @@
           </v-list-item>
           <v-list-item ga-on="click" ga-event-category="Week" ga-event-action="click" @click="changeMode('week')">
             <v-list-item-icon>
-              <v-icon v-if="mode == 'week'">check</v-icon>
+              <v-icon v-if="mode == 'week'" class="material-icons-outlined">check</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Week</v-list-item-title>
@@ -86,7 +86,7 @@
           </v-list-item>
           <v-list-item ga-on="click" ga-event-category="Month" ga-event-action="click" @click="changeMode('month')">
             <v-list-item-icon>
-              <v-icon v-if="mode == 'month'">check</v-icon>
+              <v-icon v-if="mode == 'month'" class="material-icons-outlined">check</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Month</v-list-item-title>
@@ -97,7 +97,7 @@
         <v-list>
           <v-list-item ga-on="click" ga-event-category="Print" ga-event-action="click" @click="print">
             <v-list-item-icon class="list-item-icon">
-              <v-icon>print</v-icon>
+              <v-icon class="material-icons-outlined">print</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="list-item-text">Print</v-list-item-title>
@@ -123,7 +123,7 @@
       <v-card>
         <v-app-bar elevate-on-scroll>
           <v-btn icon @click="closeSettings">
-            <v-icon>close</v-icon>
+            <v-icon class="material-icons-outlined">close</v-icon>
           </v-btn>
           <v-toolbar-title class="title font-weight-medium">Settings</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -727,5 +727,21 @@ export default {
 }
 body {
   -webkit-print-color-adjust: exact !important;
+}
+.v-date-picker-header .material-icons {
+  font-family: "Material Icons Outlined";
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
 }
 </style>
