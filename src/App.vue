@@ -243,7 +243,7 @@ export default {
       },
       settings: {
         dialog: this.$route.name == "settings",
-        showColors: localStorage.getItem("showPeriodColors") || false,
+        showColors: localStorage.getItem("showPeriodColors") ? true : false,
         periodColors: JSON.parse(localStorage.getItem("periodColors")) || ["blue2", "red2", "green2", "yellow2", "orange2", "teal2", "purple2"],
         periodNames: JSON.parse(localStorage.getItem("periodNames")) || [],
         colors: ["red2", "deeporange2", "orange2", "yellow2", "lightgreen2", "green2", "teal2", "lightblue2", "blue2", "indigo2", "purple2", "pink2", "bluegrey2", "grey2"],
