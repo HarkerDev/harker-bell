@@ -1,16 +1,17 @@
 <template>
-  <v-container fluid :style="{'min-width': mode == 'week' ? '932px' : 'unset'}">
+  <v-container fluid :class="{month: mode == 'month', day: mode == 'day'}" :style="{'min-width': mode == 'week' ? '932px' : 'unset'}">
     <transition-group name="schedule-transition">
       <!-- MONTH HEADER -->
       <v-row v-if="mode == 'month'" key="header" class="overline flex-nowrap" justify="center">
         <v-sheet v-for="day in weekdays" :key="day" class="text-center" height="24" width="143">{{day}}</v-sheet>
       </v-row>
-      <v-layout v-for="(n, i) in Math.ceil(calendar.dates.length/5)" :key="calendar.dates[i*5].getTime()" justify-center>
-        <div v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()">
+      <!-- <v-row key="content" class="row-container" justify="center" no-gutters> -->
+      <transition-group key="content" name="schedule-transition" tag="div" class="row row-container no-gutters justify-center">
+        <v-col v-for="(date, j) in calendar.dates" :key="date.getTime()" class="cols-5" cols="4">
           <!-- DAY CONTAINER -->
-          <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 498">
+          <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 498">
             <!-- DAY HEADER -->
-            <v-sheet :class="['day-header', {month: mode == 'month'}]" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" :height="mode == 'month' ? 36 : 44" tile>
+            <v-sheet class="day-header" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" :height="mode == 'month' ? 36 : 44" tile>
               <v-row class="ml-5" align="center" no-gutters>
                 <v-col cols="auto">
                   <v-layout column align-center>
@@ -100,8 +101,9 @@
               <span class="text-bottom text--secondary">{{event.name}}</span>
             </v-timeline-item>
           </v-timeline>
-        </div>
-      </v-layout>
+        </v-col>
+      <!-- </v-row> -->
+      </transition-group>
     </transition-group>
   </v-container>
 </template>
@@ -301,8 +303,8 @@ export default {
   position: relative;
 }
 .schedule-transition-move {
-  /*-webkit-transition: -webkit-transform 300ms;
-          transition: transform 300ms;*/
+  -webkit-transition: -webkit-transform 300ms;
+          transition: transform 300ms;
   -webkit-transition: all 300ms;
           transition: all 300ms;
 }
@@ -317,6 +319,15 @@ export default {
   border: 2px solid #9AA0A6 !important; /* for IE11 */
   border: 2px solid var(--v-secondary-base) !important;
 }
+.month .cols-5 {
+  width: 20%;
+  max-width: 20%;
+  flex: 0 0 20%;
+}
+.container:not(.month) .cols-5 {
+  min-width: 180px;
+  max-width: 180px;
+}
 .events {
   margin-right: -2px;
   width: 180px;
@@ -329,7 +340,11 @@ export default {
   -webkit-transition: all 300ms;
           transition: all 300ms;
 }
-.v-application .day-header:not(.month) {
+.month .row-container {
+  max-width: 710px; /* TODO: OR 711 px? */
+  margin: auto;
+}
+.container:not(.month) .day-header {
   border-bottom: 1px solid #9AA0A6 !important;
   border-bottom: 1px solid var(--v-secondary-base) !important;
   border-color: var(--v-secondary-base) !important;
