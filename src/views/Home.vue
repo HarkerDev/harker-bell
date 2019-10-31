@@ -2,9 +2,9 @@
   <v-container fluid :style="{'min-width': mode == 'week' ? '932px' : 'unset'}">
     <transition-group name="schedule-transition">
       <!-- MONTH HEADER -->
-      <v-layout v-if="mode == 'month'" key="header" class="overline" justify-center>
+      <v-row v-if="mode == 'month'" key="header" class="overline flex-nowrap" justify="center">
         <v-sheet v-for="day in weekdays" :key="day" class="text-center" height="24" width="143">{{day}}</v-sheet>
-      </v-layout>
+      </v-row>
       <v-layout v-for="(n, i) in Math.ceil(calendar.dates.length/5)" :key="calendar.dates[i*5].getTime()" justify-center>
         <div v-for="(date, j) in calendar.dates.slice(5*i, 5*i+5)" :key="date.getTime()">
           <!-- DAY CONTAINER -->
