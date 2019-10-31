@@ -387,7 +387,7 @@ export default {
     console.log("INIT DONE:\t", new Date-abcd);
   },
   mounted() {
-    setInterval(this.updateTime(), this.$MS_PER_MIN);
+    setInterval(() => this.updateTime(), this.$MS_PER_MIN, this);
     document.addEventListener("visibilitychange", () => {
       console.log(document.hidden);
       if (!document.hidden) this.updateTime();
