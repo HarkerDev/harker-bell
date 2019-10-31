@@ -11,25 +11,24 @@
           <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :width="mode == 'month' ? 144 : 180" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 498">
             <!-- DAY HEADER -->
             <v-sheet :class="['day-header', {month: mode == 'month'}]" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" :height="mode == 'month' ? 36 : 44" tile>
-              <v-layout align-center>
-                <v-flex xs3>
+              <v-row class="ml-5" align="center" no-gutters>
+                <v-col cols="auto">
                   <v-layout column align-center>
                     <span v-if="mode != 'month' && date.getUTCDate() != 1" :class="['overline', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{weekdays[date.getUTCDay()-1]}}</span>
                     <span v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}, {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{months[date.getUTCMonth()]}}</span>
                     <span :class="[mode == 'month' ? 'subtitle-1' : 'headline', 'short', 'font-family', 'gilroy', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{date.getUTCDate()}}</span>
                   </v-layout>
-                </v-flex>
-                <v-flex v-if="schedules[date.toISOString()]" xs8>
-                  <v-layout wrap justify-end align-center>
-                    <!-- <span class="overline normal text--secondary text-xs-right font-transition" :style="{'letter-spacing': mode == 'month' ? 'normal !important' : ''}">{{schedules[date.toISOString()].variant}}</span> -->
+                </v-col>
+                <v-spacer></v-spacer>
+                <v-col v-if="schedules[date.toISOString()]" cols="auto">
+                  <v-row class="mr-5" align="center" no-gutters>
                     <v-chip v-if="schedules[date.toISOString()].variant" color="warning" :input-value="true" outlined x-small>
                       {{schedules[date.toISOString()].variant}}
                     </v-chip>
-                    <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-1', 'font-family', 'gilroy', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</span>
-                  </v-layout>
-                </v-flex>
-                <v-flex xs1></v-flex>
-              </v-layout>
+                    <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-2', 'mb-n1', 'font-family', 'gilroy', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</span>
+                  </v-row>
+                </v-col>
+              </v-row>
             </v-sheet>
             <content-loader v-if="calendar.loading" :height="498" :width="180" :speed="0.5" :primary-color="$vuetify.theme.dark ? '#3C4043' : '#F1F3F4'" :secondary-color="$vuetify.theme.dark ? '#4E4F52' : '#E8EAED'">
               <rect x="75" y="25" rx="2" ry="2" width="30" height="12"></rect>
