@@ -271,7 +271,7 @@ export default {
      * @return {boolean}  true if the current falls within the schedule range; otherwise, false
      */
     showIndicator(now, date) {
-      console.log("DATUM: "+date);
+      console.log("DATE: "+date);
       let schedule = this.schedules[date.toISOString()];
       if (!schedule || schedule.schedule.length == 0) return false;
       schedule = schedule.schedule;

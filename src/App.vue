@@ -389,6 +389,7 @@ export default {
   mounted() {
     setInterval(this.updateTime(), this.$MS_PER_MIN);
     document.addEventListener("visibilitychange", () => {
+      console.log(document.hidden);
       if (!document.hidden) this.updateTime();
     });
     window.addEventListener("keyup", event => {
@@ -666,6 +667,7 @@ export default {
     },
     /**  */
     updateTime() {
+      console.log("updating...");
       this.time.now = new Date();
       this.time.utcNow = new Date(this.time.now-this.time.now.getTimezoneOffset()*this.$MS_PER_MIN);
       this.time.today = this.getCurrentUTCMidnight();
