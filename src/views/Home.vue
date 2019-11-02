@@ -305,8 +305,8 @@ export default {
   flex: 0 0 20%;
 }
 .container:not(.month) .cols-5 {
-  min-width: 180px;
-  max-width: 180px;
+  min-width: 178px;
+  max-width: 178px;
 }
 .events {
   margin-right: -2px;
