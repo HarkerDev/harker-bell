@@ -2,19 +2,19 @@
   <v-app v-if="calendar.dates.length != 0">
     <v-app-bar app elevate-on-scroll style="overflow-x: auto;">
       <v-spacer></v-spacer>
-      <v-btn class="hidden-print-only" icon ga-on="click" ga-event-category="Previous" ga-event-action="click" @click="nextOrPrevious(false)">
+      <v-btn class="hidden-print-only" icon aria-label="Previous" ga-on="click" ga-event-category="Previous" ga-event-action="click" @click="nextOrPrevious(false)">
         <v-icon class="material-icons-outlined">chevron_left</v-icon>
       </v-btn>
       <!-- TODO: Figure out why offset-y stopped working after commit 6161b44 (8/19) -->
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on}">
-          <v-btn class="hidden-print-only" icon ga-on="click, contextmenu" ga-event-category="Date Picker Icon" ga-event-action="click" v-on="on">
+          <v-btn class="hidden-print-only" icon aria-label="Choose a date" ga-on="click, contextmenu" ga-event-category="Date Picker Icon" ga-event-action="click" v-on="on">
             <v-icon class="material-icons-outlined">date_range</v-icon>
           </v-btn>
         </template>
         <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false"></v-date-picker>
       </v-menu>
-      <v-btn class="hidden-print-only mr-2" icon ga-on="click" ga-event-category="Next" ga-event-action="click" @click="nextOrPrevious(true)">
+      <v-btn class="hidden-print-only mr-2" icon aria-label="Next" ga-on="click" ga-event-category="Next" ga-event-action="click" @click="nextOrPrevious(true)">
         <v-icon class="material-icons-outlined">chevron_right</v-icon>
       </v-btn>
       <transition name="fade" mode="out-in">
@@ -35,7 +35,7 @@
       </transition>
       <v-menu offset-y min-width="160">
         <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only ml-2" icon ga-on="click, contextmenu" ga-event-category="Settings Icon" ga-event-action="click" v-on="{...menu}">
+          <v-btn class="hidden-print-only ml-2" icon aria-label="Settings" ga-on="click, contextmenu" ga-event-category="Settings Icon" ga-event-action="click" v-on="{...menu}">
             <v-icon class="material-icons-outlined">settings</v-icon>
           </v-btn>
         </template>
@@ -184,7 +184,7 @@
     <v-footer class="hidden-print-only" app color="primary" elevation="2" fixed padless>
       <div class="caption no-select mx-2">
         <span>Last connected </span>
-        <span :class="{'success--text': io.connected}">{{io.connected ? "just now" : formattedLastConnected || "never"}}</span>
+        <span :class="{'accent--text': io.connected}">{{io.connected ? "just now" : formattedLastConnected || "never"}}</span>
       </div>
       <v-spacer></v-spacer>
       <div class="caption no-select mx-2">
