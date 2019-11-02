@@ -50,7 +50,7 @@
           </content-loader>
           <!-- MONTH DAY CONTENT -->
           <div v-else-if="mode == 'month'" class="body-2">
-            Events
+            
           </div>
           <!-- WEEK DAY CONTENT -->
           <template v-else>
