@@ -344,7 +344,8 @@ export default {
     if (localStorage.getItem("darkTheme") == "true") {
       this.$vuetify.theme.dark = true;
       document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
-    }
+    } else
+      document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
     window.addEventListener("pwaUpdated", () => {
       this.snackbars.pwaUpdated = true;
     });

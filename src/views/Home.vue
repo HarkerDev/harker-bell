@@ -1,110 +1,106 @@
 <template>
   <v-container fluid :class="{month: mode == 'month', day: mode == 'day'}" :style="{'min-width': mode == 'week' ? '932px' : 'unset'}">
-    <transition-group name="schedule-transition">
-      <!-- MONTH HEADER -->
-      <v-row v-if="mode == 'month'" key="header" class="overline flex-nowrap" justify="center">
-        <v-sheet v-for="day in weekdays" :key="day" class="text-center" height="24" width="143">{{day}}</v-sheet>
-      </v-row>
-      <!-- <v-row key="content" class="row-container" justify="center" no-gutters> -->
-      <transition-group key="content" name="schedule-transition" tag="div" class="row row-container no-gutters justify-center">
-        <v-col v-for="(date, j) in calendar.dates" :key="date.getTime()" class="cols-5" cols="4">
-          <!-- DAY CONTAINER -->
-          <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 498">
-            <!-- DAY HEADER -->
-            <v-sheet class="day-header" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" :height="mode == 'month' ? 36 : 44" tile>
-              <v-row class="ml-5" align="center" no-gutters>
-                <v-col cols="auto">
-                  <v-layout column align-center>
-                    <span v-if="mode != 'month' && date.getUTCDate() != 1" :class="['overline', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{weekdays[date.getUTCDay()-1]}}</span>
-                    <span v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}, {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{months[date.getUTCMonth()]}}</span>
-                    <span :class="[mode == 'month' ? 'subtitle-1' : 'headline', 'short', 'font-family', 'gilroy', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{date.getUTCDate()}}</span>
-                  </v-layout>
-                </v-col>
-                <v-spacer></v-spacer>
-                <v-col v-if="schedules[date.toISOString()]" cols="auto">
-                  <v-row class="mr-5" align="center" no-gutters>
-                    <v-chip v-if="schedules[date.toISOString()].variant" color="warning" :input-value="true" outlined x-small>
-                      {{schedules[date.toISOString()].variant}}
-                    </v-chip>
-                    <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-2', 'mb-n1', 'font-family', 'gilroy', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</span>
-                  </v-row>
-                </v-col>
-              </v-row>
-            </v-sheet>
-            <content-loader v-if="calendar.loading" :height="498" :width="180" :speed="0.5" :primary-color="$vuetify.theme.dark ? '#3C4043' : '#F1F3F4'" :secondary-color="$vuetify.theme.dark ? '#4E4F52' : '#E8EAED'">
-              <rect x="75" y="25" rx="2" ry="2" width="30" height="12"></rect>
-              <rect x="50" y="45" rx="2" ry="2" width="80" height="12"></rect>
-              <rect x="0" y="85" rx="0" ry="0" width="180" height="10"></rect>
-              <rect x="75" y="120" rx="2" ry="2" width="30" height="12"></rect>
-              <rect x="50" y="140" rx="2" ry="2" width="80" height="12"></rect>
-              <rect x="0" y="180" rx="0" ry="0" width="180" height="10"></rect>
-              <rect x="20" y="200" rx="2" ry="2" width="50" height="12"></rect>
-              <rect x="10" y="215" rx="2" ry="2" width="70" height="12"></rect>
-              <rect x="110" y="195" rx="2" ry="2" width="50" height="12"></rect>
-              <rect x="100" y="212" rx="2" ry="2" width="70" height="15"></rect>
-              <rect x="0" y="235" rx="0" ry="0" width="180" height="7"></rect>
-              <rect x="75" y="270" rx="2" ry="2" width="30" height="12"></rect>
-              <rect x="50" y="290" rx="2" ry="2" width="80" height="12"></rect>
-              <rect x="0" y="330" rx="0" ry="0" width="180" height="10"></rect>
-              <rect x="75" y="365" rx="2" ry="2" width="30" height="12"></rect>
-              <rect x="50" y="385" rx="2" ry="2" width="80" height="12"></rect>
-              <rect x="30" y="440" rx="2" ry="2" width="120" height="12"></rect>
-            </content-loader>
-            <!-- MONTH DAY CONTENT -->
-            <div v-else-if="mode == 'month'" class="body-2">
-              Events
+    <!-- MONTH HEADER -->
+    <v-row v-if="mode == 'month'" key="header" class="overline flex-nowrap" justify="center">
+      <v-sheet v-for="day in weekdays" :key="day" class="text-center" height="24" width="143">{{day}}</v-sheet>
+    </v-row>
+    <v-row key="content" class="row-container" justify="center" no-gutters>
+      <v-col v-for="(date, j) in calendar.dates" :key="date.getTime()" class="cols-5" cols="4">
+        <!-- DAY CONTAINER -->
+        <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :max-width="mode == 'month' ? 144 : 240" :min-height="mode == 'month' ? 84 : 498">
+          <!-- DAY HEADER -->
+          <v-sheet class="day-header" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" :height="mode == 'month' ? 36 : 44" tile>
+            <v-row class="ml-5" align="center" no-gutters>
+              <v-col cols="auto">
+                <v-layout column align-center>
+                  <span v-if="mode != 'month' && date.getUTCDate() != 1" :class="['overline', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{weekdays[date.getUTCDay()-1]}}</span>
+                  <span v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}, {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{months[date.getUTCMonth()]}}</span>
+                  <span :class="[mode == 'month' ? 'subtitle-1' : 'headline', 'short', 'font-family', 'gilroy', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{date.getUTCDate()}}</span>
+                </v-layout>
+              </v-col>
+              <v-spacer></v-spacer>
+              <v-col v-if="schedules[date.toISOString()]" cols="auto">
+                <v-row class="mr-5" align="center" no-gutters>
+                  <v-chip v-if="schedules[date.toISOString()].variant" color="warning" :input-value="true" outlined x-small>
+                    {{schedules[date.toISOString()].variant}}
+                  </v-chip>
+                  <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-2', 'mb-n1', 'font-family', 'gilroy', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</span>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-sheet>
+          <content-loader v-if="calendar.loading && mode != 'month'" :height="498" :width="180" :speed="0.5" :primary-color="$vuetify.theme.dark ? '#3C4043' : '#F1F3F4'" :secondary-color="$vuetify.theme.dark ? '#4E4F52' : '#E8EAED'">
+            <rect x="75" y="25" rx="2" ry="2" width="30" height="12"></rect>
+            <rect x="50" y="45" rx="2" ry="2" width="80" height="12"></rect>
+            <rect x="0" y="85" rx="0" ry="0" width="180" height="10"></rect>
+            <rect x="75" y="120" rx="2" ry="2" width="30" height="12"></rect>
+            <rect x="50" y="140" rx="2" ry="2" width="80" height="12"></rect>
+            <rect x="0" y="180" rx="0" ry="0" width="180" height="10"></rect>
+            <rect x="20" y="200" rx="2" ry="2" width="50" height="12"></rect>
+            <rect x="10" y="215" rx="2" ry="2" width="70" height="12"></rect>
+            <rect x="110" y="195" rx="2" ry="2" width="50" height="12"></rect>
+            <rect x="100" y="212" rx="2" ry="2" width="70" height="15"></rect>
+            <rect x="0" y="235" rx="0" ry="0" width="180" height="7"></rect>
+            <rect x="75" y="270" rx="2" ry="2" width="30" height="12"></rect>
+            <rect x="50" y="290" rx="2" ry="2" width="80" height="12"></rect>
+            <rect x="0" y="330" rx="0" ry="0" width="180" height="10"></rect>
+            <rect x="75" y="365" rx="2" ry="2" width="30" height="12"></rect>
+            <rect x="50" y="385" rx="2" ry="2" width="80" height="12"></rect>
+            <rect x="30" y="440" rx="2" ry="2" width="120" height="12"></rect>
+          </content-loader>
+          <!-- MONTH DAY CONTENT -->
+          <div v-else-if="mode == 'month'" class="body-2">
+            Events
+          </div>
+          <!-- WEEK DAY CONTENT -->
+          <template v-else>
+            <div v-if="time.today.getTime() == date.getTime() && showIndicator(time.utcNow, date)">
+              <div class="error" :style="{position: 'absolute', borderTopWidth: '2px', borderTopStyle: 'solid', marginTop: '44px', top: indicatorTop(time.utcNow, date)+'px', left: 0, right: '-2px', opacity: 0.8, zIndex: 3}"></div>
+              <div class="error" :style="{position: 'absolute', borderRadius: '50%', height: '10px', width: '10px', marginTop: '40px', marginLeft: '-6px', top: indicatorTop(time.utcNow, date)+'px', zIndex: 3}"></div>
             </div>
-            <!-- WEEK DAY CONTENT -->
-            <template v-else>
-              <div v-if="time.today.getTime() == date.getTime() && showIndicator(time.utcNow, date)">
-                <div class="error" :style="{position: 'absolute', borderTopWidth: '2px', borderTopStyle: 'solid', marginTop: '44px', top: indicatorTop(time.utcNow, date)+'px', left: 0, right: '-2px', opacity: 0.8, zIndex: 3}"></div>
-                <div class="error" :style="{position: 'absolute', borderRadius: '50%', height: '10px', width: '10px', marginTop: '40px', marginLeft: '-6px', top: indicatorTop(time.utcNow, date)+'px', zIndex: 3}"></div>
-              </div>
-              <v-layout v-for="(group, gIndex) in computedSchedules[date.toISOString()]" :key="gIndex" class="group">
-                <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
-                  <template v-for="(period, pIndex) in column">
-                    <!-- LUNCH PERIOD -->
-                    <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
-                      <!-- TODO: Find a way to extract id logic somewhere -->
-                      <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" ga-on="click" ga-event-category="Lunch Menu" ga-event-action="click" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
-                        <v-layout :class="{content: true, short: period.duration <= 50 || group.length > 1}" column align-center justify-center>
-                          <div ref="periodNames">{{period.name}}</div>
-                          <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
-                          <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-                          <div v-if="period.duration >= 45 && time.utcNow >= period.start && time.utcNow <= period.end" class="overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
-                        </v-layout>
-                      </v-sheet>
-                    </v-hover>
-                    <!-- REGULAR PERIOD -->
-                    <v-sheet v-else :key="pIndex" class="period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile>
-                      <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}, getColor(period.name) && getColor(period.name)+'--text text--darken-4']" column align-center justify-center>
-                        <div ref="periodNames">
-                          {{period.name && settings.periodNames[period.name.substring(1, 2)-1] ? settings.periodNames[period.name.substring(1, 2)-1]+" ("+period.name+")" : period.name}}
-                          <span v-if="period.start && period.duration < 30 && column.length <= 1" class="text-no-wrap"> {{period.start|formatTime}}&ndash;{{period.end|formatTime}}</span>
-                        </div>
+            <v-layout v-for="(group, gIndex) in computedSchedules[date.toISOString()]" :key="gIndex" class="group">
+              <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
+                <template v-for="(period, pIndex) in column">
+                  <!-- LUNCH PERIOD -->
+                  <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
+                    <!-- TODO: Find a way to extract id logic somewhere -->
+                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" ga-on="click" ga-event-category="Lunch Menu" ga-event-action="click" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
+                      <v-layout :class="{content: true, short: period.duration <= 50 || group.length > 1}" column align-center justify-center>
+                        <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                         <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-                        <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                        <div v-if="period.duration >= 45 && time.utcNow >= period.start && time.utcNow <= period.end" class="overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                       </v-layout>
                     </v-sheet>
-                  </template>
-                </v-flex>
-              </v-layout>
-            </template>
-            <v-layout v-if="schedules[date.toISOString()] && schedules[date.toISOString()].name" class="body-2 text-center" align-center justify-center>
-              {{schedules[date.toISOString()].name}}
+                  </v-hover>
+                  <!-- REGULAR PERIOD -->
+                  <v-sheet v-else :key="pIndex" class="period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile>
+                    <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}, getColor(period.name) && getColor(period.name)+'--text text--darken-4']" column align-center justify-center>
+                      <div ref="periodNames">
+                        {{period.name && settings.periodNames[period.name.substring(1, 2)-1] ? settings.periodNames[period.name.substring(1, 2)-1]+" ("+period.name+")" : period.name}}
+                        <span v-if="period.start && period.duration < 30 && column.length <= 1" class="text-no-wrap"> {{period.start|formatTime}}&ndash;{{period.end|formatTime}}</span>
+                      </div>
+                      <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
+                      <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+                      <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                    </v-layout>
+                  </v-sheet>
+                </template>
+              </v-flex>
             </v-layout>
-          </v-sheet>
-          <v-timeline v-if="mode != 'month' && schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick" align-top dense>
-            <v-timeline-item v-for="event in schedules[date.toISOString()].events" :key="event.name" class="caption short" :color="colors[event.category]" fill-dot small>
-              <span class="text-bottom">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span>
-              <span class="text-bottom text--secondary">{{event.name}}</span>
-            </v-timeline-item>
-          </v-timeline>
-        </v-col>
-      <!-- </v-row> -->
-      </transition-group>
-    </transition-group>
+          </template>
+          <v-layout v-if="schedules[date.toISOString()] && schedules[date.toISOString()].name" class="body-2 text-center" align-center justify-center>
+            {{schedules[date.toISOString()].name}}
+          </v-layout>
+        </v-sheet>
+        <v-timeline v-if="mode != 'month' && schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick" align-top dense>
+          <v-timeline-item v-for="event in schedules[date.toISOString()].events" :key="event.name" class="caption short" :color="colors[event.category]" fill-dot small>
+            <span class="text-bottom">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span>
+            <span class="text-bottom text--secondary">{{event.name}}</span>
+          </v-timeline-item>
+        </v-timeline>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -238,7 +234,6 @@ export default {
     mode(value) {
       if (value == "month") {
         this.ref = this.$refs.day[0].$el;
-        this.ref.addEventListener("transitionend", this.transitionEnd);
       } else
         this.displayMonthContent = false;
     },
@@ -285,12 +280,6 @@ export default {
       console.log("INDICTOP: "+(now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN)
       return (now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN;
     },
-    /** TODO: DOCUMENT THIS */
-    transitionEnd() {
-      this.ref.removeEventListener("transitionend", this.transitionEnd);
-      this.displayMonthContent = true;
-      //this.$root.setCalendar(this.$route);
-    },
   }
 };
 </script>
@@ -301,15 +290,6 @@ export default {
 }
 .v-sheet {
   position: relative;
-}
-.schedule-transition-move {
-  -webkit-transition: -webkit-transform 300ms;
-          transition: transform 300ms;
-  -webkit-transition: all 300ms;
-          transition: all 300ms;
-}
-.schedule-transition-move .day-container {
-  overflow: hidden;
 }
 .v-application div.border {
   border: 1px solid #9AA0A6 !important; /* for IE11 */
