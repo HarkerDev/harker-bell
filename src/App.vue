@@ -731,10 +731,6 @@ export default {
 body {
   -webkit-print-color-adjust: exact !important;
 }
-.v-dialog__content {
-  height: 0;
-  width: 0;
-}
 .v-date-picker-header .material-icons {
   font-family: "Material Icons Outlined";
   font-weight: normal;
