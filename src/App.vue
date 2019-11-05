@@ -183,13 +183,13 @@
     </v-menu>
     <v-footer class="hidden-print-only" app color="primary" elevation="2" fixed padless>
       <div class="caption no-select mx-2">
-        <span>Last connected </span>
-        <span :class="{'accent--text': io.connected}">{{io.connected ? "just now" : formattedLastConnected || "never"}}</span>
+        <span v-show="!io.connected && formattedLastConnected">Last connected: </span>
+        <span :class="[{'error--text': time.now-io.lastConnected >= $MS_PER_DAY, 'success--text': io.connected}, 'font-weight-medium']">{{io.connected ? "Up to date" : formattedLastConnected || "Connecting..."}}</span>
       </div>
       <v-spacer></v-spacer>
       <div class="caption no-select mx-2">
-        <span>Last updated </span>
-        <span>{{formattedLastUpdated || "never"}}</span>
+        <span>Last update: </span>
+        <span class="font-weight-medium">{{formattedLastUpdated || "Updating..."}}</span>
       </div>
     </v-footer>
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
