@@ -89,7 +89,7 @@
               </v-flex>
             </v-layout>
           </template>
-          <v-layout v-if="schedules[date.toISOString()] && schedules[date.toISOString()].name" class="body-2 text-center" align-center justify-center>
+          <v-layout v-if="schedules[date.toISOString()] && schedules[date.toISOString()].name" :class="['body-2', 'text-center', {'mt-4': mode != 'month'}, 'mx-2']" align-center justify-center>
             {{schedules[date.toISOString()].name}}
           </v-layout>
         </v-sheet>
@@ -325,8 +325,8 @@ export default {
   margin: auto;
 }
 .container:not(.month) .day-header {
-  border-bottom: 1px solid #9AA0A6 !important;
-  border-bottom: 1px solid var(--v-secondary-base) !important;
+  border-bottom: 2px solid #9AA0A6 !important;
+  border-bottom: 2px solid var(--v-secondary-base) !important;
   border-color: var(--v-secondary-base) !important;
 }
 .column:not(:first-child) > .period {
@@ -344,6 +344,9 @@ export default {
 }
 .group, .column, .period {
   transition: all 100ms;
+}
+.group:nth-child(2) {
+  margin-top: -1px;
 }
 .lunch {
   cursor: pointer;
