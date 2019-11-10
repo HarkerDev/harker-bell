@@ -7,7 +7,7 @@
     <v-row key="content" class="row-container" justify="center" no-gutters>
       <v-col v-for="(date, j) in calendar.dates" :key="date.getTime()" class="cols-5" cols="4">
         <!-- DAY CONTAINER -->
-        <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :max-width="mode == 'month' ? 144 : 180" :min-height="mode == 'month' ? 84 : 498">
+        <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :max-width="mode == 'month' ? 144 : 180" :min-height="mode == 'month' ? 84 : 497">
           <!-- DAY HEADER -->
           <v-sheet class="day-header" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" :height="mode == 'month' ? 36 : 44" tile>
             <v-row class="ml-5" align="center" no-gutters>
@@ -58,7 +58,7 @@
               <div class="error" :style="{position: 'absolute', borderTopWidth: '2px', borderTopStyle: 'solid', marginTop: '44px', top: indicatorTop(time.utcNow, date)+'px', left: 0, right: '-2px', opacity: 0.8, zIndex: 3}"></div>
               <div class="error" :style="{position: 'absolute', borderRadius: '50%', height: '10px', width: '10px', marginTop: '40px', marginLeft: '-6px', top: indicatorTop(time.utcNow, date)+'px', zIndex: 3}"></div>
             </div>
-            <v-layout v-for="(group, gIndex) in computedSchedules[date.toISOString()]" :key="gIndex" class="group">
+            <v-layout v-for="(group, gIndex) in computedSchedules[date.toISOString()]" :key="gIndex" :class="['group', {'first': gIndex == 0}]">
               <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
                 <template v-for="(period, pIndex) in column">
                   <!-- LUNCH PERIOD -->
@@ -203,6 +203,13 @@ export default {
           period.start = new Date(period.start);
           period.end = new Date(period.end);
           period.duration = (period.end-period.start)/this.$MS_PER_MIN;
+          let needSplitCol = false; // need to add to previous group if there are periods that start before current one
+          for (let j = i+1; j < schedule.length; j++) {
+            if (schedule[i].start < period.start) {
+              needSplitCol = true;
+              break;
+            }
+          }
           if (+period.start == +prevPeriod.start) // add column if two periods start at the same time (dates are coerced to numbers)
             lastGroup.push([period]);
           else if (period.start < prevPeriod.end) // insert placeholder in new column if period starts before previous one ends
@@ -210,12 +217,12 @@ export default {
               {duration: (period.start-prevPeriod.end)/this.$MS_PER_MIN}, // duration of placeholder period
               period
             ]);
-          else if (+period.start == +prevPeriod.end && period.start < latestEnd) // simply add to current column if periods are adjacent
-            lastGroup[lastGroup.length-1].push(period);
+          else if (+period.start == +prevPeriod.end && (period.start < latestEnd || needSplitCol))
+            lastGroup[lastGroup.length-1].push(period); // simply add to current column if periods are adjacent or a column split is needed
           else if (+period.start == +prevPeriod.end) // start a new period group if period starts after the previous group
             result.push([[period]]);
-          else if (period.start < latestEnd) // insert placeholder in current column if there's a gap between two periods
-            lastGroup[lastGroup.length-1].push({duration: (period.start-prevPeriod.end)/this.$MS_PER_MIN}, period); // I CHANGED THIS AFTER A BUG; IF I BROKE ANYTHING LATER IT'S PROBABLY FROM THIS!
+          else if (period.start < latestEnd || needSplitCol) // insert placeholder in current column if there's a gap between two periods or a column split is needed
+            lastGroup[lastGroup.length-1].push({duration: (period.start-prevPeriod.end)/this.$MS_PER_MIN}, period); // BUGFIXED HERE
           else // insert placeholder in a new period group otherwise
             result.push([[{duration: (period.start-latestEnd)/this.$MS_PER_MIN}]], [[period]]);
           latestEnd = Math.max(latestEnd, period.end);
@@ -345,7 +352,7 @@ export default {
 .group, .column, .period {
   transition: all 100ms;
 }
-.group:nth-child(2) {
+.group.first {
   margin-top: -1px;
 }
 .lunch {

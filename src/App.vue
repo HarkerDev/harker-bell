@@ -12,7 +12,11 @@
             <v-icon class="material-icons-outlined">date_range</v-icon>
           </v-btn>
         </template>
-        <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false"></v-date-picker>
+        <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" :type="mode == 'month' ? 'month' : 'date'" @input="datePicker = false">
+          <v-spacer></v-spacer>
+          <v-btn color="accent" small outlined @click="$router.push('/').catch(() => {}); datePicker = false;">Today</v-btn>
+          <v-spacer></v-spacer>
+        </v-date-picker>
       </v-menu>
       <v-btn class="hidden-print-only mr-2" icon aria-label="Next" ga-on="click" ga-event-category="Next" ga-event-action="click" @click="nextOrPrevious(true)">
         <v-icon class="material-icons-outlined">chevron_right</v-icon>
@@ -373,15 +377,16 @@ export default {
       if (revision) {
         for (const schedule of schedules)
           await this.db.put("schedules", schedule);
-        this.io.lastUpdated = new Date();
+        let now = new Date();
+        this.io.lastUpdated = now;
+        localStorage.setItem("lastUpdated", now.getTime());
         localStorage.setItem("scheduleRevision", revision);
-        localStorage.setItem("lastUpdated", new Date().getTime());
         await this.setCalendar(this.$route);
       }
     });
     this.socket.on("pong", () => {
       let now = new Date();
-      this.lastConnected = now;
+      this.io.lastConnected = now;
       localStorage.setItem("lastConnected", now.getTime());
     });
     if (!localStorage.getItem("scheduleRevision")) this.getFromSocket(this.calendar.dates);
@@ -401,7 +406,7 @@ export default {
                event.key == "KeyT" || event.keyCode == 84) this.$router.push("/").catch(() => {});
       else if (event.key == "KeyD" || event.keyCode == 68) this.changeMode("day");
       else if (event.key == "KeyW" || event.keyCode == 87) this.changeMode("week");
-      else if (event.key == "KeyD" || event.keyCode == 77) this.changeMode("month");
+      else if (event.key == "KeyM" || event.keyCode == 77) this.changeMode("month");
     });
   },
   methods: {
