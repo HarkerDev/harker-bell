@@ -1,8 +1,9 @@
 <template>
   <v-row no-gutters>
-    <v-col>
+    <v-col cols="auto">
       <v-subheader class="body-1">P{{num}}</v-subheader>
     </v-col>
+    <v-spacer></v-spacer>
     <v-col cols="auto">
       <v-text-field v-model="settings.periodNames[num-1]" color="accent" dense counter="20" maxlength="20" placeholder="Custom Name" ga-on="click" :ga-event-category="'Period '+num+' Name'" ga-event-action="input" @blur="changeName" @focus="$event.target.select()"></v-text-field>
     </v-col>

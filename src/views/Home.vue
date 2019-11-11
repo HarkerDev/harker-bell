@@ -24,7 +24,7 @@
                   <v-chip v-if="schedules[date.toISOString()].variant" class="font-weight-bold" :color="schedules[date.toISOString()].variant.includes('adj') ? 'warning' : 'info'" :input-value="true" outlined x-small>
                     {{schedules[date.toISOString()].variant}}
                   </v-chip>
-                  <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-2', 'mb-n1', 'font-family', 'gilroy', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</span>
+                  <span :class="[mode == 'month' ? 'title' : 'display-1', 'ml-3', 'mb-n1', 'font-family', 'gilroy', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</span>
                 </v-row>
               </v-col>
             </v-row>

@@ -5,7 +5,6 @@
       <v-btn class="hidden-print-only" icon aria-label="Previous" ga-on="click" ga-event-category="Previous" ga-event-action="click" @click="nextOrPrevious(false)">
         <v-icon class="material-icons-outlined">chevron_left</v-icon>
       </v-btn>
-      <!-- TODO: Figure out why offset-y stopped working after commit 6161b44 (8/19) -->
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on}">
           <v-btn class="hidden-print-only" icon aria-label="Choose a date" ga-on="click, contextmenu" ga-event-category="Date Picker Icon" ga-event-action="click" v-on="on">
@@ -123,9 +122,9 @@
       </div>
       <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules" :settings="settings" :sheet-id="menu.open ? menu.sheetId : null" :time="time" @show-menu="showMenu"></router-view>
     </v-content>
-    <v-dialog v-model="settings.dialog" :fullscreen="$vuetify.breakpoint.xsOnly" :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="420" @input="closeSettings">
+    <v-dialog v-model="settings.dialog" eager :fullscreen="$vuetify.breakpoint.xsOnly" :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="420" @input="closeSettings">
       <v-card>
-        <v-app-bar elevate-on-scroll>
+        <v-app-bar flat>
           <v-btn icon @click="closeSettings">
             <v-icon class="material-icons-outlined">close</v-icon>
           </v-btn>
@@ -157,11 +156,10 @@
             </v-col>
           </v-row>
         </v-card-text>
+        <v-divider></v-divider>
         <v-card-actions>
           <v-layout justify-center>
-            <!--<a href="https://www.netlify.com" target="_blank">
-              <v-img height="51" :src="require('./assets/'+($vuetify.theme.dark?'netlify-dark.svg':'netlify-light.svg'))"></v-img>
-            </a>-->
+            
           </v-layout>
         </v-card-actions>
       </v-card>
