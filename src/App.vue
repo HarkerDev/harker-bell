@@ -194,6 +194,10 @@
         <span class="font-weight-medium">{{formattedLastUpdated || "Updating..."}}</span>
       </div>
     </v-footer>
+    <v-snackbar v-model="snackbars.offlineReady" :timeout="10000">
+      Your browser supports offline mode! Try turning off your internet and reloading this page.
+      <v-btn text @click="snackbars.offlineReady = false">Got It</v-btn>
+    </v-snackbar>
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
       A new version is available! Refresh the page to update.
       <v-btn text @click="refreshPWA">Reload</v-btn>
@@ -256,7 +260,7 @@ export default {
         today: null,
       },
       snackbars: {
-        offlineReady: true,
+        offlineReady: false,
         pwaUpdated: false,
       },
       prevRoute: null,
@@ -348,9 +352,8 @@ export default {
       document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
     } else
       document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
-    window.addEventListener("pwaUpdated", () => {
-      this.snackbars.pwaUpdated = true;
-    });
+    window.addEventListener("pwaOfflineReady", () => this.snackbars.offlineReady = true);
+    window.addEventListener("pwaUpdated", () => this.snackbars.pwaUpdated = true);
     this.time.today = this.getCurrentUTCMidnight();
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
