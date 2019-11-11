@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid :class="{month: mode == 'month', day: mode == 'day'}" :style="{'min-width': mode == 'week' ? '932px' : 'unset'}">
+  <v-container v-if="false" fluid :class="{month: mode == 'month', day: mode == 'day'}" :style="{'min-width': mode == 'week' ? '932px' : 'unset'}">
     <!-- MONTH HEADER -->
     <v-row v-if="mode == 'month'" key="header" class="overline flex-nowrap" justify="center">
       <v-sheet v-for="day in weekdays" :key="day" class="text-center" height="24" width="143">{{day}}</v-sheet>
