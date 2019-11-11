@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="false" fluid :class="{month: mode == 'month', day: mode == 'day'}" :style="{'min-width': mode == 'week' ? '932px' : 'unset'}">
+  <v-container fluid :class="{month: mode == 'month', week: mode == 'week', day: mode == 'day'}">
     <!-- MONTH HEADER -->
     <v-row v-if="mode == 'month'" key="header" class="overline flex-nowrap" justify="center">
       <v-sheet v-for="day in weekdays" :key="day" class="text-center" height="24" width="143">{{day}}</v-sheet>
@@ -65,7 +65,7 @@
                   <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
                     <!-- TODO: Find a way to extract id logic somewhere -->
                     <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" ga-on="click" ga-event-category="Lunch Menu" ga-event-action="click" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
-                      <v-layout :class="{content: true, short: period.duration <= 50 || group.length > 1}" column align-center justify-center>
+                      <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}]" column align-center justify-center>
                         <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                         <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
@@ -330,6 +330,9 @@ export default {
 .month .row-container {
   max-width: 710px; /* TODO: OR 711 px? */
   margin: auto;
+}
+.container.week {
+  min-width: 932px;
 }
 .container:not(.month) .day-header {
   border-bottom: 2px solid #9AA0A6 !important;

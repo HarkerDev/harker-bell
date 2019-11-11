@@ -734,6 +734,9 @@ export default {
 body {
   -webkit-print-color-adjust: exact !important;
 }
+.v-input__slot:before {
+  border-top-width: 1px !important;
+}
 .v-date-picker-header .material-icons {
   font-family: "Material Icons Outlined";
   font-weight: normal;
