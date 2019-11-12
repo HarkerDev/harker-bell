@@ -96,7 +96,7 @@
         <v-timeline v-if="mode != 'month' && schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick" align-top dense>
           <v-timeline-item v-for="event in schedules[date.toISOString()].events" :key="event.name" class="caption short" :color="colors[event.category]" fill-dot small>
             <span class="text-bottom">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span>
-            <span class="text-bottom text--secondary">{{event.name}}</span>
+            <span class="event-name text-bottom text--secondary">{{event.name}}</span>
           </v-timeline-item>
         </v-timeline>
       </v-col>
@@ -319,6 +319,9 @@ export default {
   margin-right: -2px;
   width: 180px;
   border-radius: 2px;
+}
+.event-name {
+  white-space: pre-wrap;
 }
 .day-container {
   margin: 0 -2px -2px 0;

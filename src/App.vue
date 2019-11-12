@@ -703,7 +703,7 @@ export default {
   line-height: 1.2 !important;
 }
 #message {
-  position: fixed;
+  position: absolute;
   width: 90%;
   left: 50%;
   transform: translateX(-50%);
