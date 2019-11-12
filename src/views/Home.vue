@@ -64,7 +64,7 @@
                   <!-- LUNCH PERIOD -->
                   <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
                     <!-- TODO: Find a way to extract id logic somewhere -->
-                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" ga-on="click" ga-event-category="Lunch Menu" ga-event-action="click" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
+                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" ga-on="click" ga-event-category="lunch menu" ga-event-action="click" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
                       <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}]" column align-center justify-center>
                         <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->

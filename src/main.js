@@ -52,7 +52,7 @@ function initVue() {
   window.app = app;
 }
 localStorage.setItem("appVersion", process.env.VUE_APP_VERSION);
-ga("require", "eventTracker", {events: ["click", "contextmenu"]});
+ga("require", "eventTracker", {events: ["click", "contextmenu", "focus"]});
 ga("require", "outboundLinkTracker", {events: ["click", "contextmenu", "auxclick"]});
 ga("require", "pageVisibilityTracker", {visibleThreshold: 500, visibleMetricIndex: 1});
 ga("require", "urlChangeTracker");

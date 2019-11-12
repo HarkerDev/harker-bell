@@ -2,12 +2,12 @@
   <v-app v-if="calendar.dates.length != 0">
     <v-app-bar app elevate-on-scroll style="overflow-x: auto;">
       <v-spacer></v-spacer>
-      <v-btn class="hidden-print-only" icon aria-label="Previous" ga-on="click" ga-event-category="Previous" ga-event-action="click" @click="nextOrPrevious(false)">
+      <v-btn class="hidden-print-only" icon aria-label="Previous" ga-on="click" ga-event-category="previous" ga-event-action="click" @click="nextOrPrevious(false)">
         <v-icon class="material-icons-outlined">chevron_left</v-icon>
       </v-btn>
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on}">
-          <v-btn class="hidden-print-only" icon aria-label="Choose a date" ga-on="click, contextmenu" ga-event-category="Date Picker Icon" ga-event-action="click" v-on="on">
+          <v-btn class="hidden-print-only" icon aria-label="Choose a date" ga-on="click, contextmenu" ga-event-category="date picker icon" ga-event-action="click" v-on="on">
             <v-icon class="material-icons-outlined">date_range</v-icon>
           </v-btn>
         </template>
@@ -17,7 +17,7 @@
           <v-spacer></v-spacer>
         </v-date-picker>
       </v-menu>
-      <v-btn class="hidden-print-only mr-2" icon aria-label="Next" ga-on="click" ga-event-category="Next" ga-event-action="click" @click="nextOrPrevious(true)">
+      <v-btn class="hidden-print-only mr-2" icon aria-label="Next" ga-on="click" ga-event-category="next" ga-event-action="click" @click="nextOrPrevious(true)">
         <v-icon class="material-icons-outlined">chevron_right</v-icon>
       </v-btn>
       <transition name="fade" mode="out-in">
@@ -32,13 +32,13 @@
             <span v-else>{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
           </template>
         </v-toolbar-title>
-        <v-toolbar-title v-else key="title" class="headline font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px', cursor: 'pointer'}" ga-on="click" ga-event-category="Title" ga-event-action="click" @click="changeTitle">
+        <v-toolbar-title v-else key="title" class="headline font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px', cursor: 'pointer'}" ga-on="click" ga-event-category="title" ga-event-action="click" @click="changeTitle">
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
         </v-toolbar-title>
       </transition>
       <v-menu offset-y min-width="160">
         <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only ml-2" icon aria-label="Settings" ga-on="click, contextmenu" ga-event-category="Settings Icon" ga-event-action="click" v-on="{...menu}">
+          <v-btn class="hidden-print-only ml-2" icon aria-label="Settings" ga-on="click, contextmenu" ga-event-category="settings icon" ga-event-action="click" v-on="{...menu}">
             <v-icon class="material-icons-outlined">settings</v-icon>
           </v-btn>
         </template>
@@ -71,7 +71,7 @@
         <v-divider></v-divider>
         <v-list dense subheader>
           <v-subheader>Change view</v-subheader>
-          <v-list-item ga-on="click" ga-event-category="Day" ga-event-action="click" @click="changeMode('day')">
+          <v-list-item ga-on="click" ga-event-category="day" ga-event-action="click" @click="changeMode('day')">
             <v-list-item-icon>
               <v-icon v-if="mode == 'day'" class="material-icons-outlined">check</v-icon>
             </v-list-item-icon>
@@ -79,7 +79,7 @@
               <v-list-item-title>Day</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item ga-on="click" ga-event-category="Week" ga-event-action="click" @click="changeMode('week')">
+          <v-list-item ga-on="click" ga-event-category="week" ga-event-action="click" @click="changeMode('week')">
             <v-list-item-icon>
               <v-icon v-if="mode == 'week'" class="material-icons-outlined">check</v-icon>
             </v-list-item-icon>
@@ -87,7 +87,7 @@
               <v-list-item-title>Week</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item ga-on="click" ga-event-category="Month" ga-event-action="click" @click="changeMode('month')">
+          <v-list-item ga-on="click" ga-event-category="month" ga-event-action="click" @click="changeMode('month')">
             <v-list-item-icon>
               <v-icon v-if="mode == 'month'" class="material-icons-outlined">check</v-icon>
             </v-list-item-icon>
@@ -98,7 +98,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list>
-          <v-list-item ga-on="click" ga-event-category="Print" ga-event-action="click" @click="print">
+          <v-list-item ga-on="click" ga-event-category="print" ga-event-action="click" @click="print">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">print</v-icon>
             </v-list-item-icon>
@@ -194,7 +194,7 @@
         <span class="font-weight-medium">{{formattedLastUpdated || "Updating..."}}</span>
       </div>
     </v-footer>
-    <v-snackbar v-model="snackbars.offlineReady" :timeout="10000">
+    <v-snackbar v-model="snackbars.offlineReady" :timeout="0">
       Your browser supports offline mode! Try turning off your internet and reloading this page.
       <v-btn text @click="snackbars.offlineReady = false">Got It</v-btn>
     </v-snackbar>
@@ -676,8 +676,8 @@ export default {
     updateTime() {
       console.log("updating...");
       this.time.now = new Date();
-      this.time.utcNow = new Date(this.time.now-this.time.now.getTimezoneOffset()*this.$MS_PER_MIN);
       this.time.today = this.getCurrentUTCMidnight();
+      this.time.utcNow = new Date(new Date(this.time.now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))-this.time.now.getTimezoneOffset()*this.$MS_PER_MIN);
     },
   },
 };
@@ -736,6 +736,9 @@ export default {
 }
 body {
   -webkit-print-color-adjust: exact !important;
+}
+.v-content__wrap {
+  overflow-x: auto;
 }
 .v-input__slot:before {
   border-top-width: 1px !important;
