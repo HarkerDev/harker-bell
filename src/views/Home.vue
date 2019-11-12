@@ -316,7 +316,7 @@ export default {
   max-width: 178px;
 }
 .events {
-  margin-right: -2px;
+  margin-right: -2px; /* TODO: what's this for? */
   width: 180px;
   border-radius: 2px;
 }
