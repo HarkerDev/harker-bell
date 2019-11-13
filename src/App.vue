@@ -98,6 +98,14 @@
         </v-list>
         <v-divider></v-divider>
         <v-list>
+          <v-list-item v-if="features.beforeInstallPrompt" color="accent" :input-value="true" ga-on="click" ga-event-category="install" ga-event-action="click" @click="showInstallPrompt">
+            <v-list-item-icon class="list-item-icon">
+              <v-icon class="material-icons-outlined">get_app</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="list-item-text">Install app</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item ga-on="click" ga-event-category="print" ga-event-action="click" @click="print">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">print</v-icon>
@@ -266,6 +274,7 @@ export default {
       prevRoute: null,
       features: {
         indexedDB: window.indexedDB ? true : false,
+        beforeInstallPrompt: false,
         ios: window.navigator.platform.toLowerCase().includes("ios") ||
              window.navigator.platform.toLowerCase().includes("iphone") ||
              window.navigator.platform.toLowerCase().includes("ipad"),
@@ -354,6 +363,7 @@ export default {
       document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
     window.addEventListener("pwaOfflineReady", () => this.snackbars.offlineReady = true);
     window.addEventListener("pwaUpdated", () => this.snackbars.pwaUpdated = true);
+    window.addEventListener("beforeinstallprompt", (e) => this.features.beforeInstallPrompt = e);
     this.time.today = this.getCurrentUTCMidnight();
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
@@ -655,6 +665,10 @@ export default {
       else if (this.socket) this.getFromSocket(dates);
       this.calendar.dates = dates;
       console.log("SET CAL:\t", new Date-abcd);
+    },
+    /** Shows the PWA install prompt, if available. */
+    showInstallPrompt() {
+      if (this.features.beforeInstallPrompt) this.features.beforeInstallPrompt.prompt();
     },
     /**
      * Opens the panel displaying the lunch menu next to the appropriate date when the show-menu event is emitted.
