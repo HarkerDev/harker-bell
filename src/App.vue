@@ -103,7 +103,7 @@
               <v-icon class="material-icons-outlined">get_app</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title class="list-item-text">Install app</v-list-item-title>
+              <v-list-item-title class="list-item-text font-weight-medium">Install app</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item ga-on="click" ga-event-category="print" ga-event-action="click" @click="print">
