@@ -190,8 +190,12 @@ export default {
       for (const entry of this.rawSchedules) {
         if (entry.schedule.length == 0) continue;
         let schedule = entry.schedule;
-        schedule[0].start = new Date(schedule[0].start);
-        schedule[0].end = new Date(schedule[0].end);
+        for (let i = 0; i < schedule.length; i++) {
+          let period = schedule[i];
+          period.start = new Date(period.start);
+          period.end = new Date(period.end);
+          period.duration = (period.end-period.start)/this.$MS_PER_MIN;
+        }
         let result = [[[{ // create result array with first period (including its duration) as first element
           ...schedule[0],
           ...{duration: (schedule[0].end-schedule[0].start)/this.$MS_PER_MIN}}
@@ -200,21 +204,18 @@ export default {
         for (let i = 1; i < schedule.length; i++) {
           let lastGroup = result[result.length-1]; // last group of periods in the schedule array being built
           let period = schedule[i], prevPeriod = schedule[i-1];
-          period.start = new Date(period.start);
-          period.end = new Date(period.end);
-          period.duration = (period.end-period.start)/this.$MS_PER_MIN;
           let needSplitCol = false; // need to add to previous group if there are periods that start before current one
           for (let j = i+1; j < schedule.length; j++) {
-            if (schedule[i].start < period.start) {
+            if (schedule[j].start < period.start) {
               needSplitCol = true;
               break;
             }
           }
-          if (+period.start == +prevPeriod.start) // add column if two periods start at the same time (dates are coerced to numbers)
-            lastGroup.push([period]);
+          if (+period.start == +prevPeriod.start || +period.start == +lastGroup[0][0].start)
+            lastGroup.push([period]); // add column if two periods start at the same time (dates are coerced to numbers)
           else if (period.start < prevPeriod.end) // insert placeholder in new column if period starts before previous one ends
             lastGroup.push([
-              {duration: (period.start-prevPeriod.end)/this.$MS_PER_MIN}, // duration of placeholder period
+              {duration: (period.start-lastGroup[0][0].start)/this.$MS_PER_MIN}, // duration of placeholder period
               period
             ]);
           else if (+period.start == +prevPeriod.end && (period.start < latestEnd || needSplitCol))
