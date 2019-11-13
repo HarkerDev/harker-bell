@@ -364,6 +364,7 @@ export default {
     window.addEventListener("pwaOfflineReady", () => this.snackbars.offlineReady = true);
     window.addEventListener("pwaUpdated", () => this.snackbars.pwaUpdated = true);
     window.addEventListener("beforeinstallprompt", (e) => this.features.beforeInstallPrompt = e);
+    window.addEventListener("appinstalled", () => this.features.beforeInstallPrompt = false);
     this.time.today = this.getCurrentUTCMidnight();
     console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
