@@ -275,7 +275,7 @@ export default {
      * @return {boolean}  true if the current falls within the schedule range; otherwise, false
      */
     showIndicator(now, date) {
-      console.log("DATE: "+date);
+      //console.log("DATE: "+date);
       let schedule = this.schedules[date.toISOString()];
       if (!schedule || schedule.schedule.length == 0) return false;
       schedule = schedule.schedule;
@@ -285,7 +285,7 @@ export default {
      * 
      */
     indicatorTop(now, date) {
-      console.log("INDICTOP: "+(now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN)
+      //console.log("INDICTOP: "+(now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN)
       return (now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN;
     },
   }

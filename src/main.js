@@ -7,12 +7,7 @@ import vuetify from "./plugins/vuetify";
 import {openDB} from "idb";
 import * as Sentry from "@sentry/browser";
 import * as Integrations from "@sentry/integrations";
-//import "roboto-fontface/css/roboto/roboto-fontface.css";
-//import "material-design-icons-iconfont/dist/material-design-icons.css";
-//import "typeface-roboto";
-//import "typeface-pt-sans";
 import "./fonts.css";
-//import "./material-icons.css";
 import "autotrack/lib/plugins/event-tracker";
 import "autotrack/lib/plugins/outbound-link-tracker";
 import "autotrack/lib/plugins/page-visibility-tracker";
@@ -26,17 +21,17 @@ Sentry.init({
 
 Vue.config.productionTip = false;
 
-let timestamp = new Date();
+//let timestamp = new Date();
 if (window.indexedDB)
   openDB("harker-bell-db", 1, {
     upgrade(db) {
       db.createObjectStore("schedules", {keyPath: "date"});
     },
   }).then(db => {
-    console.log("==> DB: ", new Date()-timestamp);
+    //console.log("==> DB: ", new Date()-timestamp);
     window.db = db;
     initVue();
-    console.log("==> VUE: ", new Date()-timestamp);
+    //console.log("==> VUE: ", new Date()-timestamp);
   }).catch(err => {
     console.error(err);
     window.db = null;

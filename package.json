@@ -49,6 +49,7 @@
       "parser": "babel-eslint"
     },
     "rules": {
+      "no-console": 1,
       "vue/attributes-order": 1,
       "vue/no-confusing-v-for-v-if": 1,
       "vue/no-v-html": 1,

@@ -356,8 +356,8 @@ export default {
     },
   },
   async created() {
-    console.log(new Date-abcd);
-    console.log(new Date-abcd);
+    //console.log(new Date-abcd);
+    //console.log(new Date-abcd);
     /** Number of milliseconds per minute and day */
     this.$MS_PER_MIN = 60*1000;
     this.$MS_PER_DAY = this.$MS_PER_MIN*60*24;
@@ -371,17 +371,17 @@ export default {
     window.addEventListener("beforeinstallprompt", (e) => this.features.beforeInstallPrompt = e);
     window.addEventListener("appinstalled", () => this.features.beforeInstallPrompt = false);
     this.time.today = this.getCurrentUTCMidnight();
-    console.log("STARTING:\t", new Date-abcd);
+    //console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
     this.socket = io("https://bell.dev.harker.org", {timeout: 10000});
     this.socket.on("connect", () => {
-      console.log("SOCK CONN:\t", new Date-abcd);
+      //console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
       if (this.db) this.socket.emit("request update", localStorage.getItem("scheduleRevision"));
     });
     this.socket.on("disconnect", reason => {
       this.io.connected = false;
-      console.log(reason);
+      //console.log(reason);
     });
     this.socket.on("update message", message => {
       this.message = message;
@@ -407,12 +407,12 @@ export default {
       localStorage.setItem("lastConnected", now.getTime());
     });
     if (!localStorage.getItem("scheduleRevision")) this.getFromSocket(this.calendar.dates);
-    console.log("INIT DONE:\t", new Date-abcd);
+    //console.log("INIT DONE:\t", new Date-abcd);
   },
   mounted() {
     setInterval(() => this.updateTime(), this.$MS_PER_MIN, this);
     document.addEventListener("visibilitychange", () => {
-      console.log(document.hidden);
+      //console.log(document.hidden);
       if (!document.hidden) this.updateTime();
     });
     window.addEventListener("keyup", event => {
@@ -423,7 +423,7 @@ export default {
                event.key == "KeyT" || event.keyCode == 84) this.$router.push("/").catch(() => {});
       else if (event.key == "KeyD" || event.keyCode == 68) this.changeMode("day");
       else if (event.key == "KeyW" || event.keyCode == 87) this.changeMode("week");
-      else if (event.key == "KeyM" || event.keyCode == 77) this.changeMode("month");
+      //else if (event.key == "KeyM" || event.keyCode == 77) this.changeMode("month");
       else if (event.key == "KeyR" || event.keyCode == 82) this.updateTime();
     });
     // TODO: FIX DIALOG NOT SHOWING UP ON PAGE LOAD (SETTINGS ROUTE)
@@ -503,16 +503,16 @@ export default {
      */
     async getFromIndexedDB(dates) {
       let schedules = [];
-      console.log("GET IDB:\t", new Date-abcd);
+      //console.log("GET IDB:\t", new Date-abcd);
       if (this.db) {
         await Promise.all(dates.map(async date => {
-          console.log("GETTING:\t", new Date-abcd);
+          //console.log("GETTING:\t", new Date-abcd);
           let schedule = await this.db.get("schedules", date.toISOString());
           if (schedule) schedules.push(schedule);
-          console.log("GOTTEN:\t", new Date-abcd);
+          //console.log("GOTTEN:\t", new Date-abcd);
         }));
       }
-      console.log("GOT IDB:\t", new Date-abcd);
+      //console.log("GOT IDB:\t", new Date-abcd);
       return schedules;
     },
     /**
@@ -520,16 +520,16 @@ export default {
      * @param {Date[]} dates  array of dates
      */
     getFromSocket(dates) {
-      console.log("getFromSocket");
+      //console.log("getFromSocket");
       this.calendar.loading = true;
       this.socket.emit("request schedule", {
         start: dates[0],
         end: dates[dates.length-1]
       }, schedules => {
-        console.log("GOT SOCK:\t", new Date-abcd);
+        //console.log("GOT SOCK:\t", new Date-abcd);
         this.rawSchedules = schedules;
         this.calendar.loading = false;
-        console.log(this.db);
+        //console.log(this.db);
       });
     },
     /**
@@ -606,8 +606,8 @@ export default {
      * @param {Route} route the current route object
      */
     async setCalendar(route) {
-      console.log("SETCALENDAR: ", route);
-      console.log("BEGINCAL:\t", new Date-abcd);
+      //console.log("SETCALENDAR: ", route);
+      //console.log("BEGINCAL:\t", new Date-abcd);
       if (this.$route.name == "month" && this.mode != "month")
         this.saveMode(this.mode = "month");
       else if (this.$route.name == "day" && !["day", "week"].includes(this.mode))
@@ -670,7 +670,7 @@ export default {
       if (this.db) this.rawSchedules = await this.getFromIndexedDB(dates);
       else if (this.socket) this.getFromSocket(dates);
       this.calendar.dates = dates;
-      console.log("SET CAL:\t", new Date-abcd);
+      //console.log("SET CAL:\t", new Date-abcd);
     },
     /** Shows the PWA install prompt, if available. */
     showInstallPrompt() {
@@ -697,7 +697,7 @@ export default {
     },
     /**  */
     updateTime() {
-      console.log("updating...");
+      //console.log("updating...");
       this.time.now = new Date();
       this.time.today = this.getCurrentUTCMidnight();
       this.time.utcNow = new Date(new Date(this.time.now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))-this.time.now.getTimezoneOffset()*this.$MS_PER_MIN);
