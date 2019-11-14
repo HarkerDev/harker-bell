@@ -87,12 +87,13 @@
               <v-list-item-title>Week</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item ga-on="click" ga-event-category="month" ga-event-action="click" @click="changeMode('month')">
+          <v-list-item disabled ga-on="click" ga-event-category="month" ga-event-action="click" @click="changeMode('month')">
             <v-list-item-icon>
               <v-icon v-if="mode == 'month'" class="material-icons-outlined">check</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Month</v-list-item-title>
+              <v-list-item-subtitle>Coming soon!</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -130,7 +131,7 @@
       </div>
       <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules" :settings="settings" :sheet-id="menu.open ? menu.sheetId : null" :time="time" @show-menu="showMenu"></router-view>
     </v-content>
-    <v-dialog v-model="settings.dialog" :fullscreen="$vuetify.breakpoint.xsOnly" :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="420" @input="closeSettings">
+    <v-dialog v-model="settings.dialog" :fullscreen="$vuetify.breakpoint.xsOnly" :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="400" @input="closeSettings">
       <v-card>
         <v-app-bar flat>
           <v-btn icon @click="closeSettings">
@@ -165,10 +166,14 @@
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
-        <v-card-actions>
-          <v-layout justify-center>
-            
-          </v-layout>
+        <v-card-actions class="caption">
+          <v-row>
+            <v-col class="text-center short px-6 pb-0">
+              <p><v-icon class="material-icons-outlined mr-2 mt-n1" small>info</v-icon>Schedules are only guaranteed to be accurate through the end of the current month.</p>
+              <p><a href="https://bell.harker.org/docs/api" target="_blank">API Docs</a> • <a href="https://bell.harker.org/docs" target="_blank">Help</a> • <a href="https://bell.harker.org/docs/issues" target="_blank">Send Feedback</a> • <a href="https://harkerdev.statuspage.io/?utm_source=bell&utm_medium=hdev" target="_blank">Service Status</a></p>
+              <p class="secondary--text overline">Made with <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon> by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank" class="grey2--text">HarkerDev</a></p>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-dialog>
