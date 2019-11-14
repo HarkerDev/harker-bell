@@ -238,7 +238,7 @@ export default {
         lastUpdated: localStorage.getItem("lastUpdated") || null,
       },
       db: window.db,
-      mode: localStorage.getItem("calendarMode") || this.$vuetify.breakpoint.xsOnly ? "day" : "week",
+      mode: localStorage.getItem("calendarMode") || (this.$vuetify.breakpoint.xsOnly ? "day" : "week"),
       rawSchedules: [],
       calendar: {
         currentDate: null,
