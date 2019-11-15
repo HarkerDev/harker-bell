@@ -2,7 +2,7 @@
 @font-face {
   font-family: "Gilroy";
   font-style: normal;
-  font-display: swap;
+  font-display: block;
   font-weight: 500;
   src:
     local("Gilroy Medium"),
@@ -15,7 +15,7 @@
 @font-face {
   font-family: "Gilroy";
   font-style: normal;
-  font-display: swap;
+  font-display: block;
   font-weight: 700;
   src:
     local("Gilroy Bold"),
