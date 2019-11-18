@@ -2,7 +2,7 @@ process.env.VUE_APP_VERSION = require("./package.json").version;
 
 module.exports = {
   productionSourceMap: true,
-  transpileDependencies: ["autotrack", "debug", "dom-utils", "idb", "@sentry/browser", "@sentry/integrations", "socket.io-client", "vuetify"],
+  transpileDependencies: ["autotrack", "dom-utils", "idb", "@sentry/browser", "@sentry/integrations", "socket.io-client", "vue-content-loader", "vuetify"],
   css: {
     loaderOptions: {
       sass: {
