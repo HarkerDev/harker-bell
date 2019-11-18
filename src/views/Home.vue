@@ -220,7 +220,7 @@ export default {
             ]);
           else if (+period.start == +prevPeriod.end && (period.start < latestEnd || needSplitCol))
             lastGroup[lastGroup.length-1].push(period); // simply add to current column if periods are adjacent or a column split is needed
-          else if (+period.start == +prevPeriod.end) // start a new period group if period starts after the previous group
+          else if (+period.start == +prevPeriod.end || +period.start == +latestEnd) // start a new period group if period starts after the previous group
             result.push([[period]]);
           else if (period.start < latestEnd || needSplitCol) // insert placeholder in current column if there's a gap between two periods or a column split is needed
             lastGroup[lastGroup.length-1].push({duration: (period.start-prevPeriod.end)/this.$MS_PER_MIN}, period); // BUGFIXED HERE
