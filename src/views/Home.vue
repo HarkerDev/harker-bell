@@ -347,7 +347,7 @@ export default {
   margin-left: 0;
 }
 .content {
-  padding: 0 2px 2px;
+  padding: 0 3px 3px;
   overflow-y: hidden;
 }
 .normal {
