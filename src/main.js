@@ -7,7 +7,6 @@ import vuetify from "./plugins/vuetify";
 import {openDB} from "idb";
 import * as Sentry from "@sentry/browser";
 import * as Integrations from "@sentry/integrations";
-import "./fonts.css";
 import "autotrack/lib/plugins/event-tracker";
 import "autotrack/lib/plugins/outbound-link-tracker";
 import "autotrack/lib/plugins/page-visibility-tracker";

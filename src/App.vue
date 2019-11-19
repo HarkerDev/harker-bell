@@ -21,7 +21,7 @@
         <v-icon class="material-icons-outlined">chevron_right</v-icon>
       </v-btn>
       <transition name="fade" mode="out-in">
-        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px'}">
+        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title text-center" :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '140px'}">
           <template v-if="$vuetify.breakpoint.smAndUp">
             <span v-if="mode == 'month'">{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCFullYear()}}</span>
             <span v-else-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
@@ -32,7 +32,7 @@
             <span v-else>{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
           </template>
         </v-toolbar-title>
-        <v-toolbar-title v-else key="title" class="headline font-weight-medium text-center" :style="{'min-width': $vuetify.breakpoint.smAndUp ? '220px' : '145px', cursor: 'pointer'}" ga-on="click" ga-event-category="title" ga-event-action="click" @click="changeTitle">
+        <v-toolbar-title v-else id="title" key="title" class="headline text-center" :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '140px'}" ga-on="click" ga-event-category="title" ga-event-action="click" @click="changeTitle">
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
         </v-toolbar-title>
       </transition>
@@ -732,6 +732,10 @@ export default {
   top: 55px;
   transform: translateX(-50%);
   line-height: normal;
+}
+#title {
+  font-size: 22px !important;
+  cursor: pointer;
 }
 .no-select {
   -webkit-user-select: none;
