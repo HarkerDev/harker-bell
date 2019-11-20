@@ -171,7 +171,7 @@
             <v-col class="text-center short px-6 pb-0">
               <p><v-icon class="material-icons-outlined mr-2 mt-n1" small>info</v-icon>Schedules are only guaranteed to be accurate through the end of the current month.</p>
               <p><a href="https://bell.harker.org/docs/api" target="_blank">API Docs</a> • <a href="https://bell.harker.org/docs" target="_blank">Help</a> • <a href="https://bell.harker.org/docs/issues" target="_blank">Report an Issue</a> • <a href="https://harkerdev.statuspage.io/?utm_source=bell&utm_medium=hdev" target="_blank">Service Status</a></p>
-              <p class="primary--text overline">Made with <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon> by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank" class="grey2--text">HarkerDev</a></p>
+              <p class="overline">Made with <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon> by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a></p>
             </v-col>
           </v-row>
         </v-card-actions>
