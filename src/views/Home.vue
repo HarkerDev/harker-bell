@@ -11,10 +11,10 @@
           <!-- DAY HEADER -->
           <v-sheet class="day-header" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" :height="mode == 'month' ? 36 : 44" tile>
             <v-row class="ml-5" align="center" no-gutters>
-              <v-col cols="auto">
-                <div v-if="mode != 'month' && date.getUTCDate() != 1" :class="['overline', 'text-center', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{weekdays[date.getUTCDay()-1]}}</div>
-                <div v-else-if="date.getUTCDate() == 1" :class="['overline', 'text-center', {'mb-n2': mode == 'month'}, {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{months[date.getUTCMonth()]}}</div>
-                <div :class="[mode == 'month' ? 'subtitle-1' : 'headline', 'text-left', 'short', 'font-family', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{date.getUTCDate()}}</div>
+              <v-col cols="auto" class="text-center">
+                <div v-if="mode != 'month' && date.getUTCDate() != 1" :class="['overline', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{weekdays[date.getUTCDay()-1]}}</div>
+                <div v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}, {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{months[date.getUTCMonth()]}}</div>
+                <div :class="[mode == 'month' ? 'subtitle-1' : 'headline', 'short', 'date', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{date.getUTCDate()}}</div>
               </v-col>
               <v-spacer></v-spacer>
               <v-col v-if="schedules[date.toISOString()]" cols="auto">
@@ -22,7 +22,7 @@
                   <v-chip v-if="schedules[date.toISOString()].variant" class="font-weight-bold" :color="schedules[date.toISOString()].variant.includes('adj') ? 'warning' : 'info'" :input-value="true" outlined x-small>
                     {{schedules[date.toISOString()].variant}}
                   </v-chip>
-                  <div :class="[mode == 'month' ? 'title' : 'display-1', 'ml-3', 'font-family', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</div>
+                  <div :class="[mode == 'month' ? 'title' : 'display-1', 'ml-3', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</div>
                 </v-row>
               </v-col>
             </v-row>
@@ -362,6 +362,9 @@ export default {
 }
 .lunch {
   cursor: pointer;
+}
+.date {
+  margin-left: -1px;
 }
 .text-bottom {
   vertical-align: text-bottom;
