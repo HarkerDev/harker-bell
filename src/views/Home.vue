@@ -52,7 +52,7 @@
           </div>
           <!-- WEEK DAY CONTENT -->
           <template v-else>
-            <div v-if="time.today.getTime() == date.getTime() && showIndicator(time.utcNow, date)">
+            <div v-if="time.today.getTime() == date.getTime() && showIndicator(time.utcNow, date)" class="hidden-print-only">
               <div class="error" :style="{position: 'absolute', borderTopWidth: '2px', borderTopStyle: 'solid', marginTop: '44px', top: indicatorTop(time.utcNow, date)+'px', left: 0, right: '-2px', opacity: 0.8, zIndex: 3}"></div>
               <div class="error" :style="{position: 'absolute', borderRadius: '50%', height: '10px', width: '10px', marginTop: '40px', marginLeft: '-6px', top: indicatorTop(time.utcNow, date)+'px', zIndex: 3}"></div>
             </div>
@@ -67,7 +67,7 @@
                         <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                         <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-                        <div v-if="period.duration >= 45 && time.utcNow >= period.start && time.utcNow <= period.end" class="overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                        <div v-if="period.duration >= 45 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                       </v-layout>
                     </v-sheet>
                   </v-hover>
@@ -80,7 +80,7 @@
                       </div>
                       <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                       <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-                      <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                      <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                     </v-layout>
                   </v-sheet>
                 </template>
@@ -321,6 +321,7 @@ export default {
 }
 .event-name {
   white-space: pre-wrap;
+  cursor: text;
 }
 .day-container {
   margin: 0 -2px -2px 0;

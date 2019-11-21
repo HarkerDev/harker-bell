@@ -170,7 +170,7 @@
           <v-row>
             <v-col class="text-center short px-6 pb-0">
               <p><v-icon class="material-icons-outlined mr-2 mt-n1" small>info</v-icon>Schedules are only guaranteed to be accurate through the end of the current month.</p>
-              <p><a href="https://bell.harker.org/docs/api" target="_blank">API Docs</a> • <a href="https://bell.harker.org/docs" target="_blank">Help</a> • <a href="https://bell.harker.org/docs/issues" target="_blank">Report an Issue</a> • <a href="https://harkerdev.statuspage.io/?utm_source=bell&utm_medium=hdev" target="_blank">Service Status</a></p>
+              <p><a href="https://bell.harker.org/docs/api" target="_blank">API Docs</a> • <a href="https://bell.harker.org/docs" target="_blank">Help</a> • <a href="https://github.com/BowenYin/harker-bell" target="_blank">GitHub</a> • <a href="https://harkerdev.statuspage.io/?utm_source=bell&utm_medium=hdev" target="_blank">Service Status</a></p>
               <p class="overline">Made with <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon> by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a></p>
             </v-col>
           </v-row>
@@ -646,12 +646,12 @@ export default {
         if (route.name == "day")
           startDate = this.getSunday(new Date(Date.UTC(year, month-1, day))); // date in URL
         else
-          startDate = this.getSunday(new Date(+this.calendar.currentDate)); // sunday of the current week
+          startDate = this.getSunday(new Date(+this.calendar.currentDate+this.$MS_PER_DAY)); // sunday of the current week, or next sunday if it is already saturday
         endDate = new Date(+startDate+5*this.$MS_PER_DAY); // add 5 days to get friday
       } else if (route.name == "day") // is day mode
         startDate = endDate = new Date(Date.UTC(year, month-1, day)); // date specified in URL
       else // if no date specified in URL path
-        startDate = endDate = new Date(+this.calendar.currentDate);
+        startDate = endDate = new Date(+this.calendar.currentDate+this.$MS_PER_DAY);
       if (this.mode == "day") {
         let date = this.calendar.currentDate;
         if (date.getUTCDay() == 0) date = new Date(+date+this.$MS_PER_DAY);
