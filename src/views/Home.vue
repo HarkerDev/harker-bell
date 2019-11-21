@@ -53,8 +53,8 @@
           <!-- WEEK DAY CONTENT -->
           <template v-else>
             <div v-if="time.today.getTime() == date.getTime() && showIndicator(time.utcNow, date)" class="hidden-print-only">
-              <div class="error" :style="{position: 'absolute', borderTopWidth: '2px', borderTopStyle: 'solid', marginTop: '44px', top: indicatorTop(time.utcNow, date)+'px', left: 0, right: '-2px', opacity: 0.8, zIndex: 3}"></div>
-              <div class="error" :style="{position: 'absolute', borderRadius: '50%', height: '10px', width: '10px', marginTop: '40px', marginLeft: '-6px', top: indicatorTop(time.utcNow, date)+'px', zIndex: 3}"></div>
+              <div class="error indicator-line" :style="{top: indicatorTop(time.utcNow, date)+'px'}"></div>
+              <div class="error indicator-dot" :style="{top: indicatorTop(time.utcNow, date)+'px'}"></div>
             </div>
             <v-layout v-for="(group, gIndex) in computedSchedules[date.toISOString()]" :key="gIndex" :class="['group', {'first': gIndex == 0}]">
               <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
@@ -67,7 +67,7 @@
                         <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                         <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-                        <div v-if="period.duration >= 45 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                        <div v-if="period.duration >= 45 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                       </v-layout>
                     </v-sheet>
                   </v-hover>
@@ -80,7 +80,7 @@
                       </div>
                       <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                       <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-                      <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                      <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                     </v-layout>
                   </v-sheet>
                 </template>
@@ -366,6 +366,28 @@ export default {
 }
 .date {
   margin-left: -1px;
+}
+.indicator-line {
+  position: absolute;
+  border-top-width: 2px;
+  border-top-style: solid;
+  margin-top: 44px;
+  left: 0;
+  right: -2px;
+  opacity: 0.8;
+  z-index: 3;
+}
+.indicator-dot {
+  position: absolute;
+  border-radius: 50%;
+  height: 10px;
+  width: 10px;
+  margin-top: 40px;
+  margin-left: -6px;
+  z-index: 3;
+}
+.time-remain {
+  letter-spacing: normal !important;
 }
 .text-bottom {
   vertical-align: text-bottom;
