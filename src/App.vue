@@ -648,18 +648,19 @@ export default {
         else
           startDate = this.getSunday(new Date(+this.calendar.currentDate+this.$MS_PER_DAY)); // sunday of the current week, or next sunday if it is already saturday
         endDate = new Date(+startDate+5*this.$MS_PER_DAY); // add 5 days to get friday
-      } else if (route.name == "day") // is day mode
+      } else if (route.name == "day") { // is day route
         startDate = endDate = new Date(Date.UTC(year, month-1, day)); // date specified in URL
-      else // if no date specified in URL path
-        startDate = endDate = new Date(+this.calendar.currentDate+this.$MS_PER_DAY);
-      if (this.mode == "day") {
         let date = this.calendar.currentDate;
         if (date.getUTCDay() == 0) date = new Date(+date+this.$MS_PER_DAY);
-        else if (date.getUTCDay() == 6) date = new Date(date-this.$MS_PER_DAY);
+        else if (date.getUTCDay() == 6) date = new Date(+date+2*this.$MS_PER_DAY);
         if (+date != +this.calendar.currentDate) {
           this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
           return;
         }
+      } else { // if no date specified in URL path
+        startDate = endDate = new Date(+this.calendar.currentDate);
+        if (startDate.getUTCDay() == 0) startDate = endDate = new Date(+startDate+this.$MS_PER_DAY);
+        else if (startDate.getUTCDay() == 6) startDate = endDate = new Date(+startDate+2*this.$MS_PER_DAY);
       }
       let dates = [];
       while (startDate <= endDate) {

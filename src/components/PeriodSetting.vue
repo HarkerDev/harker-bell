@@ -4,7 +4,7 @@
       <v-subheader class="body-1 pl-4 mr-4">P{{num}}</v-subheader>
     </v-col>
     <v-col>
-      <v-text-field v-model="settings.periodNames[num-1]" color="accent" dense counter="20" maxlength="20" placeholder="Custom Name" ga-on="focus" :ga-event-category="'period '+num+' name'" ga-event-action="input" @blur="changeName" @focus="$event.target.select()"></v-text-field>
+      <v-text-field v-model="settings.periodNames[num-1]" color="accent" dense counter="25" maxlength="25" placeholder="Custom Name" ga-on="focus" :ga-event-category="'period '+num+' name'" ga-event-action="input" @blur="changeName" @focus="$event.target.select()"></v-text-field>
     </v-col>
     <v-col cols="auto">
       <v-select v-model="settings.periodColors[num-1]" class="mx-8" color="accent" dense :disabled="!settings.showColors" hide-details :items="settings.colors" :menu-props="{'max-width': 56}" style="width: 52px;" @input="changeColors">

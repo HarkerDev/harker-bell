@@ -80,7 +80,7 @@
                       </div>
                       <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                       <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-                      <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                      <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                     </v-layout>
                   </v-sheet>
                 </template>
@@ -385,9 +385,6 @@ export default {
   margin-top: 40px;
   margin-left: -6px;
   z-index: 3;
-}
-.time-remain {
-  letter-spacing: normal !important;
 }
 .text-bottom {
   vertical-align: text-bottom;
