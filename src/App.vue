@@ -51,14 +51,6 @@
               <v-list-item-title class="list-item-text">Settings</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item href="https://bell.harker.org/docs/shortcuts" target="_blank">
-            <v-list-item-icon class="list-item-icon">
-              <v-icon class="material-icons-outlined">keyboard</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title class="list-item-text">Keyboard shortcuts</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
           <v-list-item href="https://bell.harker.org/submitevent" target="_blank">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">open_in_new</v-icon>
@@ -143,7 +135,7 @@
         </v-app-bar>
         <v-list subheader>
           <v-list-item>
-            <v-list-item-content>Use dark theme</v-list-item-content>
+            <v-list-item-content>Enable dark theme</v-list-item-content>
             <v-list-item-action>
               <v-switch v-model="$vuetify.theme.dark" :inset="features.ios"></v-switch>
             </v-list-item-action>
