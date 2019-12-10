@@ -43,7 +43,6 @@ function initVue() {
     vuetify,
     render: h => h(App)
   }).$mount("#app");
-  window.app = app;
 }
 localStorage.setItem("appVersion", process.env.VUE_APP_VERSION);
 ga("require", "eventTracker", {events: ["click", "contextmenu", "focus"]});
