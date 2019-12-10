@@ -202,8 +202,8 @@
     </v-footer>
     <v-snackbar v-model="snackbars.offlineReady" :timeout="30000">
       {{features.beforeInstallPrompt ? 'Install this app in one click for quick and easy access.': 'Install this app onto your home screen for quick and easy access.'}}
-      <v-btn v-if="features.beforeInstallPrompt" text href="https://bell.harker.org/docs/install.html?utm_source=bell&utm_medium=inapp" target="_blank" @click="snackbars.offlineReady = false">Learn More</v-btn>
-      <v-btn v-else text @click="showInstallPrompt; snackbars.offlineReady = false;">Install</v-btn>
+      <v-btn v-if="features.beforeInstallPrompt" text @click="showInstallPrompt; snackbars.offlineReady = false;">Install</v-btn>
+      <v-btn v-else text href="https://bell.harker.org/docs/install.html?utm_source=bell&utm_medium=inapp" target="_blank" @click="snackbars.offlineReady = false">Learn More</v-btn>
     </v-snackbar>
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
       A new version is available! Refresh the app to update.
