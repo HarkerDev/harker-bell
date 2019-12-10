@@ -490,6 +490,10 @@ export default {
       if (window.indexedDB) text += "indexedDB: "+JSON.stringify(await window.indexedDB.databases())+"\n";
       for (let key in window.applicationCache)
         text += key+": "+window.applicationCache[key]+"\n";
+      try {
+        const vue = document.getElementById("app").__vue__;
+        text += JSON.stringify((({calendar, env, features, io, mode, prevRoute, settings}) => ({calendar, env, features, io, mode, prevRoute, settings}))(vue.$parent.$data))+"\n";
+      } catch {text += "missing vue\n"}
       text += new Date().toString();
       
       let textArea = document.createElement("textarea");
