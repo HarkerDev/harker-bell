@@ -492,7 +492,7 @@ export default {
         text += key+": "+window.applicationCache[key]+"\n";
       try {
         const vue = document.getElementById("app").__vue__;
-        text += JSON.stringify((({calendar, env, features, io, mode, prevRoute, settings}) => ({calendar, env, features, io, mode, prevRoute, settings}))(vue.$parent.$data))+"\n";
+        text += JSON.stringify((({calendar, env, features, io, mode, settings}) => ({calendar, env, features, io, mode, settings}))(vue.$parent.$data))+"\n";
       } catch {text += "missing vue\n"}
       text += new Date().toString();
       
