@@ -161,8 +161,9 @@
         <v-card-actions class="caption">
           <v-row>
             <v-col class="text-center short px-6 pb-0">
-              <p><v-icon class="material-icons-outlined mr-2 mt-n1" small>info</v-icon>Schedules are only guaranteed to be accurate through the end of the current month.</p>
-              <p><a href="https://bell.harker.org/docs/api" target="_blank">API Docs</a> • <a href="https://bell.harker.org/docs" target="_blank">Help</a> • <a href="https://github.com/BowenYin/harker-bell" target="_blank">GitHub</a> • <a href="https://harkerdev.statuspage.io/?utm_source=bell&utm_medium=hdev" target="_blank">Service Status</a></p>
+              <p><v-icon class="material-icons-outlined mr-2 mt-n1" small>info</v-icon>Schedules are only guaranteed to be accurate up to the end of the current month.</p>
+              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API Docs</a> • <a href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank">Help</a> • <a href="https://github.com/BowenYin/harker-bell" target="_blank">GitHub</a> • <a href="https://harkerdev.statuspage.io/?utm_source=bell&utm_medium=hdev" target="_blank">Service Status</a></p>
+              <v-btn class="mb-1" x-small text @click="copyDebug">Copy Debug Info</v-btn>
               <p class="overline">Made with <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon> by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a></p>
             </v-col>
           </v-row>
@@ -199,12 +200,13 @@
         <span class="font-weight-medium">{{formattedLastUpdated || "Updating..."}}</span>
       </div>
     </v-footer>
-    <v-snackbar v-model="snackbars.offlineReady" :timeout="0">
-      Your browser supports offline mode! Try turning off your internet and reloading this page.
-      <v-btn text @click="snackbars.offlineReady = false">Got It</v-btn>
+    <v-snackbar v-model="snackbars.offlineReady" :timeout="30000">
+      {{features.beforeInstallPrompt ? 'Install this app in one click for quick and easy access.': 'Install this app onto your home screen for quick and easy access.'}}
+      <v-btn v-if="features.beforeInstallPrompt" text href="https://bell.harker.org/docs/assistant.html?utm_source=bell&utm_medium=inapp" target="_blank" @click="snackbars.offlineReady = false">Learn More</v-btn>
+      <v-btn v-else text @click="showInstallPrompt(); snackbars.offlineReady = false;">Install</v-btn>
     </v-snackbar>
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
-      A new version is available! Refresh the page to update.
+      A new version is available! Refresh the app to update.
       <v-btn text @click="refreshPWA">Reload</v-btn>
     </v-snackbar>
   </v-app>
@@ -473,6 +475,34 @@ export default {
       if (this.prevRoute) this.$router.back();
       else this.$router.push("/");
     },
+    /** Copies debug info to the clipboard. */
+    async copyDebug() {
+      let text = "";
+      for (let key in window.navigator)
+        text += key+": "+window.navigator[key]+"\n";
+      text += JSON.stringify(window.location)+"\n";
+      text += JSON.stringify(window.performance)+"\n";
+      for (let key in window.screen)
+        text += key+": "+window.screen[key]+"\n";
+      text += document.cookie+"\n";
+      if (window.localStorage) text += "localStorage: "+JSON.stringify(window.localStorage)+"\n";
+      if (window.caches) text += "caches: "+JSON.stringify(await window.caches.keys())+"\n";
+      if (window.indexedDB) text += "indexedDB: "+JSON.stringify(await window.indexedDB.databases())+"\n";
+      for (let key in window.applicationCache)
+        text += key+": "+window.applicationCache[key]+"\n";
+      text += new Date().toString();
+      
+      let textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const copied = document.execCommand("copy");
+      if (copied) alert("Copied to clipboard.");
+      else alert("Unable to copy debug info to clipboard.");
+      textArea.remove();
+    },
     /**
      * Formats a date into a human-readable representation. Can optionally omit the time portion.
      * @param {Date} date         date to be formatted
@@ -720,6 +750,7 @@ export default {
 }
 #message {
   position: absolute;
+  max-width: 550px;
   width: 90%;
   left: 50%;
   top: 55px;
@@ -763,6 +794,9 @@ body {
 }
 .v-input__slot:before {
   border-top-width: 1px !important;
+}
+.v-text-field > .v-input__control > .v-input__slot:after {
+  border-width: 1px 0 1px 0;
 }
 .v-date-picker-header .material-icons {
   font-family: "Material Icons Outlined";
