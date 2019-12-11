@@ -80,7 +80,7 @@
                       </div>
                       <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                       <div v-if="period.start && period.duration >= 30" class="text-no-wrap">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-                      <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only overline font-weight-medium" style="letter-spacing: normal !important;">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                      <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                     </v-layout>
                   </v-sheet>
                 </template>
@@ -91,7 +91,7 @@
             {{schedules[date.toISOString()].name}}
           </v-layout>
         </v-sheet>
-        <v-timeline v-if="mode != 'month' && schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick" align-top dense>
+        <v-timeline v-if="mode != 'month' && schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick hidden-print-only" align-top dense>
           <v-timeline-item v-for="event in schedules[date.toISOString()].events" :key="event.name" class="caption short" :color="colors[event.category]" fill-dot small>
             <span class="text-bottom">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span>
             <span class="event-name text-bottom text--secondary">{{event.name}}</span>
@@ -346,7 +346,7 @@ export default {
   margin-left: 0;
 }
 .content {
-  padding: 0 3px 3px;
+  padding: 0 3px;
   overflow-y: hidden;
 }
 .normal {
@@ -366,6 +366,7 @@ export default {
 }
 .date {
   margin-left: -1px;
+  margin-top: -2px;
 }
 .indicator-line {
   position: absolute;
@@ -396,10 +397,13 @@ export default {
   -webkit-transition: all 300ms;
           transition: all 300ms;
 }
+.v-application .overline.time-remain {
+  letter-spacing: normal !important;
+}
 </style>
 <style>
 .v-timeline-item__dot {
-  margin-top: 5px;
+  margin-top: 4px;
   -webkit-box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12) !important;
           box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12) !important;
 }

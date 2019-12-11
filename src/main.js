@@ -46,6 +46,8 @@ function initVue() {
 }
 localStorage.setItem("appVersion", process.env.VUE_APP_VERSION);
 ga("require", "eventTracker", {events: ["click", "contextmenu", "focus"]});
-ga("require", "outboundLinkTracker", {events: ["click", "contextmenu", "auxclick"]});
+ga("require", "outboundLinkTracker", {
+  events: ["click", "contextmenu", "auxclick"],
+  shouldTrackOutboundLink: () => true});
 ga("require", "pageVisibilityTracker", {visibleThreshold: 500, visibleMetricIndex: 1});
 ga("require", "urlChangeTracker");
