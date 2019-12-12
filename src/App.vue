@@ -135,7 +135,7 @@
         </v-app-bar>
         <v-list subheader>
           <v-list-item>
-            <v-list-item-content>Enable dark theme</v-list-item-content>
+            <v-list-item-content>Use dark theme</v-list-item-content>
             <v-list-item-action>
               <v-switch v-model="$vuetify.theme.dark" :inset="features.ios"></v-switch>
             </v-list-item-action>
@@ -409,7 +409,7 @@ export default {
       //console.log(document.hidden);
       if (!document.hidden) this.updateTime();
     });
-    window.addEventListener("keyup", event => {
+    window.addEventListener("keydown", event => {
       if (this.settings.dialog) return;
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
@@ -741,7 +741,7 @@ export default {
   border-radius: 2px !important;
 }
 .v-date-picker-title__date {
-  font-size: 26px !important;
+  font-size: 22px !important;
 }
 .v-menu__content {
   max-width: 95% !important;
