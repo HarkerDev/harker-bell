@@ -1,20 +1,16 @@
 <template>
-  <v-container fluid :class="{month: mode == 'month', week: mode == 'week', day: mode == 'day'}">
-    <!-- MONTH HEADER -->
-    <v-row v-if="mode == 'month'" key="header" class="overline flex-nowrap" justify="center">
-      <v-sheet v-for="day in weekdays" :key="day" class="text-center" height="24" width="143">{{day}}</v-sheet>
-    </v-row>
+  <v-container fluid :class="{week: mode == 'week', day: mode == 'day'}">
     <v-row key="content" class="row-container" justify="center" no-gutters>
       <v-col v-for="(date, j) in calendar.dates" :key="date.getTime()" class="cols-5" cols="4">
         <!-- DAY CONTAINER -->
-        <v-sheet ref="day" :class="['day-container', 'border-thick', {'overflow-hidden': mode == 'month'}]" :max-width="mode == 'month' ? 144 : 180" :min-height="mode == 'month' ? 84 : 497">
+        <v-sheet ref="day" class="day-container border-thick" max-width="180" min-height="497">
           <!-- DAY HEADER -->
-          <v-sheet class="day-header" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" :height="mode == 'month' ? 36 : 44" tile>
+          <v-sheet class="day-header" :color="time.today.getTime() == date.getTime() ? 'blue2 lighten-4' : ''" height="44" tile>
             <v-row class="ml-5" align="center" no-gutters>
               <v-col cols="auto" class="text-center">
-                <div v-if="mode != 'month' && date.getUTCDate() != 1" :class="['overline', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{weekdays[date.getUTCDay()-1]}}</div>
-                <div v-else-if="date.getUTCDate() == 1" :class="['overline', {'mb-n2': mode == 'month'}, {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{months[date.getUTCMonth()]}}</div>
-                <div :class="[mode == 'month' ? 'subtitle-1' : 'headline', 'short', 'date', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{date.getUTCDate()}}</div>
+                <div v-if="date.getUTCDate() != 1" :class="['overline', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{weekdays[date.getUTCDay()-1]}}</div>
+                <div v-else-if="date.getUTCDate() == 1" :class="['overline', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{months[date.getUTCMonth()]}}</div>
+                <div :class="['headline', 'short', 'date', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{date.getUTCDate()}}</div>
               </v-col>
               <v-spacer></v-spacer>
               <v-col v-if="schedules[date.toISOString()]" cols="auto">
@@ -22,12 +18,12 @@
                   <v-chip v-if="schedules[date.toISOString()].variant" class="font-weight-bold" :color="schedules[date.toISOString()].variant.includes('adj') ? 'warning' : 'info'" :input-value="true" outlined x-small>
                     {{schedules[date.toISOString()].variant}}
                   </v-chip>
-                  <div :class="[mode == 'month' ? 'title' : 'display-1', 'ml-3', 'text--disabled', 'font-weight-bold', 'font-transition']">{{schedules[date.toISOString()].code}}</div>
+                  <div class="display-1 ml-3 text--disabled font-weight-bold font-transition">{{schedules[date.toISOString()].code}}</div>
                 </v-row>
               </v-col>
             </v-row>
           </v-sheet>
-          <content-loader v-if="calendar.loading && mode != 'month'" :height="498" :width="180" :speed="0.5" :primary-color="$vuetify.theme.dark ? '#3C4043' : '#F1F3F4'" :secondary-color="$vuetify.theme.dark ? '#4E4F52' : '#E8EAED'">
+          <content-loader v-if="calendar.loading" :height="498" :width="180" :speed="0.5" :primary-color="$vuetify.theme.dark ? '#3C4043' : '#F1F3F4'" :secondary-color="$vuetify.theme.dark ? '#4E4F52' : '#E8EAED'">
             <rect x="75" y="25" rx="2" ry="2" width="30" height="12"></rect>
             <rect x="50" y="45" rx="2" ry="2" width="80" height="12"></rect>
             <rect x="0" y="85" rx="0" ry="0" width="180" height="10"></rect>
@@ -46,10 +42,6 @@
             <rect x="50" y="385" rx="2" ry="2" width="80" height="12"></rect>
             <rect x="30" y="440" rx="2" ry="2" width="120" height="12"></rect>
           </content-loader>
-          <!-- MONTH DAY CONTENT -->
-          <div v-else-if="mode == 'month'" class="body-2">
-            
-          </div>
           <!-- WEEK DAY CONTENT -->
           <template v-else>
             <div v-if="time.today.getTime() == date.getTime() && showIndicator(time.utcNow, date)" class="hidden-print-only">
@@ -87,11 +79,11 @@
               </v-flex>
             </v-layout>
           </template>
-          <v-layout v-if="schedules[date.toISOString()] && schedules[date.toISOString()].name" :class="['body-2', 'text-center', {'mt-4': mode != 'month'}, 'mx-2']" align-center justify-center>
+          <v-layout v-if="schedules[date.toISOString()] && schedules[date.toISOString()].name" class="body-2 text-center mt-4 mx-2" align-center justify-center>
             {{schedules[date.toISOString()].name}}
           </v-layout>
         </v-sheet>
-        <v-timeline v-if="mode != 'month' && schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick hidden-print-only" align-top dense>
+        <v-timeline v-if="schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick hidden-print-only" align-top dense>
           <v-timeline-item v-for="event in schedules[date.toISOString()].events" :key="event.name" class="caption short" :color="colors[event.category]" fill-dot small>
             <span class="text-bottom">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span>
             <span class="event-name text-bottom text--secondary">{{event.name}}</span>
@@ -126,7 +118,7 @@ export default {
     },
     mode: {
       validator(value) {
-        return ["day", "week", "month"].indexOf(value) != -1;
+        return ["day", "week"].indexOf(value) != -1;
       },
       required: true
     },
@@ -153,7 +145,6 @@ export default {
   },
   data() {
     return {
-      displayMonthContent: this.mode == "month",
       open: false,
       ref: undefined,
       stayOpen: true,
@@ -230,19 +221,6 @@ export default {
       }
       return computedSchedules;
     },
-    /** Keeps track of whether the current calendar mode is set to month view. */
-    isMonth() {
-      return this.mode == "month";
-    },
-  },
-  watch: {
-    /** Responds to calendar mode changes. */
-    mode(value) {
-      if (value == "month") {
-        this.ref = this.$refs.day[0].$el;
-      } else
-        this.displayMonthContent = false;
-    },
   },
   created() {
     /** Number of milliseconds in a minute */
@@ -305,12 +283,7 @@ export default {
   border: 2px solid #9AA0A6 !important; /* for IE11 */
   border: 2px solid var(--v-secondary-base) !important;
 }
-.month .cols-5 {
-  width: 20%;
-  max-width: 20%;
-  flex: 0 0 20%;
-}
-.container:not(.month) .cols-5 {
+.container .cols-5 {
   min-width: 178px;
   max-width: 178px;
 }
@@ -330,14 +303,10 @@ export default {
   -webkit-transition: all 300ms;
           transition: all 300ms;
 }
-.month .row-container {
-  max-width: 710px; /* TODO: OR 711 px? */
-  margin: auto;
-}
 .container.week {
   min-width: 932px;
 }
-.container:not(.month) .day-header {
+.container .day-header {
   border-bottom: 2px solid #9AA0A6 !important;
   border-bottom: 2px solid var(--v-secondary-base) !important;
   border-color: var(--v-secondary-base) !important;
