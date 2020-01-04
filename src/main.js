@@ -38,7 +38,7 @@ if (window.indexedDB)
   });
 else initVue();
 function initVue() {
-  var app = new Vue({
+  new Vue({
     router,
     vuetify,
     render: h => h(App)
