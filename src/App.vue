@@ -101,7 +101,7 @@
       </v-menu>
       <v-spacer></v-spacer>
     </v-app-bar>
-    <div id="message-wrapper" class="mb-2 hidden-print-only" style="height: 16px;">
+    <div id="message-wrapper" class="mb-2 hidden-print-only" style="height: 14px;">
       <div id="message" class="caption text-center" :style="{top: $vuetify.breakpoint.mdAndUp ? '62px' : '55px'}" v-html="message"></div>
     </div>
     <v-content style="overflow-x: scroll;">
