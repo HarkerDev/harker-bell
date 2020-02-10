@@ -32,7 +32,7 @@ if (window.indexedDB)
     initVue();
     //console.log("==> VUE: ", new Date()-timestamp);
   }).catch(err => {
-    console.error(err);
+    Sentry.captureException(err);
     window.db = null;
     initVue();
   });
