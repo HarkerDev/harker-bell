@@ -1,15 +1,26 @@
-# Harker Bell Schedule
-![GitHub package.json version](https://img.shields.io/github/package-json/v/BowenYin/harker-bell.svg)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/af49fbbb-c506-4bc7-a158-ab0ae4e922bf/deploy-status)](https://app.netlify.com/sites/harker-bell/deploys)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FBowenYin%2Fharker-bell.svg?type=small)](https://app.fossa.io/projects/git%2Bgithub.com%2FBowenYin%2Fharker-bell?ref=badge_shield)
+# Harker Bell Schedule (harker-bell)
 
-#### [View Live Site](https://bell.harker.org)
-#### [View Changelog](https://github.com/BowenYin/harker-bell/releases)
-#### [View Documentation](https://bell.harker.org/docs)
+Bell schedule app built for the future of the web.
 
-<a href="https://www.netlify.com">
-  <img src="https://www.netlify.com/img/global/badges/netlify-light.svg"/>
-</a>
+## Install the dependencies
+```bash
+npm install
+```
 
-### License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FBowenYin%2Fharker-bell.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FBowenYin%2Fharker-bell?ref=badge_large)
+### Start the app in development mode (hot-code reloading, error reporting, etc.)
+```bash
+quasar dev
+```
+
+### Lint the files
+```bash
+npm run lint
+```
+
+### Build the app for production
+```bash
+quasar build
+```
+
+### Customize the configuration
+See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).

@@ -1,118 +1,38 @@
 {
   "name": "harker-bell",
-  "version": "2.1.1",
+  "version": "3.0.0",
+  "description": "Bell schedule app built for the future of the web.",
+  "productName": "Harker Bell Schedule",
+  "cordovaId": "",
+  "capacitorId": "",
+  "author": "Bowen Yin <bowenvictoryin@gmail.com>",
   "private": true,
-  "author": "Bowen Yin",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --modern",
-    "lint": "vue-cli-service lint"
+    "lint": "eslint --ext .js,.vue src",
+    "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@sentry/browser": "^5.10.2",
-    "@sentry/integrations": "^5.10.2",
+    "@quasar/extras": "^1.0.0",
+    "@sentry/browser": "^5.12.1",
+    "@sentry/integrations": "^5.12.0",
     "autotrack": "^2.4.1",
-    "idb": "^4.0.5",
-    "register-service-worker": "^1.6.2",
-    "socket.io-client": "^2.3.0",
-    "vue": "^2.6.11",
-    "vue-content-loader": "^0.2.2",
-    "vue-router": "^3.1.3",
-    "vuetify": "2.1.18"
+    "idb": "^5.0.1",
+    "quasar": "^1.0.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.12.1",
-    "@vue/cli-plugin-eslint": "^3.12.1",
-    "@vue/cli-plugin-pwa": "^3.12.1",
-    "@vue/cli-service": "^3.12.1",
-    "babel-eslint": "^10.0.3",
-    "deepmerge": "^3.3.0",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.2.3",
-    "fibers": "^4.0.1",
-    "sass": "^1.24.2",
-    "sass-loader": "^7.3.1",
-    "vue-cli-plugin-vuetify": "^0.6.3",
-    "vue-template-compiler": "^2.6.11",
-    "vuetify-loader": "^1.4.3"
+    "@quasar/app": "^1.0.0",
+    "@vue/eslint-config-airbnb": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.10.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-vue": "^5.0.0"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/strongly-recommended",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {
-      "no-console": 1,
-      "vue/attributes-order": 1,
-      "vue/no-confusing-v-for-v-if": 1,
-      "vue/no-v-html": 1,
-      "vue/order-in-components": 1,
-      "vue/this-in-template": 1,
-      "vue/array-bracket-spacing": 1,
-      "vue/arrow-spacing": 1,
-      "vue/block-spacing": 1,
-      "vue/brace-style": 1,
-      "vue/camelcase": 1,
-      "vue/comma-dangle": 1,
-      "vue/component-name-in-template-casing": [
-        1,
-        "kebab-case"
-      ],
-      "vue/key-spacing": 1,
-      "vue/match-component-file-name": 1,
-      "vue/no-boolean-default": 1,
-      "vue/no-restricted-syntax": 1,
-      "vue/object-curly-spacing": 1,
-      "vue/require-direct-export": 1,
-      "vue/script-indent": 1,
-      "vue/space-unary-ops": 1,
-      "vue/v-on-function-call": 1,
-      "vue/max-attributes-per-line": 0,
-      "vue/html-closing-bracket-spacing": [
-        "error",
-        {
-          "selfClosingTag": 0
-        }
-      ],
-      "vue/html-self-closing": [
-        "error",
-        {
-          "html": {
-            "normal": "never",
-            "component": "never"
-          }
-        }
-      ],
-      "vue/singleline-html-element-content-newline": 0,
-      "vue/mustache-interpolation-spacing": [
-        "warning",
-        "never"
-      ]
-    }
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
   },
   "browserslist": [
-    "> 1% in US",
-    "not dead"
-  ],
-  "bugs": {
-    "url": "https://github.com/BowenYin/harker-bell/issues"
-  },
-  "homepage": "https://github.com/BowenYin/harker-bell#readme",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/BowenYin/harker-bell"
-  }
+    "last 1 version, not dead, ie >= 11"
+  ]
 }
