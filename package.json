@@ -8,6 +8,8 @@
   "author": "Bowen Yin <bowenvictoryin@gmail.com>",
   "private": true,
   "scripts": {
+    "dev": "quasar dev",
+    "build": "quasar build -m pwa",
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0"
   },
