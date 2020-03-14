@@ -17,6 +17,7 @@ Sentry.init({
   integrations: [new Integrations.Vue({Vue, attachProps: true, logErrors: true})],
   release: "harker-bell@"+process.env.VUE_APP_VERSION,
 });
+window.onload = () => Sentry.setTag("nodes", document.getElementsByTagName("*").length);
 
 Vue.config.productionTip = false;
 
@@ -43,7 +44,6 @@ function initVue() {
     vuetify,
     render: h => h(App)
   }).$mount("#app");
-  Sentry.setTag("nodes", document.getElementsByTagName("*").length);
 }
 localStorage.setItem("appVersion", process.env.VUE_APP_VERSION);
 ga("require", "eventTracker", {events: ["click", "contextmenu", "focus"]});
@@ -52,4 +52,4 @@ ga("require", "outboundLinkTracker", {
   shouldTrackOutboundLink: () => true});
 ga("require", "pageVisibilityTracker", {visibleThreshold: 500, visibleMetricIndex: 1});
 ga("require", "urlChangeTracker");
-ga(function(trk) {Sentry.setExtra("clientId", trk.get("clientId"))});
+ga(trk => Sentry.setExtra("clientId", trk.get("clientId")));
