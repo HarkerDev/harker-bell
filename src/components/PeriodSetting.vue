@@ -72,7 +72,7 @@ export default {
             new URL(value);
             return true;
           } catch (err) {
-            return false;  
+            return false;
           }
         },
       },
