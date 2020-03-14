@@ -52,4 +52,4 @@ ga("require", "outboundLinkTracker", {
   shouldTrackOutboundLink: () => true});
 ga("require", "pageVisibilityTracker", {visibleThreshold: 500, visibleMetricIndex: 1});
 ga("require", "urlChangeTracker");
-ga(trk => Sentry.setExtra("clientId", trk.get("clientId")));
+ga(trk => Sentry.setTag("clientId", trk.get("clientId")));
