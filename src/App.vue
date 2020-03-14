@@ -1,6 +1,6 @@
 <template>
   <v-app v-if="calendar.dates.length != 0">
-    <v-app-bar app elevate-on-scroll style="overflow-x: auto;">
+    <v-app-bar app color="primary" elevate-on-scroll style="overflow-x: auto;">
       <v-spacer></v-spacer>
       <v-btn class="hidden-print-only" icon aria-label="Previous" ga-on="click" ga-event-category="previous" ga-event-action="click" @click="nextOrPrevious(false)">
         <v-icon class="material-icons-outlined">chevron_left</v-icon>
@@ -113,7 +113,7 @@
     </v-content>
     <v-dialog v-model="settings.dialog" :fullscreen="$vuetify.breakpoint.xsOnly" :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="400" @input="closeSettings">
       <v-card>
-        <v-app-bar flat>
+        <v-app-bar color="primary" flat>
           <v-btn icon @click="closeSettings">
             <v-icon class="material-icons-outlined">close</v-icon>
           </v-btn>
@@ -125,7 +125,7 @@
           <v-list-item>
             <v-list-item-content>Use dark theme</v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="$vuetify.theme.dark" :inset="features.ios"></v-switch>
+              <v-switch v-model="$vuetify.theme.dark" color="accent" :inset="features.ios"></v-switch>
             </v-list-item-action>
           </v-list-item>
         </v-list>
@@ -134,7 +134,7 @@
           <v-list-item>
             <v-list-item-content>Show period colors</v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="settings.showColors" :inset="features.ios"></v-switch>
+              <v-switch v-model="settings.showColors" color="accent" :inset="features.ios"></v-switch>
             </v-list-item-action>
           </v-list-item>
         </v-list>
@@ -142,6 +142,7 @@
           <v-row>
             <v-col>
               <period-setting v-for="i in 7" :key="i" :num="i" :settings="settings"></period-setting>
+              <link-setting v-for="x in ['Advisory', 'Office Hours']" :key="x" :name="x" :settings="settings"></link-setting>
             </v-col>
           </v-row>
         </v-card-text>
@@ -203,12 +204,13 @@
 <script>
 import io from "socket.io-client";
 import PeriodSetting from "./components/PeriodSetting";
+import LinkSetting from "./components/LinkSetting";
 
-var abcd = new Date;
 export default {
   name: "App",
   components: {
-    PeriodSetting
+    PeriodSetting,
+    LinkSetting,
   },
   data() {
     return {
@@ -247,6 +249,8 @@ export default {
         showColors: localStorage.getItem("showPeriodColors") == "true",
         periodColors: JSON.parse(localStorage.getItem("periodColors")) || ["blue2", "red2", "green2", "yellow2", "orange2", "teal2", "purple2"],
         periodNames: JSON.parse(localStorage.getItem("periodNames")) || [],
+        links: JSON.parse(localStorage.getItem("periodLinks")) || {},
+        tempLinks: JSON.parse(localStorage.getItem("periodLinks")) || {},
         colors: ["red2", "deeporange2", "orange2", "yellow2", "lightgreen2", "green2", "teal2", "lightblue2", "blue2", "indigo2", "purple2", "pink2", "bluegrey2", "grey2"],
       },
       time: {

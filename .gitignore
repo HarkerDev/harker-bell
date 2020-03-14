@@ -2,6 +2,7 @@
 node_modules
 /dist
 .netlify
+.quasar
 
 # local env files
 .env.local

@@ -64,7 +64,7 @@
                     </v-sheet>
                   </v-hover>
                   <!-- REGULAR PERIOD -->
-                  <v-sheet v-else :key="pIndex" class="period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile>
+                  <v-sheet v-else :key="pIndex" class="period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile :tag="settings.links[period.name] ? 'a' : 'div'" :href="settings.links[period.name] || false" target="_blank">
                     <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}, getColor(period.name) && getColor(period.name)+'--text text--darken-4']" column align-center justify-center>
                       <div ref="periodNames">
                         {{period.name && settings.periodNames[period.name.substring(1, 2)-1] ? settings.periodNames[period.name.substring(1, 2)-1]+" ("+period.name+")" : period.name}}
@@ -275,7 +275,7 @@ export default {
 .v-sheet {
   position: relative;
 }
-.v-application div.border {
+.v-application div.border, .v-application a.border {
   border: 1px solid #9AA0A6 !important; /* for IE11 */
   border: 1px solid var(--v-secondary-base) !important;
 }
@@ -323,6 +323,7 @@ export default {
 }
 .period {
   margin: 0 -1px -1px;
+  text-decoration: initial;
 }
 .group, .column, .period {
   transition: all 100ms;
