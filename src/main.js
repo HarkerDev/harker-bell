@@ -46,6 +46,7 @@ function initVue() {
   }).$mount("#app");
 }
 localStorage.setItem("appVersion", process.env.VUE_APP_VERSION);
+ga("set", "dimension5", process.env.VUE_APP_VERSION || "not set");
 ga("require", "eventTracker", {events: ["click", "contextmenu", "focus"]});
 ga("require", "outboundLinkTracker", {
   events: ["click", "contextmenu", "auxclick"],

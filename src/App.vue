@@ -195,8 +195,7 @@
       <v-btn v-else text href="https://bell.harker.org/docs/install.html?utm_source=bell&utm_medium=inapp" target="_blank" @click="snackbars.offlineReady = false">Learn More</v-btn>
     </v-snackbar>
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
-      A new version is available! Refresh the app to update.
-      <v-btn text @click="refreshPWA">Reload</v-btn>
+      Updating to the latest version...
     </v-snackbar>
   </v-app>
 </template>
@@ -347,7 +346,10 @@ export default {
     } else
       document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
     window.addEventListener("pwaOfflineReady", () => this.snackbars.offlineReady = true);
-    window.addEventListener("pwaUpdated", () => this.snackbars.pwaUpdated = true);
+    window.addEventListener("pwaUpdated", () => {
+      this.snackbars.pwaUpdated = true;
+      this.$nextTick(() => window.location.reload());
+    });
     window.addEventListener("beforeinstallprompt", (e) => this.features.beforeInstallPrompt = e);
     window.addEventListener("appinstalled", () => this.features.beforeInstallPrompt = false);
     this.time.today = this.getCurrentUTCMidnight();
@@ -576,11 +578,6 @@ export default {
       setTimeout(() => {
         window.print();
       }, 100);
-    },
-    /** Reloads the page when the user clicks on the PWA update snackbar. */
-    refreshPWA() {
-      this.snackbars.pwaUpdated = false;
-      window.location.reload(false);
     },
     /**
      * Saves the calendar mode to local storage.
