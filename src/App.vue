@@ -346,7 +346,7 @@ export default {
     /** Handles changes to the virtual bells toggle setting. */
     "settings.enableBells"(enabled) {
       if (enabled) this.listenForBells();
-      else this.socket.off("virtual bells");
+      else this.socket.off("virtual bell");
       localStorage.setItem("virtualBells", enabled.toString());
       if (window.ga) window.ga("set", "dimension8", enabled.toString());
     },
@@ -572,7 +572,7 @@ export default {
     listenForBells() {
       const startTone = new Audio("/tones/start.mp3");
       const endTone = new Audio("/tones/end.mp3");
-      startTone.volume = endTone.volume = 0.3;
+      startTone.volume = endTone.volume = 0.4;
       this.socket.on("virtual bell", isStartBell => {
         isStartBell ? startTone.play() : endTone.play();
       });
