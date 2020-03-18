@@ -132,6 +132,15 @@
         <v-divider></v-divider>
         <v-list>
           <v-list-item>
+            <v-list-item-content>Enable virtual bells</v-list-item-content>
+            <v-list-item-action>
+              <v-switch v-model="settings.enableBells" color="accent" :inset="features.ios"></v-switch>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-item>
             <v-list-item-content>Show period colors</v-list-item-content>
             <v-list-item-action>
               <v-switch v-model="settings.showColors" color="accent" :inset="features.ios"></v-switch>
@@ -245,6 +254,7 @@ export default {
       },
       settings: {
         dialog: false,
+        enableBells: localStorage.getItem("virtualBells") != "false",
         showColors: localStorage.getItem("showPeriodColors") == "true",
         periodColors: JSON.parse(localStorage.getItem("periodColors")) || ["blue2", "red2", "green2", "yellow2", "orange2", "teal2", "purple2"],
         periodNames: JSON.parse(localStorage.getItem("periodNames")) || [],
@@ -333,6 +343,13 @@ export default {
       localStorage.setItem("showPeriodColors", showColors.toString());
       if (window.ga) window.ga("set", "dimension2", showColors.toString());
     },
+    /** Handles changes to the virtual bells toggle setting. */
+    "settings.enableBells"(enabled) {
+      if (enabled) this.listenForBells();
+      else this.socket.off("virtual bells");
+      localStorage.setItem("virtualBells", enabled.toString());
+      if (window.ga) window.ga("set", "dimension8", enabled.toString());
+    },
   },
   async created() {
     //console.log(new Date-abcd);
@@ -383,6 +400,7 @@ export default {
         await this.setCalendar(this.$route);
       }
     });
+    if (this.settings.enableBells) this.listenForBells();
     this.socket.on("pong", () => {
       let now = new Date();
       this.io.lastConnected = now;
@@ -549,6 +567,15 @@ export default {
       date = new Date(date);
       date.setUTCDate(date.getUTCDate()-(date.getUTCDay()+1)%7); // mod 7 days
       return date;
+    },
+    /** Starts listening for virtual bells. */
+    listenForBells() {
+      const startTone = new Audio("/tones/start.mp3");
+      const endTone = new Audio("/tones/end.mp3");
+      startTone.volume = endTone.volume = 0.5;
+      this.socket.on("virtual bell", isStartBell => {
+        isStartBell ? startTone.play() : endTone.play();
+      });
     },
     /**
      * Navigates to the next or previous view, depending on the current calendar mode selected.
