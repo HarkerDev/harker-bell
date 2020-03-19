@@ -572,9 +572,10 @@ export default {
     listenForBells() {
       const startTone = new Audio("/tones/start.mp3");
       const endTone = new Audio("/tones/end.mp3");
-      startTone.volume = endTone.volume = 0.5;
-      this.socket.on("virtual bell", isStartBell => {
+      startTone.volume = endTone.volume = 0.7;
+      this.socket.on("virtual bell", (isStartBell, ack) => {
         isStartBell ? startTone.play() : endTone.play();
+        ack("virtual bell", isStartBell);
       });
     },
     /**

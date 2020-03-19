@@ -17,7 +17,9 @@ Sentry.init({
   integrations: [new Integrations.Vue({Vue, attachProps: true, logErrors: true})],
   release: "harker-bell@"+process.env.VUE_APP_VERSION,
 });
-window.onload = () => Sentry.setTag("nodes", document.getElementsByTagName("*").length);
+window.onload = () => {
+  setTimeout(() => Sentry.setTag("nodes", document.getElementsByTagName("*").length), 2000);
+};
 
 Vue.config.productionTip = false;
 
