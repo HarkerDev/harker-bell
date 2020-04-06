@@ -1,6 +1,6 @@
 <template>
   <v-app v-if="calendar.dates.length != 0">
-    <v-app-bar app color="primary" elevate-on-scroll style="overflow-x: auto;">
+    <v-app-bar app color="primary" elevate-on-scroll style="overflow-x: auto; opacity: 0.9;">
       <v-spacer></v-spacer>
       <v-btn class="hidden-print-only" icon aria-label="Previous" ga-on="click" ga-event-category="previous" ga-event-action="click" @click="nextOrPrevious(false)">
         <v-icon class="material-icons-outlined">chevron_left</v-icon>
@@ -187,7 +187,7 @@
         <v-card-text v-else>No lunch menu available<br>for this day.</v-card-text>
       </v-card>
     </v-menu>
-    <v-footer class="hidden-print-only" app color="primary" elevation="2" fixed padless>
+    <v-footer class="hidden-print-only" app color="primary" elevation="2" fixed padless style="opacity: 0.85;">
       <div class="caption no-select mx-2">
         <span v-show="!io.connected && formattedLastConnected">Last connected: </span>
         <span :class="[{'error--text': time.now-io.lastConnected >= $MS_PER_DAY, 'success--text': io.connected}, 'font-weight-medium']">{{io.connected ? "Up to date" : formattedLastConnected || "Connecting..."}}</span>
