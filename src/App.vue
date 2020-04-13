@@ -372,7 +372,7 @@ export default {
     this.time.today = this.getCurrentUTCMidnight();
     //console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://harkerdev.wl.r.appspot.com", {timeout: 10000});
+    this.socket = io("https://disco-portal-274116.wl.r.appspot.com", {timeout: 30000});
     this.socket.on("connect", () => {
       //console.log("SOCK CONN:\t", new Date-abcd);
       //this.io.connected = true;
