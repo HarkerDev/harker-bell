@@ -372,14 +372,14 @@ export default {
     this.time.today = this.getCurrentUTCMidnight();
     //console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://bell.dev.harker.org", {timeout: 10000});
+    this.socket = io("http://34.83.85.172:8080", {timeout: 10000});
     this.socket.on("connect", () => {
       //console.log("SOCK CONN:\t", new Date-abcd);
-      this.io.connected = true;
+      //this.io.connected = true;
       if (this.db) this.socket.emit("request update", localStorage.getItem("scheduleRevision"));
     });
     this.socket.on("disconnect", reason => {
-      this.io.connected = false;
+      //this.io.connected = false;
       //console.log(reason);
     });
     this.socket.on("update message", message => {
@@ -402,9 +402,9 @@ export default {
     });
     if (this.settings.enableBells) this.listenForBells();
     this.socket.on("pong", () => {
-      let now = new Date();
-      this.io.lastConnected = now;
-      localStorage.setItem("lastConnected", now.getTime());
+      //let now = new Date();
+      //this.io.lastConnected = now;
+      //localStorage.setItem("lastConnected", now.getTime());
     });
     if (!localStorage.getItem("scheduleRevision")) this.getFromSocket(this.calendar.dates);
     //console.log("INIT DONE:\t", new Date-abcd);
