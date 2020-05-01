@@ -37,6 +37,9 @@ module.exports = {
         urlPattern: "https://www.google-analytics.com/analytics.js",
         handler: "staleWhileRevalidate"
       }, {
+        urlPattern: "https://ipmeta.io/plugin.js",
+        handler: "staleWhileRevalidate"
+      }, {
         urlPattern: "https://qbw8rkkv7x0h.statuspage.io/embed/script.js",
         handler: "staleWhileRevalidate"
       }],
