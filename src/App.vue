@@ -141,6 +141,19 @@
         <v-divider></v-divider>
         <v-list>
           <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>Enable notifications</v-list-item-title>
+              <v-list-item-subtitle v-if="features.notif">Get notified at the start of each Zoom class</v-list-item-subtitle>
+              <v-list-item-subtitle v-else>Not supported in this browser</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-switch v-model="settings.enableNotifications" color="accent" :disabled="!features.notif" :inset="features.ios"></v-switch>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-item>
             <v-list-item-content>Show period colors</v-list-item-content>
             <v-list-item-action>
               <v-switch v-model="settings.showColors" color="accent" :inset="features.ios"></v-switch>
@@ -206,6 +219,9 @@
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
       Updating to the latest version...
     </v-snackbar>
+    <v-snackbar v-model="snackbars.notifDenied" :timeout="4000">
+      Permission denied <v-icon dark class="material-icons-outlined">sentiment_dissatisfied</v-icon>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -255,6 +271,7 @@ export default {
       settings: {
         dialog: false,
         enableBells: localStorage.getItem("virtualBells") != "false",
+        enableNotifications: localStorage.getItem("enableNotifications") == "true",
         showColors: localStorage.getItem("showPeriodColors") == "true",
         periodColors: JSON.parse(localStorage.getItem("periodColors")) || ["blue2", "red2", "green2", "yellow2", "orange2", "teal2", "purple2"],
         periodNames: JSON.parse(localStorage.getItem("periodNames")) || [],
@@ -268,12 +285,14 @@ export default {
         today: null,
       },
       snackbars: {
+        notifDenied: false,
         offlineReady: false,
         pwaUpdated: false,
       },
       prevRoute: null,
       features: {
         indexedDB: window.indexedDB ? true : false,
+        notif: window.Notification ? true : false,
         beforeInstallPrompt: false,
         ios: window.navigator.platform.toLowerCase().includes("ios") ||
              window.navigator.platform.toLowerCase().includes("iphone") ||
@@ -345,10 +364,42 @@ export default {
     },
     /** Handles changes to the virtual bells toggle setting. */
     "settings.enableBells"(enabled) {
-      if (enabled) this.listenForBells();
-      else this.socket.off("virtual bell");
       localStorage.setItem("virtualBells", enabled.toString());
       if (window.ga) window.ga("set", "dimension8", enabled.toString());
+    },
+    "settings.enableNotifications"(enabled) {
+      if (!window.Notification) return;
+      function setVars() {
+        localStorage.setItem("enableNotifications", enabled.toString());
+        if (window.ga) window.ga("set", "dimension9", enabled.toString());
+      }
+      function notifPromise() {
+        try {
+          Notification.requestPermission().then();
+        } catch(e) {
+          return false;
+        }
+        return true;
+      }
+      function handlePermission(permission, thisV) {
+        if (!Notification.permission) Notification.permission = permission;
+        if (permission != "granted") {
+          thisV.settings.enableNotifications = false;
+          return thisV.snackbars.notifDenied = true;
+        }
+        setVars();
+        new Notification("Successfully enabled notifications!", {
+          body: "You'll receive notifications at the start of each class with a custom link.",
+          icon: "/img/icons/android-chrome-192x192.png",
+        });
+      }
+      if (!enabled) return setVars();
+      if (Notification.permission == "granted")
+        setVars();
+      else if (notifPromise())
+        Notification.requestPermission().then(permission => handlePermission(permission, this));
+      else
+        Notification.requestPermission(permission => handlePermission(permission, this));
     },
   },
   async created() {
@@ -400,7 +451,24 @@ export default {
         await this.setCalendar(this.$route);
       }
     });
-    if (this.settings.enableBells) this.listenForBells();
+    const startTone = new Audio("/tones/start.mp3");
+    const endTone = new Audio("/tones/end.mp3");
+    startTone.volume = endTone.volume = 0.7;
+    this.socket.on("virtual bell", (isStartBell, periodName) => {
+      if (this.settings.enableBells)
+        isStartBell ? startTone.play() : endTone.play();
+      if (isStartBell && this.settings.enableNotifications && this.settings.links[periodName]) {
+        const notif = new Notification(periodName+" is starting", {
+          body: "Click to join this class!",
+          icon: "/img/icons/android-chrome-192x192.png",
+        });
+        notif.addEventListener("click", () => {
+          window.open(this.settings.links[periodName]);
+          notif.close();
+        });
+      }
+      this.socket.emit("virtual bell ack", this.settings.enableBells, this.settings.enableNotifications);
+    });
     this.socket.on("pong", () => {
       let now = new Date();
       this.io.lastConnected = now;
@@ -567,16 +635,6 @@ export default {
       date = new Date(date);
       date.setUTCDate(date.getUTCDate()-(date.getUTCDay()+1)%7); // mod 7 days
       return date;
-    },
-    /** Starts listening for virtual bells. */
-    listenForBells() {
-      const startTone = new Audio("/tones/start.mp3");
-      const endTone = new Audio("/tones/end.mp3");
-      startTone.volume = endTone.volume = 0.7;
-      this.socket.on("virtual bell", isStartBell => {
-        isStartBell ? startTone.play() : endTone.play();
-        this.socket.emit("virtual bell ack");
-      });
     },
     /**
      * Navigates to the next or previous view, depending on the current calendar mode selected.
