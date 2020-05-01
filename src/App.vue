@@ -381,22 +381,28 @@ export default {
         }
         return true;
       }
-      function handlePermission(permission, thisV) {
-        if (!Notification.permission) Notification.permission = permission;
-        if (permission != "granted") {
-          thisV.settings.enableNotifications = false;
-          return thisV.snackbars.notifDenied = true;
-        }
-        setVars();
-        new Notification("Successfully enabled notifications!", {
-          body: "You'll receive notifications at the start of each class with a custom link.",
+      function showNotif() {
+        const notif = new Notification("Successfully enabled notifications!", {
+          body: "You'll receive a notification for each class that has a custom link.",
           icon: "/img/icons/android-chrome-192x192.png",
         });
+        notif.addEventListener("click", () => notif.close());
+      }
+      function handlePermission(permission, thisV) {
+        if (!Notification.permission) Notification.permission = permission;
+        if (permission == "granted") {
+          setVars();
+          showNotif();
+        } else {
+          thisV.settings.enableNotifications = false;
+          thisV.snackbars.notifDenied = true;
+        }
       }
       if (!enabled) return setVars();
-      if (Notification.permission == "granted")
+      if (Notification.permission == "granted") {
         setVars();
-      else if (notifPromise())
+        showNotif();
+      } else if (notifPromise())
         Notification.requestPermission().then(permission => handlePermission(permission, this));
       else
         Notification.requestPermission(permission => handlePermission(permission, this));
