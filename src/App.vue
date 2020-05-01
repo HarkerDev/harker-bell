@@ -383,7 +383,7 @@ export default {
       }
       function showNotif() {
         const notif = new Notification("Successfully enabled notifications!", {
-          body: "You'll receive a notification for each class that has a custom link.",
+          body: "You'll receive notifications for each class that has a custom link.",
           icon: "/img/icons/android-chrome-192x192.png",
         });
         notif.addEventListener("click", () => notif.close());
