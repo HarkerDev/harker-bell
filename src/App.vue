@@ -123,9 +123,21 @@
         </v-app-bar>
         <v-list subheader>
           <v-list-item>
-            <v-list-item-content>Use dark theme</v-list-item-content>
+            <v-list-item-content :class="{'text--disabled': settings.autoDark}">Use dark mode</v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="$vuetify.theme.dark" color="accent" :inset="features.ios"></v-switch>
+              <v-switch v-model="$vuetify.theme.dark" color="accent" :disabled="settings.autoDark" :inset="features.ios"></v-switch>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>Automatic dark mode</v-list-item-title>
+              <v-list-item-subtitle>Sunset to sunrise</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-switch v-model="settings.autoDark" color="accent" :inset="features.ios"></v-switch>
             </v-list-item-action>
           </v-list-item>
         </v-list>
@@ -270,6 +282,7 @@ export default {
       },
       settings: {
         dialog: false,
+        autoDark: localStorage.getItem("autoDark") == "true",
         enableBells: localStorage.getItem("virtualBells") != "false",
         enableNotifications: localStorage.getItem("enableNotifications") == "true",
         showColors: localStorage.getItem("showPeriodColors") == "true",
@@ -356,6 +369,16 @@ export default {
       if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
       else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
       if (window.ga) window.ga("set", "dimension1", dark.toString());
+    },
+    /** Handles changes to the automatic dark mode setting. */
+    "settings.autoDark"(autoDark) {
+      localStorage.setItem("autoDark", autoDark.toString());
+      if (window.ga) window.ga("set", "dimension13", autoDark.toString());
+      if (autoDark) {
+        window.initializeAutoDark();
+        if (localStorage.getItem("autoDark") == "true") this.$vuetify.theme.dark = true;
+        else this.$vuetify.theme.dark = false;
+      }
     },
     /** Handles changes to the period colors toggle setting. */
     "settings.showColors"(showColors) {
@@ -760,12 +783,17 @@ export default {
         this.menu.open = true;
       });
     },
-    /**  */
+    /** Handler that runs every minute and on page focus. */
     updateTime() {
       //console.log("updating...");
       this.time.now = new Date();
       this.time.today = this.getCurrentUTCMidnight();
       this.time.utcNow = new Date(new Date(this.time.now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))-this.time.now.getTimezoneOffset()*this.$MS_PER_MIN);
+      if (this.settings.autoDark && this.time.now >= window.nextSunRiseSet.time) {
+        if (window.nextSunRiseSet.isSunrise) this.$vuetify.theme.dark = false;
+        else this.$vuetify.theme.dark = true;
+        window.nextSunRiseSet = window.getNextSunRiseSet(this.time.now);
+      }
     },
   },
 };

@@ -11,6 +11,7 @@ import "autotrack/lib/plugins/event-tracker";
 import "autotrack/lib/plugins/outbound-link-tracker";
 import "autotrack/lib/plugins/page-visibility-tracker";
 import "autotrack/lib/plugins/url-change-tracker";
+import "./scripts/sun";
 
 Sentry.init({
   dsn: "https://2774d8d5d9c3402fb93dd9e702e39470@sentry.dev.harker.org/11",
@@ -20,6 +21,28 @@ Sentry.init({
 window.onload = () => {
   setTimeout(() => Sentry.setTag("nodes", document.getElementsByTagName("*").length), 2000);
 };
+
+const MS_PER_DAY = 24*60*60*1000;
+/**
+ * Gets the next sunrise or sunset for a given date.
+ * @param {Date} date a date
+ * @return {Object}   object containing a `time` and an `isSunrise` field
+ */
+window.getNextSunRiseSet = (date) => {
+  let sunrise = date.sunrise(37.318, -121.971); // coordinates of Harker
+  let sunset = date.sunset(37.318, -121.971);
+  if (sunrise < date) sunrise = new Date(sunrise.getTime()+MS_PER_DAY);
+  if (sunset < date) sunset = new Date(sunset.getTime()+MS_PER_DAY);
+  if (sunrise < sunset) return {time: sunrise, isSunrise: true};
+  else return {time: sunset, isSunrise: false};
+}
+/** Initializes auto dark mode and updates the current setting as necessary. */
+window.initializeAutoDark = () => {
+  window.nextSunRiseSet = window.getNextSunRiseSet(new Date());
+  if (nextSunRiseSet.isSunrise) localStorage.setItem("darkTheme", true);
+  else localStorage.setItem("darkTheme", false);
+};
+if (localStorage.getItem("autoDark") == "true") window.initializeAutoDark();
 
 Vue.config.productionTip = false;
 
