@@ -134,7 +134,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>Automatic dark mode</v-list-item-title>
-              <v-list-item-subtitle>Sunset to sunrise</v-list-item-subtitle>
+              <v-list-item-subtitle>Turns on from sunset to sunrise</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
               <v-switch v-model="settings.autoDark" color="accent" :inset="features.ios"></v-switch>
