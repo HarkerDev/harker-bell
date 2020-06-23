@@ -376,7 +376,7 @@ export default {
       if (window.ga) window.ga("set", "dimension13", autoDark.toString());
       if (autoDark) {
         window.initializeAutoDark();
-        if (localStorage.getItem("autoDark") == "true") this.$vuetify.theme.dark = true;
+        if (localStorage.getItem("darkTheme") == "true") this.$vuetify.theme.dark = true;
         else this.$vuetify.theme.dark = false;
       }
     },
