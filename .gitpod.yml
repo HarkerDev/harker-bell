@@ -1,0 +1,7 @@
+tasks:
+  - init: npm install
+    command: npm run serve
+vscode:
+  extensions:
+    - octref.vetur@0.24.0:FtNScOJHzSTxcNY6NB60Cg==
+    - christian-kohler.npm-intellisense@1.2.1:vghMIRDy8/ygZPJWq/9oEQ==
