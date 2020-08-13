@@ -306,7 +306,7 @@ export default {
 .container.week {
   min-width: 932px;
 }
-.container .day-header {
+.container .v-sheet.day-header {
   border-bottom: 2px solid #9AA0A6 !important;
   border-bottom: 2px solid var(--v-secondary-base) !important;
   border-color: var(--v-secondary-base) !important;

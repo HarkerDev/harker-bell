@@ -1,6 +1,9 @@
 process.env.VUE_APP_VERSION = require("./package.json").version;
 
 module.exports = {
+  devServer: {
+    disableHostCheck: true,
+  },
   productionSourceMap: true,
   transpileDependencies: ["autotrack", "dom-utils", "idb", "vuetify"],
   css: {

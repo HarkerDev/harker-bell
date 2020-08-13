@@ -8,7 +8,7 @@
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on}">
           <v-btn class="hidden-print-only" icon aria-label="Choose a date" ga-on="click, contextmenu" ga-event-category="date picker icon" ga-event-action="click" v-on="on">
-            <v-icon class="material-icons-outlined">date_range</v-icon>
+            <v-icon class="material-icons-outlined">event</v-icon>
           </v-btn>
         </template>
         <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" type="date" @input="datePicker = false">
@@ -100,6 +100,14 @@
         </v-list>
       </v-menu>
       <v-spacer></v-spacer>
+      <v-menu offset-y min-width="300" content-class="hdev-app-menu">
+        <template v-slot:activator="{on: menu}">
+          <v-btn class="hidden-print-only" icon aria-label="All apps" ga-on="click, contextmenu" ga-event-category="app menu" ga-event-action="click" v-on="{...menu}">
+            <v-icon class="material-icons-outlined">apps</v-icon>
+          </v-btn>
+        </template>
+        <iframe src="https://harkerdev-menu.netlify.app/?exclude=bell" style="border: none; height: 100%"></iframe>
+      </v-menu>
     </v-app-bar>
     <div id="message-wrapper" class="mb-2 hidden-print-only" style="height: 14px;">
       <div id="message" class="caption text-center" :style="{top: $vuetify.breakpoint.mdAndUp ? '62px' : '55px'}" v-html="message"></div>
@@ -134,7 +142,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>Automatic dark mode</v-list-item-title>
-              <v-list-item-subtitle>Sunset to sunrise</v-list-item-subtitle>
+              <v-list-item-subtitle>Turns on from sunset to sunrise</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
               <v-switch v-model="settings.autoDark" color="accent" :inset="features.ios"></v-switch>
@@ -185,7 +193,7 @@
           <v-row>
             <v-col class="text-center short px-6 pb-0">
               <p><v-icon class="material-icons-outlined mr-2 mt-n1" small>info</v-icon>Schedules are only guaranteed to be accurate up to the end of the current month.</p>
-              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API Docs</a> • <a href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank">Help</a> • <a href="https://github.com/BowenYin/harker-bell" target="_blank">GitHub</a> • <a href="https://harkerdev.statuspage.io/?utm_source=bell&utm_medium=hdev" target="_blank">Service Status</a></p>
+              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API Docs</a> • <a href="https://github.com/BowenYin/harker-bell" target="_blank">GitHub</a> • <a href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank">Help</a></p>
               <v-btn class="mb-1" x-small text @click="copyDebug">Copy Debug Info</v-btn>
               <p class="overline">Made with <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon> by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a></p>
             </v-col>
@@ -376,7 +384,7 @@ export default {
       if (window.ga) window.ga("set", "dimension13", autoDark.toString());
       if (autoDark) {
         window.initializeAutoDark();
-        if (localStorage.getItem("autoDark") == "true") this.$vuetify.theme.dark = true;
+        if (localStorage.getItem("darkTheme") == "true") this.$vuetify.theme.dark = true;
         else this.$vuetify.theme.dark = false;
       }
     },
@@ -867,6 +875,15 @@ body {
 }
 .v-text-field > .v-input__control > .v-input__slot:after {
   border-width: 1px 0 1px 0;
+}
+.hdev-app-menu {
+  overflow: hidden;
+  height: 312px;
+  padding-top: 4px;
+  background-color: #FFFFFF;
+}
+.v-btn.v-date-picker-table__current.v-btn--disabled .v-btn__content {
+  color: #BDC1C6;
 }
 .v-date-picker-header .material-icons {
   font-family: "Material Icons Outlined";
