@@ -187,12 +187,17 @@
               <link-setting v-for="x in ['Advisory', 'Office Hours']" :key="x" :name="x" :settings="settings"></link-setting>
             </v-col>
           </v-row>
+          <v-row>
+            <v-col class="caption text-center short px-6 pb-0">
+              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp#event-categories" target="_blank">What do the event colors mean?</a></p>
+              <div><v-icon class="material-icons-outlined mr-3 mt-n1" x-small>info</v-icon>Schedules are only guaranteed to be accurate up to the end of the current month.</div>
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions class="caption">
           <v-row>
             <v-col class="text-center short px-6 pb-0">
-              <p><v-icon class="material-icons-outlined mr-2 mt-n1" small>info</v-icon>Schedules are only guaranteed to be accurate up to the end of the current month.</p>
               <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API Docs</a> • <a href="https://github.com/BowenYin/harker-bell" target="_blank">GitHub</a> • <a href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank">Help</a></p>
               <v-btn class="mb-1" x-small text @click="copyDebug">Copy Debug Info</v-btn>
               <p class="overline">Made with <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon> by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a></p>
