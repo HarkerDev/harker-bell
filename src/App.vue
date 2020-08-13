@@ -603,10 +603,10 @@ export default {
       if (!timestamp) return null;
       let date = new Date(+timestamp);
       if (new Date().setHours(0, 0, 0, 0) == new Date(+timestamp).setHours(0, 0, 0, 0))
-        return date.toLocaleTimeString(undefined, {timeStyle: "short", hour: "numeric", minute: "2-digit"});
+        return date.toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
       if (!showTime)
-        return date.toLocaleDateString(undefined, {dateStyle: "short", month: "numeric", day: "numeric", year: "2-digit"});
-      return date.toLocaleDateString(undefined, {dateStyle: "short", timeStyle: "short", month: "numeric", day: "numeric", year: "2-digit", hour: "numeric", minute: "2-digit"});
+        return date.toLocaleDateString(undefined, {month: "numeric", day: "numeric", year: "2-digit"});
+      return date.toLocaleDateString(undefined, {month: "numeric", day: "numeric", year: "2-digit", hour: "numeric", minute: "2-digit"});
     },
     /**
      * Retrives local schedules from IndexedDB if available.
