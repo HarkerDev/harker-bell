@@ -23,7 +23,7 @@ window.onload = () => {
   setTimeout(() => Sentry.setTag("nodes", document.getElementsByTagName("*").length), 2000);
 };
 
-function logWebVitals({name, delta, id}) {
+function saveWebVitals({name, delta, id}) {
   if (window.ga) ga("send", "event", {
     eventCategory: "Web Vitals",
     eventAction: name,
@@ -32,11 +32,11 @@ function logWebVitals({name, delta, id}) {
     nonInteraction: true,
   });
 }
-getFCP(logWebVitals);
-getLCP(logWebVitals);
-getFID(logWebVitals);
-getCLS(logWebVitals);
-getTTFB(logWebVitals);
+getFCP(saveWebVitals);
+getLCP(saveWebVitals);
+getFID(saveWebVitals);
+getCLS(saveWebVitals);
+getTTFB(saveWebVitals);
 
 const MS_PER_DAY = 24*60*60*1000;
 /**
