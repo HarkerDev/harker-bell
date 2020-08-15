@@ -11,6 +11,7 @@ import "autotrack/lib/plugins/event-tracker";
 import "autotrack/lib/plugins/outbound-link-tracker";
 import "autotrack/lib/plugins/page-visibility-tracker";
 import "autotrack/lib/plugins/url-change-tracker";
+import {getFCP, getLCP, getFID, getCLS, getTTFB} from "web-vitals";
 import "./scripts/sun";
 
 Sentry.init({
@@ -21,6 +22,21 @@ Sentry.init({
 window.onload = () => {
   setTimeout(() => Sentry.setTag("nodes", document.getElementsByTagName("*").length), 2000);
 };
+
+function logWebVitals({name, delta, id}) {
+  if (window.ga) ga("send", "event", {
+    eventCategory: "Web Vitals",
+    eventAction: name,
+    eventValue: Math.round(name == "CLS" ? delta*1000 : delta),
+    eventLabel: id,
+    nonInteraction: true,
+  });
+}
+getFCP(logWebVitals);
+getLCP(logWebVitals);
+getFID(logWebVitals);
+getCLS(logWebVitals);
+getTTFB(logWebVitals);
 
 const MS_PER_DAY = 24*60*60*1000;
 /**
