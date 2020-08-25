@@ -360,7 +360,7 @@ export default {
 .text-bottom {
   vertical-align: text-bottom;
 }
-.short .overline {
+.overline {
   line-height: 1.3;
 }
 .font-transition {

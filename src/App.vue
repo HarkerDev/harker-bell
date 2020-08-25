@@ -630,6 +630,11 @@ export default {
       let schedules = [];
       //console.log("GET IDB:\t", new Date-abcd);
       if (this.db) {
+        // if fewer than 10 schedules in IndexedDB then assume something broke and refetch
+        if (localStorage.getItem("scheduleRevision") && await this.db.count("schedules") < 10) {
+          localStorage.removeItem("scheduleRevision");
+          window.location.reload();
+        }
         await Promise.all(dates.map(async date => {
           //console.log("GETTING:\t", new Date-abcd);
           let schedule = await this.db.get("schedules", date.toISOString());
@@ -829,7 +834,7 @@ export default {
   opacity: 0;
 }
 .short {
-  line-height: 1.2 !important;
+  line-height: 1.15 !important;
 }
 #message {
   position: absolute;
