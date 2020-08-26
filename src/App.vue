@@ -228,7 +228,7 @@
     <v-footer class="hidden-print-only" app color="primary" elevation="2" fixed padless style="opacity: 0.85;">
       <div class="caption no-select mx-2">
         <span v-show="!io.connected && formattedLastConnected">Last connected: </span>
-        <span :class="[{'error--text': time.now-io.lastConnected >= $MS_PER_DAY, 'success--text': io.connected}, 'font-weight-medium']">{{io.connected ? "Up to date" : formattedLastConnected || "Connecting..."}}</span>
+        <span :class="[{'error--text': time.now-io.lastConnected >= $MS_PER_DAY, 'success--text': io.connected}, 'font-weight-medium']">{{io.connected ? "Connected" : formattedLastConnected || "Connecting..."}}</span>
       </div>
       <v-spacer></v-spacer>
       <div class="caption no-select mx-2">
