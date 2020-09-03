@@ -307,7 +307,7 @@ export default {
       },
       time: {
         now: new Date(),
-        utcNow: new Date(new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))-new Date().getTimezoneOffset()*this.$MS_PER_MIN),
+        utcNow: new Date(new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))-new Date().getTimezoneOffset()*60*1000),
         today: null,
       },
       snackbars: {
