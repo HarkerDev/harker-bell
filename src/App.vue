@@ -198,7 +198,7 @@
         <v-card-actions class="caption">
           <v-row>
             <v-col class="text-center short px-6 pb-0">
-              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API Docs</a> • <a href="https://github.com/BowenYin/harker-bell" target="_blank">GitHub</a> • <a href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank">Help</a></p>
+              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API Docs</a> • <a href="https://github.com/BowenYin/harker-bell" target="_blank">GitHub</a> • <a href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank">Help</a> • <a href="https://github.com/BowenYin/harker-bell/releases" target="_blank">Release Notes</a></p>
               <v-btn class="mb-1" x-small text @click="copyDebug">Copy Debug Info</v-btn>
               <p class="overline">Made with <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon> by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a></p>
             </v-col>
@@ -307,7 +307,7 @@ export default {
       },
       time: {
         now: new Date(),
-        utcNow: new Date(new Date()-new Date().getTimezoneOffset()*60000),
+        utcNow: new Date(new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))-new Date().getTimezoneOffset()*this.$MS_PER_MIN),
         today: null,
       },
       snackbars: {
