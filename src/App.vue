@@ -110,6 +110,7 @@
       </v-menu>
     </v-app-bar>
     <div id="message-wrapper" class="mb-2 hidden-print-only" style="height: 14px;">
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <div id="message" class="caption text-center" :style="{top: $vuetify.breakpoint.mdAndUp ? '62px' : '55px'}" v-html="message"></div>
     </div>
     <v-content style="overflow-x: scroll;">
@@ -321,8 +322,8 @@ export default {
         notif: window.Notification ? true : false,
         beforeInstallPrompt: false,
         ios: window.navigator.platform.toLowerCase().includes("ios") ||
-             window.navigator.platform.toLowerCase().includes("iphone") ||
-             window.navigator.platform.toLowerCase().includes("ipad"),
+          window.navigator.platform.toLowerCase().includes("iphone") ||
+          window.navigator.platform.toLowerCase().includes("ipad"),
       },
       longMonths: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -471,7 +472,7 @@ export default {
       this.io.connected = true;
       if (this.db) this.socket.emit("request update", localStorage.getItem("scheduleRevision"));
     });
-    this.socket.on("disconnect", reason => {
+    this.socket.on("disconnect", () => {
       this.io.connected = false;
       //console.log(reason);
     });
@@ -530,7 +531,7 @@ export default {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
       else if (event.key == "ArrowDown" || event.keyCode == 40 ||
-               event.key == "KeyT" || event.keyCode == 84) this.$router.push("/").catch(() => {});
+        event.key == "KeyT" || event.keyCode == 84) this.$router.push("/").catch(() => {});
       else if (event.key == "KeyD" || event.keyCode == 68) this.changeMode("day");
       else if (event.key == "KeyW" || event.keyCode == 87) this.changeMode("week");
       else if (event.key == "KeyR" || event.keyCode == 82) this.updateTime();
@@ -557,7 +558,7 @@ export default {
       this.calendar.keepCurrentDate = true;
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (mode == "week" && this.$route.name == "day" &&
-          +this.getSaturday(new Date(+date)) == +this.getSaturday(new Date(+today)))
+        +this.getSaturday(new Date(+date)) == +this.getSaturday(new Date(+today)))
         this.$router.push("/");
       else this.setCalendar(this.$route);
     },

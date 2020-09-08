@@ -108,7 +108,7 @@ export default {
     formatTime(date) {
       if (typeof date == "string") date = new Date(date);
       return (date.getUTCHours()+11)%12+1+":"+ // convert hours to 12-hour time
-             ("0"+date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
+        ("0"+date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
     },
   },
   props: {
