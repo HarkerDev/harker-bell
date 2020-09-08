@@ -5,7 +5,7 @@ module.exports = {
     disableHostCheck: true,
   },
   productionSourceMap: true,
-  transpileDependencies: ["autotrack", "dom-utils", "idb", "vuetify"],
+  transpileDependencies: [],
   css: {
     loaderOptions: {
       sass: {

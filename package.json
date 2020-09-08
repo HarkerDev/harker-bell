@@ -1,6 +1,6 @@
 {
   "name": "harker-bell",
-  "version": "2.4.9",
+  "version": "2.5.0",
   "private": true,
   "author": "Bowen Yin",
   "scripts": {
@@ -106,7 +106,9 @@
   },
   "browserslist": [
     "> 1% in US",
-    "not dead"
+    "last 2 versions",
+    "not dead",
+    "not IE <= 11"
   ],
   "bugs": {
     "url": "https://github.com/BowenYin/harker-bell/issues"
