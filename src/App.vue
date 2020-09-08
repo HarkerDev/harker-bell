@@ -200,7 +200,6 @@
           <v-row>
             <v-col class="text-center short px-6 pb-0">
               <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API Docs</a> • <a href="https://github.com/BowenYin/harker-bell" target="_blank">GitHub</a> • <a href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank">Help</a> • <a href="https://github.com/BowenYin/harker-bell/releases" target="_blank">Release Notes</a></p>
-              <v-btn class="mb-1" x-small text @click="copyDebug">Copy Debug Info</v-btn>
               <p class="overline">Made with <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon> by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a></p>
             </v-col>
           </v-row>
@@ -574,38 +573,6 @@ export default {
     closeSettings() {
       if (this.prevRoute) this.$router.back();
       else this.$router.push("/");
-    },
-    /** Copies debug info to the clipboard. */
-    async copyDebug() {
-      let text = "";
-      for (let key in window.navigator)
-        text += key+": "+window.navigator[key]+"\n";
-      text += JSON.stringify(window.location)+"\n";
-      text += JSON.stringify(window.performance)+"\n";
-      for (let key in window.screen)
-        text += key+": "+window.screen[key]+"\n";
-      text += document.cookie+"\n";
-      if (window.localStorage) text += "localStorage: "+JSON.stringify(window.localStorage)+"\n";
-      if (window.caches) text += "caches: "+JSON.stringify(await window.caches.keys())+"\n";
-      if (window.indexedDB) text += "indexedDB: "+JSON.stringify(await window.indexedDB.databases())+"\n";
-      for (let key in window.applicationCache)
-        text += key+": "+window.applicationCache[key]+"\n";
-      try {
-        const vue = document.getElementById("app").__vue__;
-        text += JSON.stringify((({calendar, env, features, io, mode, settings}) => ({calendar, env, features, io, mode, settings}))(vue.$parent.$data))+"\n";
-      } catch {text += "missing vue\n"}
-      text += new Date().toString();
-      
-      let textArea = document.createElement("textarea");
-      textArea.value = text;
-      textArea.style.position = "fixed";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      const copied = document.execCommand("copy");
-      if (copied) alert("Copied to clipboard.");
-      else alert("Unable to copy debug info to clipboard.");
-      textArea.remove();
     },
     /**
      * Formats a date into a human-readable representation. Can optionally omit the time portion.
