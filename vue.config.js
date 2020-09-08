@@ -19,10 +19,20 @@ module.exports = {
     msTileColor: "#005841",
     appleMobileWebAppCapable: "yes",
     workboxOptions: {
+      cleanupOutdatedCaches: true,
       clientsClaim: true,
+      exclude: [/_redirects/],
       navigateFallback: "/index.html",
       navigateFallbackBlacklist: [/api/, /docs/, /admin/, /submitevent/],
-      offlineGoogleAnalytics: true,
+      offlineGoogleAnalytics: {
+        parameterOverrides: {
+          cd14: "offline",
+        },
+        hitFilter: params => {
+          const queueTime = Math.round(params.get("qt")/1000);
+          params.set("cm3", queueTime);
+        },
+      },
       runtimeCaching: [{
         urlPattern: /^https:\/\/fonts\.googleapis\.com/,
         handler: "staleWhileRevalidate",
