@@ -185,7 +185,7 @@
           <v-row>
             <v-col>
               <period-setting v-for="i in 7" :key="i" :num="i" :settings="settings"></period-setting>
-              <link-setting v-for="x in ['Advisory', 'Class Meeting', 'Office Hours']" :key="x" :name="x" :settings="settings"></link-setting>
+              <link-setting v-for="x in ['Advisory', 'Class Meeting', 'Office Hours', 'Clubs']" :key="x" :name="x" :settings="settings"></link-setting>
             </v-col>
           </v-row>
           <v-row>
