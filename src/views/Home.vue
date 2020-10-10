@@ -383,7 +383,7 @@ export default {
 }
 .hovercard {
   height: 24px;
-  display: block;
+  display: none;
   position: fixed;
   overflow: hidden;
   padding: 2px 6px 2px 7px;
@@ -392,24 +392,18 @@ export default {
   line-height: 20px !important;
   background-color: var(--v-accent-base);
   color: #FFFFFF;
-  transition: visibility 75ms, opacity 75ms linear;
-  opacity: 0;
-  visibility: hidden;
-}
-div.regular-period .hovercard {
-  display: none;
 }
 a.regular-period:hover .hovercard, .lunch:hover .hovercard {
   opacity: 0.8;
-  visibility: visible;
-}
-.hovercard-icon {
-  vertical-align: sub;
+  display: block;
 }
 @media (hover: none) {
   .hovercard {
-    display: none;
+    display: none !important;
   }
+}
+.hovercard-icon {
+  vertical-align: sub;
 }
 </style>
 <style>
