@@ -54,17 +54,18 @@
                   <!-- LUNCH PERIOD -->
                   <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
                     <!-- TODO: Find a way to extract id logic somewhere -->
-                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" ga-on="click" ga-event-category="lunch menu" ga-event-action="click" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)">
+                    <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" ga-on="click" ga-event-category="lunch menu" ga-event-action="click" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)" @mousemove.stop="onMouseMove">
                       <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}]" column align-center justify-center>
                         <div ref="periodNames">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                         <div v-if="period.start && period.duration >= 30" class="text-no-wrap text--secondary">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
                         <div v-if="period.duration >= 45 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                        <div class="hovercard font-weight-medium">View menu</div>
                       </v-layout>
                     </v-sheet>
                   </v-hover>
                   <!-- REGULAR PERIOD -->
-                  <v-sheet v-else :key="pIndex" class="period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile :tag="settings.links[period.name] ? 'a' : 'div'" :href="settings.links[period.name] || false" target="_blank">
+                  <v-sheet v-else :key="pIndex" class="period regular-period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile :tag="settings.links[period.name] ? 'a' : 'div'" :href="settings.links[period.name] || false" target="_blank" @mousemove.stop="onMouseMove">
                     <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}, getColor(period.name) && getColor(period.name)+'--text text--darken-4']" column align-center justify-center>
                       <div ref="periodNames">
                         {{period.name && settings.periodNames[period.name.substring(1, 2)-1] ? settings.periodNames[period.name.substring(1, 2)-1]+" ("+period.name+")" : period.name}}
@@ -73,6 +74,9 @@
                       <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                       <div v-if="period.start && period.duration >= 30" :class="['text-no-wrap', {'text--secondary': !getColor(period.name)}]">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
                       <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                      <div class="hovercard font-weight-medium">
+                        Join class <v-icon dark small class="material-icons-outlined hovercard-icon">launch</v-icon>
+                      </div>
                     </v-layout>
                   </v-sheet>
                 </template>
@@ -235,6 +239,13 @@ export default {
         return this.settings.periodColors[+period.substring(1, 2)-1];
       return undefined;
     },
+    onMouseMove(e) {
+      const hovercard = e.currentTarget.getElementsByClassName("hovercard")[0];
+      if (hovercard) {
+        hovercard.style.top = e.clientY-24+"px";
+        hovercard.style.left = e.clientX+"px";
+      }
+    },
     /**
      * Shows the lunch menu for the lunch period element at the provided ID
      * @param {string} id ID of the lunch period element
@@ -369,6 +380,36 @@ export default {
 }
 .v-application .overline.time-remain {
   letter-spacing: normal !important;
+}
+.hovercard {
+  height: 24px;
+  display: block;
+  position: fixed;
+  overflow: hidden;
+  padding: 2px 6px 2px 7px;
+  border-radius: 2px;
+  z-index: 2;
+  line-height: 20px !important;
+  background-color: var(--v-accent-base);
+  color: #FFFFFF;
+  transition: visibility 75ms, opacity 75ms linear;
+  opacity: 0;
+  visibility: hidden;
+}
+div.regular-period .hovercard {
+  display: none;
+}
+a.regular-period:hover .hovercard, .lunch:hover .hovercard {
+  opacity: 0.8;
+  visibility: visible;
+}
+.hovercard-icon {
+  vertical-align: sub;
+}
+@media (hover: none) {
+  .hovercard {
+    display: none;
+  }
 }
 </style>
 <style>
