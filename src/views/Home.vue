@@ -56,7 +56,7 @@
                     <!-- TODO: Find a way to extract id logic somewhere -->
                     <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" ga-on="click" ga-event-category="lunch menu" ga-event-action="click" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)" @mousemove.stop="onMouseMove">
                       <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}]" column align-center justify-center>
-                        <div ref="periodNames">{{period.name}}</div>
+                        <div ref="periodNames" class="period-name">{{period.name}}</div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                         <div v-if="period.start && period.duration >= 30" class="text-no-wrap text--secondary">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
                         <div v-if="period.duration >= 45 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
@@ -68,7 +68,7 @@
                   <v-sheet v-else :key="pIndex" class="period regular-period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile :tag="settings.links[period.name] ? 'a' : 'div'" :href="settings.links[period.name] || false" target="_blank" @mousemove.stop="onMouseMove">
                     <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}, getColor(period.name) && getColor(period.name)+'--text text--darken-4']" column align-center justify-center>
                       <div ref="periodNames">
-                        {{period.name && settings.periodNames[period.name.substring(1, 2)-1] ? settings.periodNames[period.name.substring(1, 2)-1]+" ("+period.name+")" : period.name}}
+                        <span class="period-name">{{period.name && settings.periodNames[period.name.substring(1, 2)-1] ? settings.periodNames[period.name.substring(1, 2)-1]+" ("+period.name+")" : period.name}}</span>
                         <span v-if="period.start && period.duration < 30 && column.length <= 1" class="text-no-wrap text--secondary"> {{period.start|formatTime}}&ndash;{{period.end|formatTime}}</span>
                       </div>
                       <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
@@ -335,6 +335,13 @@ export default {
 .period {
   margin: 0 -1px -1px;
   text-decoration: initial;
+}
+.period-name {
+  line-height: 1.15;
+  margin: 2px 0;
+}
+.short .period-name {
+  margin: 0 !important;
 }
 .group, .column, .period {
   transition: all 100ms;
