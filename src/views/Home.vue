@@ -395,7 +395,7 @@ export default {
   overflow: hidden;
   padding: 2px 6px 2px 7px;
   border-radius: 2px;
-  z-index: 2;
+  z-index: 10;
   line-height: 20px !important;
   background-color: var(--v-accent-base);
   color: #FFFFFF;
