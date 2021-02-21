@@ -23,7 +23,7 @@ module.exports = {
       clientsClaim: true,
       exclude: [/_redirects/],
       navigateFallback: "/index.html",
-      navigateFallbackBlacklist: [/api/, /docs/, /admin/, /submitevent/],
+      navigateFallbackBlacklist: [/api/, /docs/, /admin/, /submitevent/, /p/],
       offlineGoogleAnalytics: {
         parameterOverrides: {
           cd14: "offline",
