@@ -4,6 +4,11 @@
   status = 200
   headers = {Access-Control-Allow-Origin = "https://bell.harker.org"}
 [[redirects]]
+  from = "/pgtm/*"
+  to = "https://www.googletagmanager.com/gtm.js:splat"
+  status = 200
+  headers = {Access-Control-Allow-Origin = "https://bell.harker.org"}
+[[redirects]]
   from = "/submitevent"
   to = "https://docs.google.com/forms/d/e/1FAIpQLSeWUzPcr079_ZhXHlRcwKwsoMjJL5O_ZsWVulzMjqVxHOb7Fg/viewform"
   status = 302
