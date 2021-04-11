@@ -1,0 +1,12 @@
+[build]
+  publish = "dist/"
+  command = "npm run build"
+  environment = {NODE_VERSION = "14"}
+[[redirects]]
+  from = "/docs/*"
+  to = "https://harker-bell-docs.netlify.com/:splat"
+  status = 200
+[redirects]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,7 +1,6 @@
 {
   "name": "harker-bell",
   "version": "3.0.0",
-  "engines": {"node": ">=14.0.0"},
   "scripts": {
     "dev": "vite",
     "build": "vite build",
