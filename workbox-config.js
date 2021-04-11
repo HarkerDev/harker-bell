@@ -13,6 +13,7 @@ module.exports = {
     }
   ],
   swDest: "dist/sw.js",
+  sourcemap: false,
   ignoreURLParametersMatching: [
     /^utm_/,
     /^fbclid$/,
