@@ -1,11 +1,20 @@
 module.exports = {
-  "globDirectory": "dist/",
-  "globPatterns": [
+  globDirectory: "dist/",
+  globPatterns: [
     "**/*.{js,css,png,json,ico,html,webmanifest}"
   ],
-  "swDest": "dist/sw.js",
-  // "ignoreURLParametersMatching": [
-  //   "/^utm_/",
-  //   "/^fbclid$/"
-  // ]
+  globIgnores: [
+    "**/data/*"
+  ],
+  runtimeCaching: [
+    {
+      handler: "NetworkFirst",
+      urlPattern: /\/data\//,
+    }
+  ],
+  swDest: "dist/sw.js",
+  ignoreURLParametersMatching: [
+    /^utm_/,
+    /^fbclid$/,
+  ]
 };
