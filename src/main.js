@@ -6,11 +6,6 @@ import "./index.css";
 var schedules;
 var start=new Date;
 console.log(start);
-fetch("/data/schedules.json", {
-  method: "GET",
-  credentials: "include",
-  mode: "no-cors",
-}).then(response => {schedules = response.json();console.log(new Date-start)});
 console.log("start");
 const VueApp = {
   data: () => ({
@@ -27,6 +22,12 @@ const VueApp = {
     window.addEventListener("popstate", () => {
       this.currentRoute = window.location.pathname;
     });
+    console.log(new Date-start);
+    fetch("/data/schedules.json", {
+      method: "GET",
+      credentials: "include",
+      mode: "no-cors",
+    }).then(response => { this.schedules = response.json(); console.log(new Date - start) });
   }
 }
 createApp(VueApp).mount("#app");
