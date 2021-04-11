@@ -7,6 +7,13 @@ var schedules;
 var start=new Date;
 console.log(start);
 console.log("start");
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js");
+  });
+}
+
 const VueApp = {
   data: () => ({
     currentRoute: window.location.pathname,

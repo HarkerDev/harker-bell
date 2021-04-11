@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && workbox generateSW workbox-config.js",
     "serve": "vite preview"
   },
   "dependencies": {
@@ -16,6 +16,6 @@
     "postcss": "^8.2.9",
     "tailwindcss": "^2.1.1",
     "vite": "^2.1.5",
-    "vite-plugin-pwa": "^0.7.0"
+    "workbox-cli": "^6.1.2"
   }
 }
