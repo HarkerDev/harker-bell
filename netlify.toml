@@ -6,7 +6,7 @@
   from = "/docs/*"
   to = "https://harker-bell-docs.netlify.com/:splat"
   status = 200
-[redirects]
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
