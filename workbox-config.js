@@ -12,6 +12,7 @@ module.exports = {
       urlPattern: /\/data\//,
     }
   ],
+  skipWaiting: true,
   swDest: "dist/sw.js",
   sourcemap: false,
   ignoreURLParametersMatching: [

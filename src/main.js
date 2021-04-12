@@ -29,6 +29,11 @@ const VueApp = {
     window.addEventListener("popstate", () => {
       this.currentRoute = window.location.pathname;
     });
+    if (localStorage.colorTheme == "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
     console.log(new Date-start);
     fetch("/data/schedules.json", {
       method: "GET",

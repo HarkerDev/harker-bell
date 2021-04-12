@@ -6,3 +6,4 @@ vscode:
     - octref.vetur@0.24.0:FtNScOJHzSTxcNY6NB60Cg==
     - christian-kohler.npm-intellisense@1.2.1:vghMIRDy8/ygZPJWq/9oEQ==
     - dbaeumer.vscode-eslint@2.1.8:02aHhbJ0Q4aGdjHXlTdVKg==
+    - bradlc.vscode-tailwindcss

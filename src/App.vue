@@ -1,6 +1,15 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + Vite" />
+  <div class="sticky top-0 bg-white bg-opacity-90">
+    text
+  </div>
+  <div>
+    <img alt="Vue logo" src="./assets/logo.png" />
+    <HelloWorld msg="Hello Vue 3 + Vite" />
+    <input type="text" placeholder="Text">
+    <input type="checkbox">
+    <h1>text</h1>
+    <div style="height: 200px"></div>
+  </div>
 </template>
 
 <script setup>
@@ -11,12 +20,12 @@ import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <style>
-#app {
+/* #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
-}
+} */
 </style>
