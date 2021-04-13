@@ -1,6 +1,6 @@
 [build]
   publish = "dist/"
-  command = "npm run build"
+  command = "node ./admin/minifyJson.js && npm run build"
   environment = {NODE_VERSION = "14"}
 [[redirects]]
   from = "/docs/*"
