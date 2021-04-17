@@ -72,8 +72,8 @@
                         <span v-if="period.start && period.duration < 30 && column.length <= 1" class="text-no-wrap text--secondary"> {{period.start|formatTime}}&ndash;{{period.end|formatTime}}</span>
                       </div>
                       <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
-                      <div v-if="period.start && period.duration >= 30" :class="['text-no-wrap', {'text--secondary': !getColor(period.name)}]">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
-                      <div v-if="period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                      <div v-if="period.name && period.start && period.duration >= 30" :class="['text-no-wrap', {'text--secondary': !getColor(period.name)}]">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+                      <div v-if="period.name && period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                       <div class="hovercard font-weight-medium">
                         Join class <v-icon dark small class="material-icons-outlined hovercard-icon">launch</v-icon>
                       </div>
