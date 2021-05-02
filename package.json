@@ -24,7 +24,7 @@
     "web-vitals": "^0.2.4"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.4",
+    "@vue/cli-plugin-babel": "^4.5.12",
     "@vue/cli-plugin-eslint": "^4.5.4",
     "@vue/cli-plugin-pwa": "^4.5.4",
     "@vue/cli-service": "^4.1.1",
