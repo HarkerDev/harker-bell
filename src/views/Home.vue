@@ -65,7 +65,7 @@
                     </v-sheet>
                   </v-hover>
                   <!-- REGULAR PERIOD -->
-                  <a v-else :key="pIndex" :style="{'text-decoration': 'none', 'cursor': (period.link ? 'pointer' : 'default')}">
+                  <a v-else :key="pIndex" :style="{'text-decoration': 'none'">
                     <v-sheet v-if="period.link" class="period regular-period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile :tag="period.link ? 'a' : 'div'" :href="period.link || false" target="_blank" @mousemove.stop="onMouseMove">
                       <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}, getColor(period.name) && getColor(period.name)+'--text text--darken-4']" column align-center justify-center>
                         <div ref="periodNames" class="period-name">
