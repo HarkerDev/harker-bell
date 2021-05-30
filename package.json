@@ -112,12 +112,12 @@
     "not IE <= 11"
   ],
   "bugs": {
-    "url": "https://github.com/BowenYin/harker-bell/issues"
+    "url": "https://github.com/HarkerDev/harker-bell/issues"
   },
-  "homepage": "https://github.com/BowenYin/harker-bell#readme",
+  "homepage": "https://github.com/HarkerDev/harker-bell#readme",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BowenYin/harker-bell"
+    "url": "git+https://github.com/HarkerDev/harker-bell"
   }
 }
