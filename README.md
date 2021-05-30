@@ -4,7 +4,7 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FHarkerDev%2Fharker-bell.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2FHarkerDev%2Fharker-bell?ref=badge_small)
 
 #### [View Live Site](https://bell.harker.org)
-#### [View Changelog](https://github.com/BowenYin/harker-bell/releases)
+#### [View Changelog](https://github.com/HarkerDev/harker-bell/releases)
 #### [View Documentation](https://bell.harker.org/docs)
 
 <a href="https://www.netlify.com">
