@@ -1,5 +1,5 @@
 # Harker Bell Schedule
-![GitHub package.json version](https://img.shields.io/github/package-json/v/BowenYin/harker-bell.svg?style=flat)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/HarkerDev/harker-bell.svg?style=flat)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/af49fbbb-c506-4bc7-a158-ab0ae4e922bf/deploy-status)](https://app.netlify.com/sites/harker-bell/deploys)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FHarkerDev%2Fharker-bell.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2FHarkerDev%2Fharker-bell?ref=badge_small)
 
