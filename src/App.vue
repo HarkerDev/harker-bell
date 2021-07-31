@@ -185,7 +185,6 @@
           <v-row>
             <v-col>
               <period-setting v-for="i in 7" :key="i" :num="i" :settings="settings"></period-setting>
-              <link-setting v-for="x in ['Advisory', 'Class Meeting', 'Office Hours', 'Clubs']" :key="x" :name="x" :settings="settings"></link-setting>
             </v-col>
           </v-row>
           <v-row>
@@ -253,13 +252,11 @@
 <script>
 import io from "socket.io-client";
 import PeriodSetting from "./components/PeriodSetting";
-import LinkSetting from "./components/LinkSetting";
 
 export default {
   name: "App",
   components: {
     PeriodSetting,
-    LinkSetting,
   },
   data() {
     return {

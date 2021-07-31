@@ -28,9 +28,7 @@
           </v-select>
         </v-col>
       </v-row>
-      <v-row no-gutters>
-        <v-text-field v-model="settings.tempLinks['P'+num]" color="accent" dense placeholder="Custom Link" :rules="[validation.url]" ga-on="focus" :ga-event-category="'link '+num" ga-event-action="input" @blur="changeLink(settings.tempLinks['P'+num])" @focus="$event.target.select()"></v-text-field>
-      </v-row>
+
     </v-col>
   </v-row>
 </template>
