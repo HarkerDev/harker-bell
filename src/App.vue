@@ -151,27 +151,7 @@
           </v-list-item>
         </v-list>
         <v-divider></v-divider>
-        <v-list>
-          <v-list-item>
-            <v-list-item-content>Enable virtual bells</v-list-item-content>
-            <v-list-item-action>
-              <v-switch v-model="settings.enableBells" color="accent" :inset="features.ios"></v-switch>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list>
         <v-divider></v-divider>
-        <v-list>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Enable notifications</v-list-item-title>
-              <v-list-item-subtitle v-if="features.notif">Get notified at the start of each Zoom class</v-list-item-subtitle>
-              <v-list-item-subtitle v-else>Not supported in this browser</v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-action>
-              <v-switch v-model="settings.enableNotifications" color="accent" :disabled="!features.notif" :inset="features.ios"></v-switch>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list>
         <v-divider></v-divider>
         <v-list>
           <v-list-item>
@@ -493,21 +473,6 @@ export default {
     const startTone = new Audio("/tones/start.mp3");
     const endTone = new Audio("/tones/end.mp3");
     startTone.volume = endTone.volume = 0.7;
-    this.socket.on("virtual bell", (isStartBell, periodName) => {
-      if (this.settings.enableBells)
-        isStartBell ? startTone.play() : endTone.play();
-      if (isStartBell && this.settings.enableNotifications && this.settings.links[periodName]) {
-        const notif = new Notification(periodName+" is starting", {
-          body: "Click to join this class!",
-          icon: "/img/icons/android-chrome-192x192.png",
-        });
-        notif.addEventListener("click", () => {
-          window.open(this.settings.links[periodName]);
-          notif.close();
-        });
-      }
-      this.socket.emit("virtual bell ack", this.settings.enableBells, this.settings.enableNotifications);
-    });
     this.socket.on("pong", () => {
       let now = new Date();
       this.io.lastConnected = now;
