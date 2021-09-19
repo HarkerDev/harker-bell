@@ -2,47 +2,66 @@
   <v-app v-if="calendar.dates.length != 0">
     <v-app-bar app color="primary" elevate-on-scroll style="overflow-x: auto; opacity: 0.9;">
       <v-spacer></v-spacer>
-      <v-btn class="hidden-print-only" icon aria-label="Previous" ga-on="click" ga-event-category="previous" ga-event-action="click" @click="nextOrPrevious(false)">
-<!--        <v-icon class="material-icons-outlined">chevron_left</v-icon>-->
+      <v-btn class="hidden-print-only" icon aria-label="Previous" ga-on="click" ga-event-category="previous"
+             ga-event-action="click" @click="nextOrPrevious(false)"
+      >
+        <!--        <v-icon class="material-icons-outlined">chevron_left</v-icon>-->
         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+          <path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/>
         </svg>
       </v-btn>
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on}">
-          <v-btn class="hidden-print-only" icon aria-label="Choose a date" ga-on="click, contextmenu" ga-event-category="date picker icon" ga-event-action="click" v-on="on">
+          <v-btn class="hidden-print-only" icon aria-label="Choose a date" ga-on="click, contextmenu"
+                 ga-event-category="date picker icon" ga-event-action="click" v-on="on"
+          >
             <v-icon class="material-icons-outlined">event</v-icon>
           </v-btn>
         </template>
-        <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" type="date" @input="datePicker = false">
+        <v-date-picker v-model="currentDateString" :allowed-dates="allowedDate" color="accent" type="date"
+                       @input="datePicker = false"
+        >
           <v-spacer></v-spacer>
-          <v-btn color="accent" small outlined @click="$router.push('/').catch(() => {}); datePicker = false;">Today</v-btn>
+          <v-btn color="accent" small outlined @click="$router.push('/').catch(() => {}); datePicker = false;">Today
+          </v-btn>
           <v-spacer></v-spacer>
         </v-date-picker>
       </v-menu>
-      <v-btn class="hidden-print-only mr-2" icon aria-label="Next" ga-on="click" ga-event-category="next" ga-event-action="click" @click="nextOrPrevious(true)">
-<!--        <v-icon class="material-icons-outlined">chevron_right</v-icon>-->
+      <v-btn class="hidden-print-only mr-2" icon aria-label="Next" ga-on="click" ga-event-category="next"
+             ga-event-action="click" @click="nextOrPrevious(true)"
+      >
+        <!--        <v-icon class="material-icons-outlined">chevron_right</v-icon>-->
         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+          <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
         </svg>
       </v-btn>
       <transition name="fade" mode="out-in">
-        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title text-center" :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '140px'}">
+        <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title text-center"
+                         :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '140px'}"
+        >
           <template v-if="$vuetify.breakpoint.smAndUp">
-            <span v-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
-            <span v-else>{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
-          </template><template v-else>
-            <span v-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} - {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}</span>
-            <span v-else>{{shortMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
+            <span v-if="mode == 'week'"
+            >{{ shortMonths[calendar.dates[0].getUTCMonth()] }} {{ calendar.dates[0].getUTCDate() }} &ndash; {{ shortMonths[calendar.dates[calendar.dates.length - 1].getUTCMonth()] }} {{ calendar.dates[calendar.dates.length - 1].getUTCDate() }}, {{ calendar.dates[calendar.dates.length - 1].getUTCFullYear() }}</span>
+            <span v-else>{{ longMonths[calendar.currentDate.getUTCMonth()] }} {{ calendar.currentDate.getUTCDate() }}, {{ calendar.currentDate.getUTCFullYear() }}</span>
+          </template>
+          <template v-else>
+            <span v-if="mode == 'week'"
+            >{{ shortMonths[calendar.dates[0].getUTCMonth()] }} {{ calendar.dates[0].getUTCDate() }} - {{ shortMonths[calendar.dates[calendar.dates.length - 1].getUTCMonth()] }} {{ calendar.dates[calendar.dates.length - 1].getUTCDate() }}</span>
+            <span v-else>{{ shortMonths[calendar.currentDate.getUTCMonth()] }} {{ calendar.currentDate.getUTCDate() }}, {{ calendar.currentDate.getUTCFullYear() }}</span>
           </template>
         </v-toolbar-title>
-        <v-toolbar-title v-else id="title" key="title" class="headline text-center" :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '140px'}" ga-on="click" ga-event-category="title" ga-event-action="click" @click="changeTitle">
+        <v-toolbar-title v-else id="title" key="title" class="headline text-center"
+                         :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '140px'}" ga-on="click"
+                         ga-event-category="title" ga-event-action="click" @click="changeTitle"
+        >
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
         </v-toolbar-title>
       </transition>
       <v-menu offset-y min-width="160">
         <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only ml-2" icon aria-label="Settings" ga-on="click, contextmenu" ga-event-category="settings icon" ga-event-action="click" v-on="{...menu}">
+          <v-btn class="hidden-print-only ml-2" icon aria-label="Settings" ga-on="click, contextmenu"
+                 ga-event-category="settings icon" ga-event-action="click" v-on="{...menu}"
+          >
             <v-icon class="material-icons-outlined">settings</v-icon>
           </v-btn>
         </template>
@@ -86,7 +105,9 @@
         </v-list>
         <v-divider></v-divider>
         <v-list>
-          <v-list-item v-if="features.beforeInstallPrompt" color="accent" :input-value="true" ga-on="click" ga-event-category="install" ga-event-action="click" @click="showInstallPrompt">
+          <v-list-item v-if="features.beforeInstallPrompt" color="accent" :input-value="true" ga-on="click"
+                       ga-event-category="install" ga-event-action="click" @click="showInstallPrompt"
+          >
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">get_app</v-icon>
             </v-list-item-icon>
@@ -108,8 +129,16 @@
       <v-spacer></v-spacer>
       <v-menu offset-y min-width="300" content-class="hdev-app-menu">
         <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only" icon aria-label="All apps" ga-on="click, contextmenu" ga-event-category="app menu" ga-event-action="click" v-on="{...menu}">
-            <v-icon class="material-icons-outlined">apps</v-icon>
+          <v-btn class="hidden-print-only" icon aria-label="All apps" ga-on="click, contextmenu"
+                 ga-event-category="app menu" ga-event-action="click" v-on="{...menu}"
+          >
+            <!--            <v-icon class="material-icons-outlined">apps</v-icon>-->
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path fill="currentColor"
+                  d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"
+              />
+            </svg>
           </v-btn>
         </template>
         <iframe src="https://harkerdev-menu.netlify.app/?exclude=bell" style="border: none; height: 100%"></iframe>
@@ -117,16 +146,25 @@
     </v-app-bar>
     <div id="message-wrapper" class="mb-2 hidden-print-only" style="height: 14px;">
       <!-- eslint-disable-next-line vue/no-v-html -->
-      <div id="message" class="caption text-center" :style="{top: $vuetify.breakpoint.mdAndUp ? '62px' : '55px'}" v-html="message"></div>
+      <div id="message" class="caption text-center" :style="{top: $vuetify.breakpoint.mdAndUp ? '62px' : '55px'}"
+           v-html="message"
+      ></div>
     </div>
     <v-content style="overflow-x: scroll;">
       <div class="text-center hidden-screen-only">
-        <span v-if="mode == 'week'">{{shortMonths[calendar.dates[0].getUTCMonth()]}} {{calendar.dates[0].getUTCDate()}} &ndash; {{shortMonths[calendar.dates[calendar.dates.length-1].getUTCMonth()]}} {{calendar.dates[calendar.dates.length-1].getUTCDate()}}, {{calendar.dates[calendar.dates.length-1].getUTCFullYear()}}</span>
-        <span v-else>{{longMonths[calendar.currentDate.getUTCMonth()]}} {{calendar.currentDate.getUTCDate()}}, {{calendar.currentDate.getUTCFullYear()}}</span>
+        <span v-if="mode == 'week'"
+        >{{ shortMonths[calendar.dates[0].getUTCMonth()] }} {{ calendar.dates[0].getUTCDate() }} &ndash; {{ shortMonths[calendar.dates[calendar.dates.length - 1].getUTCMonth()] }} {{ calendar.dates[calendar.dates.length - 1].getUTCDate() }}, {{ calendar.dates[calendar.dates.length - 1].getUTCFullYear() }}</span>
+        <span v-else
+        >{{ longMonths[calendar.currentDate.getUTCMonth()] }} {{ calendar.currentDate.getUTCDate() }}, {{ calendar.currentDate.getUTCFullYear() }}</span>
       </div>
-      <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules" :settings="settings" :sheet-id="menu.open ? menu.sheetId : null" :time="time" @show-menu="showMenu"></router-view>
+      <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules"
+                   :settings="settings" :sheet-id="menu.open ? menu.sheetId : null" :time="time" @show-menu="showMenu"
+      ></router-view>
     </v-content>
-    <v-dialog v-model="settings.dialog" :fullscreen="$vuetify.breakpoint.xsOnly" :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="400" @input="closeSettings">
+    <v-dialog v-model="settings.dialog" :fullscreen="$vuetify.breakpoint.xsOnly"
+              :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="400"
+              @input="closeSettings"
+    >
       <v-card>
         <v-app-bar color="primary" flat>
           <v-btn icon @click="closeSettings">
@@ -134,13 +172,15 @@
           </v-btn>
           <v-toolbar-title class="title font-weight-medium">Settings</v-toolbar-title>
           <v-spacer></v-spacer>
-          <div class="overline">Version {{env.VUE_APP_VERSION}}</div>
+          <div class="overline">Version {{ env.VUE_APP_VERSION }}</div>
         </v-app-bar>
         <v-list subheader>
           <v-list-item>
             <v-list-item-content :class="{'text--disabled': settings.autoDark}">Use dark mode</v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="$vuetify.theme.dark" color="accent" :disabled="settings.autoDark" :inset="features.ios"></v-switch>
+              <v-switch v-model="$vuetify.theme.dark" color="accent" :disabled="settings.autoDark"
+                        :inset="features.ios"
+              ></v-switch>
             </v-list-item-action>
           </v-list-item>
         </v-list>
@@ -175,8 +215,13 @@
           </v-row>
           <v-row>
             <v-col class="caption text-center short px-6 pb-0">
-              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp#event-categories" target="_blank">What do the event colors mean?</a></p>
-              <div><v-icon class="material-icons-outlined mr-3 mt-n1" x-small>info</v-icon>Schedules are only guaranteed to be accurate up to the end of the current month.</div>
+              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp#event-categories"
+                    target="_blank"
+              >What do the event colors mean?</a></p>
+              <div>
+                <v-icon class="material-icons-outlined mr-3 mt-n1" x-small>info</v-icon>
+                Schedules are only guaranteed to be accurate up to the end of the current month.
+              </div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -184,27 +229,37 @@
         <v-card-actions class="caption">
           <v-row>
             <v-col class="text-center short px-6 pb-0">
-              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API Docs</a> • <a href="https://github.com/HarkerDev/harker-bell" target="_blank">GitHub</a> • <a href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank">Help</a> • <a href="https://github.com/HarkerDev/harker-bell/releases" target="_blank">Release Notes</a></p>
-              <p class="overline">Made with <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon> by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a></p>
+              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API
+                Docs</a> • <a href="https://github.com/HarkerDev/harker-bell" target="_blank">GitHub</a> • <a
+                  href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank"
+              >Help</a> • <a href="https://github.com/HarkerDev/harker-bell/releases" target="_blank">Release Notes</a>
+              </p>
+              <p class="overline">Made with
+                <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon>
+                by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a></p>
             </v-col>
           </v-row>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-menu v-model="menu.open" absolute :close-on-content-click="false" offset-x :position-x="menu.x" :position-y="menu.y">
+    <v-menu v-model="menu.open" absolute :close-on-content-click="false" offset-x :position-x="menu.x"
+            :position-y="menu.y"
+    >
       <v-card min-height="100" max-width="480">
-        <v-simple-table v-if="schedules[menu.date.toISOString()] && schedules[menu.date.toISOString()].lunch.length > 0" dense fixed-header height="260">
+        <v-simple-table v-if="schedules[menu.date.toISOString()] && schedules[menu.date.toISOString()].lunch.length > 0"
+                        dense fixed-header height="260"
+        >
           <thead>
-            <tr>
-              <th class="px-5">Location</th>
-              <th class="px-5">Menu Item</th>
-            </tr>
+          <tr>
+            <th class="px-5">Location</th>
+            <th class="px-5">Menu Item</th>
+          </tr>
           </thead>
           <tbody>
-            <tr v-for="item in schedules[menu.date.toISOString()].lunch" :key="item.place">
-              <td class="body-2 font-weight-medium px-5" style="word-break: normal;">{{item.place}}</td>
-              <td class="body-2 short py-2 px-5" style="white-space: pre-wrap;">{{item.food}}</td>
-            </tr>
+          <tr v-for="item in schedules[menu.date.toISOString()].lunch" :key="item.place">
+            <td class="body-2 font-weight-medium px-5" style="word-break: normal;">{{ item.place }}</td>
+            <td class="body-2 short py-2 px-5" style="white-space: pre-wrap;">{{ item.food }}</td>
+          </tr>
           </tbody>
         </v-simple-table>
         <v-card-text v-else>No lunch menu available<br>for this day.</v-card-text>
@@ -213,24 +268,30 @@
     <v-footer class="hidden-print-only" app color="primary" elevation="2" fixed padless style="opacity: 0.85;">
       <div class="caption no-select mx-2">
         <span v-show="!io.connected && formattedLastConnected">Last connected: </span>
-        <span :class="[{'error--text': time.now-io.lastConnected >= $MS_PER_DAY, 'success--text': io.connected}, 'font-weight-medium']">{{io.connected ? "Connected" : formattedLastConnected || "Connecting..."}}</span>
+        <span
+            :class="[{'error--text': time.now-io.lastConnected >= $MS_PER_DAY, 'success--text': io.connected}, 'font-weight-medium']"
+        >{{ io.connected ? "Connected" : formattedLastConnected || "Connecting..." }}</span>
       </div>
       <v-spacer></v-spacer>
       <div class="caption no-select mx-2">
         <span>Last update: </span>
-        <span class="font-weight-medium">{{formattedLastUpdated || "Updating..."}}</span>
+        <span class="font-weight-medium">{{ formattedLastUpdated || "Updating..." }}</span>
       </div>
     </v-footer>
     <v-snackbar v-model="snackbars.offlineReady" :timeout="30000">
-      {{features.beforeInstallPrompt ? 'Install this app in one click for quick and easy access.': 'Install this app onto your home screen for quick and easy access.'}}
+      {{ features.beforeInstallPrompt ? 'Install this app in one click for quick and easy access.' : 'Install this app onto your home screen for quick and easy access.' }}
       <v-btn v-if="features.beforeInstallPrompt" text @click="showInstallPrompt">Install</v-btn>
-      <v-btn v-else text href="https://bell.harker.org/docs/install.html?utm_source=bell&utm_medium=inapp" target="_blank" @click="snackbars.offlineReady = false">Learn More</v-btn>
+      <v-btn v-else text href="https://bell.harker.org/docs/install.html?utm_source=bell&utm_medium=inapp"
+             target="_blank" @click="snackbars.offlineReady = false"
+      >Learn More
+      </v-btn>
     </v-snackbar>
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
       Updating to the latest version...
     </v-snackbar>
     <v-snackbar v-model="snackbars.notifDenied" :timeout="4000">
-      Permission denied <v-icon dark class="material-icons-outlined">sentiment_dissatisfied</v-icon>
+      Permission denied
+      <v-icon dark class="material-icons-outlined">sentiment_dissatisfied</v-icon>
     </v-snackbar>
   </v-app>
 </template>
@@ -290,7 +351,7 @@ export default {
       },
       time: {
         now: new Date(),
-        utcNow: new Date(new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))-new Date().getTimezoneOffset()*60*1000),
+        utcNow: new Date(new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"})) - new Date().getTimezoneOffset() * 60 * 1000),
         today: null,
       },
       snackbars: {
@@ -304,8 +365,8 @@ export default {
         notif: window.Notification ? true : false,
         beforeInstallPrompt: false,
         ios: window.navigator.platform.toLowerCase().includes("ios") ||
-          window.navigator.platform.toLowerCase().includes("iphone") ||
-          window.navigator.platform.toLowerCase().includes("ipad"),
+            window.navigator.platform.toLowerCase().includes("iphone") ||
+            window.navigator.platform.toLowerCase().includes("ipad"),
       },
       longMonths: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -362,8 +423,8 @@ export default {
     /** Handles changes to the dark mode setting. */
     "$vuetify.theme.dark"(dark) {
       localStorage.setItem("darkTheme", dark.toString());
-      if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
-      else document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
+      if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content", "#202124");
+      else document.querySelector('meta[name="theme-color"]').setAttribute("content", "#FFFFFF");
       if (window.ga) window.ga("set", "dimension1", dark.toString());
     },
     /** Handles changes to the automatic dark mode setting. */
@@ -388,18 +449,21 @@ export default {
     },
     "settings.enableNotifications"(enabled) {
       if (!window.Notification) return;
+
       function setVars() {
         localStorage.setItem("enableNotifications", enabled.toString());
         if (window.ga) window.ga("set", "dimension9", enabled.toString());
       }
+
       function notifPromise() {
         try {
           Notification.requestPermission().then();
-        } catch(e) {
+        } catch (e) {
           return false;
         }
         return true;
       }
+
       function showNotif() {
         const notif = new Notification("Successfully enabled notifications!", {
           body: "You'll receive notifications for each class that has a custom link.",
@@ -407,6 +471,7 @@ export default {
         });
         notif.addEventListener("click", () => notif.close());
       }
+
       function handlePermission(permission, thisV) {
         if (!Notification.permission) Notification.permission = permission;
         if (permission == "granted") {
@@ -417,6 +482,7 @@ export default {
           thisV.snackbars.notifDenied = true;
         }
       }
+
       if (!enabled) return setVars();
       if (Notification.permission == "granted") {
         setVars();
@@ -431,13 +497,13 @@ export default {
     //console.log(new Date-abcd);
     //console.log(new Date-abcd);
     /** Number of milliseconds per minute and day */
-    this.$MS_PER_MIN = 60*1000;
-    this.$MS_PER_DAY = this.$MS_PER_MIN*60*24;
+    this.$MS_PER_MIN = 60 * 1000;
+    this.$MS_PER_DAY = this.$MS_PER_MIN * 60 * 24;
     if (localStorage.getItem("darkTheme") == "true") {
       this.$vuetify.theme.dark = true;
-      document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#202124");
+      document.querySelector('meta[name="theme-color"]').setAttribute("content", "#202124");
     } else
-      document.querySelector('meta[name="theme-color"]').setAttribute("content",  "#FFFFFF");
+      document.querySelector('meta[name="theme-color"]').setAttribute("content", "#FFFFFF");
     window.addEventListener("pwaOfflineReady", () => this.snackbars.offlineReady = true);
     window.addEventListener("pwaUpdated", () => {
       this.snackbars.pwaUpdated = true;
@@ -462,7 +528,7 @@ export default {
       this.message = message;
       this.$nextTick(() => {
         const el = document.getElementById("message-wrapper");
-        if (el) el.style.height = document.getElementById("message").clientHeight+"px";
+        if (el) el.style.height = document.getElementById("message").clientHeight + "px";
       });
     });
     if (this.db) this.socket.on("update schedule", async (schedules, revision) => {
@@ -498,7 +564,8 @@ export default {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
       else if (event.key == "ArrowDown" || event.keyCode == 40 ||
-        event.key == "KeyT" || event.keyCode == 84) this.$router.push("/").catch(() => {});
+          event.key == "KeyT" || event.keyCode == 84) this.$router.push("/").catch(() => {
+      });
       else if (event.key == "KeyD" || event.keyCode == 68) this.changeMode("day");
       else if (event.key == "KeyW" || event.keyCode == 87) this.changeMode("week");
       else if (event.key == "KeyR" || event.keyCode == 82) this.updateTime();
@@ -525,7 +592,7 @@ export default {
       this.calendar.keepCurrentDate = true;
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (mode == "week" && this.$route.name == "day" &&
-        +this.getSaturday(new Date(+date)) == +this.getSaturday(new Date(+today)))
+          +this.getSaturday(new Date(+date)) == +this.getSaturday(new Date(+today)))
         this.$router.push("/");
       else this.setCalendar(this.$route);
     },
@@ -534,7 +601,9 @@ export default {
       if (this.calendar.titleTimeout) {
         this.calendar.titleChanging = true;
         clearTimeout(this.calendar.titleTimeout);
-        this.calendar.titleTimeout = setTimeout(() => {this.calendar.titleChanging = false;}, 2000);
+        this.calendar.titleTimeout = setTimeout(() => {
+          this.calendar.titleChanging = false;
+        }, 2000);
       } else this.calendar.titleTimeout = true;
     },
     /** Closes the settings dialog by either navigating back in history or going to the home page. */
@@ -555,7 +624,13 @@ export default {
         return date.toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
       if (!showTime)
         return date.toLocaleDateString(undefined, {month: "numeric", day: "numeric", year: "2-digit"});
-      return date.toLocaleDateString(undefined, {month: "numeric", day: "numeric", year: "2-digit", hour: "numeric", minute: "2-digit"});
+      return date.toLocaleDateString(undefined, {
+        month: "numeric",
+        day: "numeric",
+        year: "2-digit",
+        hour: "numeric",
+        minute: "2-digit"
+      });
     },
     /**
      * Retrives local schedules from IndexedDB if available.
@@ -590,7 +665,7 @@ export default {
       this.calendar.loading = true;
       this.socket.emit("request schedule", {
         start: dates[0],
-        end: dates[dates.length-1]
+        end: dates[dates.length - 1]
       }, schedules => {
         //console.log("GOT SOCK:\t", new Date-abcd);
         this.rawSchedules = schedules;
@@ -605,7 +680,7 @@ export default {
      */
     getCurrentUTCMidnight() {
       let now = new Date();
-      let date = new Date(now-now.getTimezoneOffset()*this.$MS_PER_MIN);
+      let date = new Date(now - now.getTimezoneOffset() * this.$MS_PER_MIN);
       date.setUTCHours(0, 0, 0, 0);
       return date;
     },
@@ -616,7 +691,7 @@ export default {
      */
     getSaturday(date) {
       date = new Date(date);
-      date.setUTCDate(date.getUTCDate()-(date.getUTCDay()+1)%7); // mod 7 days
+      date.setUTCDate(date.getUTCDate() - (date.getUTCDay() + 1) % 7); // mod 7 days
       return date;
     },
     /**
@@ -629,17 +704,17 @@ export default {
       let sign = isNext ? 1 : -1;
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (this.mode == "week") {
-        date = this.getSaturday(new Date(+date+sign*7*this.$MS_PER_DAY));
-        date.setUTCDate(date.getUTCDate()+2);
-      // if going next and it's a friday, then skip directly to monday, and vice versa
+        date = this.getSaturday(new Date(+date + sign * 7 * this.$MS_PER_DAY));
+        date.setUTCDate(date.getUTCDate() + 2);
+        // if going next and it's a friday, then skip directly to monday, and vice versa
       } else if (isNext && date.getUTCDay() == 5 || !isNext && date.getUTCDay() == 1)
-        date.setUTCDate(date.getUTCDate()+sign*3);
+        date.setUTCDate(date.getUTCDate() + sign * 3);
       else // day mode
-        date.setUTCDate(date.getUTCDate()+sign*1);
+        date.setUTCDate(date.getUTCDate() + sign * 1);
       if (+date == +today || this.mode == "week" && +this.getSaturday(date) == +this.getSaturday(today))
         this.$router.push("/");
       else
-        this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
+        this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth() + 1}/${date.getUTCDate()}`);
       this.arrowAllowed = true;
     },
     /** Prints the current view of the bell schedule. */
@@ -669,11 +744,11 @@ export default {
       let year = +route.params.year, month = +route.params.month, day = +route.params.day;
       if (!this.calendar.keepCurrentDate)
         if (year && month) {
-          this.calendar.currentDate = new Date(Date.UTC(year, month-1, day || 1));
+          this.calendar.currentDate = new Date(Date.UTC(year, month - 1, day || 1));
           if (!day && this.calendar.currentDate.getUTCDay() == 0)
-            this.calendar.currentDate = new Date(+this.calendar.currentDate+this.$MS_PER_DAY);
+            this.calendar.currentDate = new Date(+this.calendar.currentDate + this.$MS_PER_DAY);
           else if (!day && this.calendar.currentDate.getUTCDay() == 6)
-            this.calendar.currentDate = new Date(+this.calendar.currentDate+2*this.$MS_PER_DAY);
+            this.calendar.currentDate = new Date(+this.calendar.currentDate + 2 * this.$MS_PER_DAY);
         } else this.calendar.currentDate = this.getCurrentUTCMidnight();
       else this.calendar.keepCurrentDate = false;
       this.calendar.currentMonth = null;
@@ -681,30 +756,30 @@ export default {
       let startDate, endDate;
       if (this.mode == "week") {
         if (route.name == "day")
-          startDate = this.getSaturday(new Date(Date.UTC(year, month-1, day))); // date in URL
+          startDate = this.getSaturday(new Date(Date.UTC(year, month - 1, day))); // date in URL
         else
           startDate = this.getSaturday(new Date(+this.calendar.currentDate)); // saturday of the current week
-        endDate = new Date(+startDate+6*this.$MS_PER_DAY); // add 6 days to get friday
+        endDate = new Date(+startDate + 6 * this.$MS_PER_DAY); // add 6 days to get friday
       } else if (route.name == "day") { // is day route
-        startDate = endDate = new Date(Date.UTC(year, month-1, day)); // date specified in URL
+        startDate = endDate = new Date(Date.UTC(year, month - 1, day)); // date specified in URL
         let date = this.calendar.currentDate;
-        if (date.getUTCDay() == 0) date = new Date(+date+this.$MS_PER_DAY);
-        else if (date.getUTCDay() == 6) date = new Date(+date+2*this.$MS_PER_DAY);
+        if (date.getUTCDay() == 0) date = new Date(+date + this.$MS_PER_DAY);
+        else if (date.getUTCDay() == 6) date = new Date(+date + 2 * this.$MS_PER_DAY);
         if (+date != +this.calendar.currentDate) {
-          this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth()+1}/${date.getUTCDate()}`);
+          this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth() + 1}/${date.getUTCDate()}`);
           return;
         }
       } else { // if no date specified in URL path
         startDate = endDate = this.calendar.currentDate;
-        if (startDate.getUTCDay() == 0) startDate = endDate = new Date(+startDate+this.$MS_PER_DAY);
-        else if (startDate.getUTCDay() == 6) startDate = endDate = new Date(+startDate+2*this.$MS_PER_DAY);
+        if (startDate.getUTCDay() == 0) startDate = endDate = new Date(+startDate + this.$MS_PER_DAY);
+        else if (startDate.getUTCDay() == 6) startDate = endDate = new Date(+startDate + 2 * this.$MS_PER_DAY);
         this.calendar.currentDate = startDate;
       }
       let dates = [];
       while (startDate <= endDate) {
         if (startDate.getUTCDay() > 0 && startDate.getUTCDay() < 6) // if date is a weekday
           dates.push(startDate);
-        startDate = new Date(+startDate+this.$MS_PER_DAY); // add 1 day
+        startDate = new Date(+startDate + this.$MS_PER_DAY); // add 1 day
       }
       if (this.db) this.rawSchedules = await this.getFromIndexedDB(dates);
       else if (this.socket) this.getFromSocket(dates);
@@ -731,7 +806,7 @@ export default {
         this.menu.open = false; // required in order for the position transition to work
       }
       let rect = document.getElementById(id).getBoundingClientRect();
-      this.menu.x = rect.left+rect.width;
+      this.menu.x = rect.left + rect.width;
       this.menu.y = rect.top;
       this.$nextTick(() => {
         this.menu.open = true;
@@ -742,7 +817,7 @@ export default {
       //console.log("updating...");
       this.time.now = new Date();
       this.time.today = this.getCurrentUTCMidnight();
-      this.time.utcNow = new Date(new Date(this.time.now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))-this.time.now.getTimezoneOffset()*this.$MS_PER_MIN);
+      this.time.utcNow = new Date(new Date(this.time.now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})) - this.time.now.getTimezoneOffset() * this.$MS_PER_MIN);
       if (this.settings.autoDark && this.time.now >= window.nextSunRiseSet.time) {
         if (window.nextSunRiseSet.isSunrise) this.$vuetify.theme.dark = false;
         else this.$vuetify.theme.dark = true;
@@ -757,21 +832,27 @@ export default {
 .v-snack__wrapper {
   border-radius: 2px !important;
 }
+
 .v-date-picker-title__date {
   font-size: 22px !important;
 }
+
 .v-menu__content {
   max-width: 95% !important;
 }
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity 250ms;
 }
+
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
+
 .short {
   line-height: 1.15 !important;
 }
+
 #message {
   position: absolute;
   max-width: 550px;
@@ -781,56 +862,75 @@ export default {
   transform: translateX(-50%);
   line-height: normal;
 }
+
 #title {
   font-size: 22px !important;
   cursor: pointer;
 }
+
 .no-select {
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
+
 .v-list-item__icon:first-child {
   margin-right: 18px !important;
 }
+
 .list-item-icon {
   margin-top: 10px;
   margin-bottom: 8px;
 }
+
 .list-item-text {
   font-size: 15px;
 }
+
 .blink {
   animation: blink 1.25s step-start infinite;
 }
+
 @keyframes blink {
-  50% {opacity: 0;}
+  50% {
+    opacity: 0;
+  }
 }
+
 @media print {
-  @page {size: landscape;}
+  @page {
+    size: landscape;
+  }
 }
+
 body {
   -webkit-print-color-adjust: exact !important;
 }
+
 .v-content__wrap {
   overflow-x: auto;
 }
+
 .v-input__slot:before {
   border-top-width: 1px !important;
 }
+
 .v-text-field > .v-input__control > .v-input__slot:after {
   border-width: 1px 0 1px 0;
 }
+
 .hdev-app-menu {
   overflow: hidden;
   height: 312px;
   padding-top: 4px;
   background-color: #FFFFFF;
 }
+
 .v-btn.v-date-picker-table__current.v-btn--disabled .v-btn__content {
   color: #BDC1C6;
 }
+
 .v-date-picker-header .material-icons {
   font-family: "Material Icons Outlined";
   font-weight: normal;
