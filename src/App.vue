@@ -3,7 +3,10 @@
     <v-app-bar app color="primary" elevate-on-scroll style="overflow-x: auto; opacity: 0.9;">
       <v-spacer></v-spacer>
       <v-btn class="hidden-print-only" icon aria-label="Previous" ga-on="click" ga-event-category="previous" ga-event-action="click" @click="nextOrPrevious(false)">
-        <v-icon class="material-icons-outlined">chevron_left</v-icon>
+<!--        <v-icon class="material-icons-outlined">chevron_left</v-icon>-->
+        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+        </svg>
       </v-btn>
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on}">
@@ -18,7 +21,10 @@
         </v-date-picker>
       </v-menu>
       <v-btn class="hidden-print-only mr-2" icon aria-label="Next" ga-on="click" ga-event-category="next" ga-event-action="click" @click="nextOrPrevious(true)">
-        <v-icon class="material-icons-outlined">chevron_right</v-icon>
+<!--        <v-icon class="material-icons-outlined">chevron_right</v-icon>-->
+        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+        </svg>
       </v-btn>
       <transition name="fade" mode="out-in">
         <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title text-center" :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '140px'}">
