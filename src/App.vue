@@ -22,7 +22,8 @@
                        @input="datePicker = false"
         >
           <v-spacer></v-spacer>
-          <v-btn color="accent" small outlined @click="$router.push('/').catch(() => {}); datePicker = false;">Today
+          <v-btn color="accent" small outlined @click="$router.push('/').catch(() => {}); datePicker = false;">
+            Today
           </v-btn>
           <v-spacer></v-spacer>
         </v-date-picker>
@@ -40,13 +41,11 @@
                          :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '140px'}"
         >
           <template v-if="$vuetify.breakpoint.smAndUp">
-            <span v-if="mode == 'week'"
-            >{{ shortMonths[calendar.dates[0].getUTCMonth()] }} {{ calendar.dates[0].getUTCDate() }} &ndash; {{ shortMonths[calendar.dates[calendar.dates.length - 1].getUTCMonth()] }} {{ calendar.dates[calendar.dates.length - 1].getUTCDate() }}, {{ calendar.dates[calendar.dates.length - 1].getUTCFullYear() }}</span>
+            <span v-if="mode == 'week'">{{ shortMonths[calendar.dates[0].getUTCMonth()] }} {{ calendar.dates[0].getUTCDate() }} &ndash; {{ shortMonths[calendar.dates[calendar.dates.length - 1].getUTCMonth()] }} {{ calendar.dates[calendar.dates.length - 1].getUTCDate() }}, {{ calendar.dates[calendar.dates.length - 1].getUTCFullYear() }}</span>
             <span v-else>{{ longMonths[calendar.currentDate.getUTCMonth()] }} {{ calendar.currentDate.getUTCDate() }}, {{ calendar.currentDate.getUTCFullYear() }}</span>
           </template>
           <template v-else>
-            <span v-if="mode == 'week'"
-            >{{ shortMonths[calendar.dates[0].getUTCMonth()] }} {{ calendar.dates[0].getUTCDate() }} - {{ shortMonths[calendar.dates[calendar.dates.length - 1].getUTCMonth()] }} {{ calendar.dates[calendar.dates.length - 1].getUTCDate() }}</span>
+            <span v-if="mode == 'week'">{{ shortMonths[calendar.dates[0].getUTCMonth()] }} {{ calendar.dates[0].getUTCDate() }} - {{ shortMonths[calendar.dates[calendar.dates.length - 1].getUTCMonth()] }} {{ calendar.dates[calendar.dates.length - 1].getUTCDate() }}</span>
             <span v-else>{{ shortMonths[calendar.currentDate.getUTCMonth()] }} {{ calendar.currentDate.getUTCDate() }}, {{ calendar.currentDate.getUTCFullYear() }}</span>
           </template>
         </v-toolbar-title>
@@ -136,7 +135,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24">
               <path d="M0 0h24v24H0V0z" fill="none"/>
               <path fill="currentColor"
-                  d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"
+                    d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"
               />
             </svg>
           </v-btn>
@@ -152,10 +151,8 @@
     </div>
     <v-content style="overflow-x: scroll;">
       <div class="text-center hidden-screen-only">
-        <span v-if="mode == 'week'"
-        >{{ shortMonths[calendar.dates[0].getUTCMonth()] }} {{ calendar.dates[0].getUTCDate() }} &ndash; {{ shortMonths[calendar.dates[calendar.dates.length - 1].getUTCMonth()] }} {{ calendar.dates[calendar.dates.length - 1].getUTCDate() }}, {{ calendar.dates[calendar.dates.length - 1].getUTCFullYear() }}</span>
-        <span v-else
-        >{{ longMonths[calendar.currentDate.getUTCMonth()] }} {{ calendar.currentDate.getUTCDate() }}, {{ calendar.currentDate.getUTCFullYear() }}</span>
+        <span v-if="mode == 'week'">{{ shortMonths[calendar.dates[0].getUTCMonth()] }} {{ calendar.dates[0].getUTCDate() }} &ndash; {{ shortMonths[calendar.dates[calendar.dates.length - 1].getUTCMonth()] }} {{ calendar.dates[calendar.dates.length - 1].getUTCDate() }}, {{ calendar.dates[calendar.dates.length - 1].getUTCFullYear() }}</span>
+        <span v-else>{{ longMonths[calendar.currentDate.getUTCMonth()] }} {{ calendar.currentDate.getUTCDate() }}, {{ calendar.currentDate.getUTCFullYear() }}</span>
       </div>
       <router-view :calendar="calendar" :mode="mode" :raw-schedules="rawSchedules" :schedules="schedules"
                    :settings="settings" :sheet-id="menu.open ? menu.sheetId : null" :time="time" @show-menu="showMenu"
@@ -215,9 +212,11 @@
           </v-row>
           <v-row>
             <v-col class="caption text-center short px-6 pb-0">
-              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp#event-categories"
-                    target="_blank"
-              >What do the event colors mean?</a></p>
+              <p>
+                <a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp#event-categories"
+                   target="_blank"
+                >What do the event colors mean?</a>
+              </p>
               <div>
                 <v-icon class="material-icons-outlined mr-3 mt-n1" x-small>info</v-icon>
                 Schedules are only guaranteed to be accurate up to the end of the current month.
@@ -229,14 +228,17 @@
         <v-card-actions class="caption">
           <v-row>
             <v-col class="text-center short px-6 pb-0">
-              <p><a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API
-                Docs</a> • <a href="https://github.com/HarkerDev/harker-bell" target="_blank">GitHub</a> • <a
+              <p>
+                <a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API
+                  Docs</a> • <a href="https://github.com/HarkerDev/harker-bell" target="_blank">GitHub</a> • <a
                   href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank"
-              >Help</a> • <a href="https://github.com/HarkerDev/harker-bell/releases" target="_blank">Release Notes</a>
+                >Help</a> • <a href="https://github.com/HarkerDev/harker-bell/releases" target="_blank">Release Notes</a>
               </p>
-              <p class="overline">Made with
+              <p class="overline">
+                Made with
                 <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon>
-                by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a></p>
+                by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a>
+              </p>
             </v-col>
           </v-row>
         </v-card-actions>
@@ -250,16 +252,26 @@
                         dense fixed-header height="260"
         >
           <thead>
-          <tr>
-            <th class="px-5">Location</th>
-            <th class="px-5">Menu Item</th>
-          </tr>
+            <tr>
+              <th class="px-5">Location</th>
+              <th class="px-5">Menu Item</th>
+            </tr>
           </thead>
           <tbody>
-          <tr v-for="item in schedules[menu.date.toISOString()].lunch" :key="item.place">
-            <td class="body-2 font-weight-medium px-5" style="word-break: normal;">{{ item.place }}</td>
-            <td class="body-2 short py-2 px-5" style="white-space: pre-wrap;">{{ item.food }}</td>
-          </tr>
+            <tr v-for="item in schedules[menu.date.toISOString()].lunch" :key="item.place">
+              <td class="body-2 font-weight-medium px-5" style="word-break: normal;">{{ item.place }}</td>
+              <td class="body-2 short py-2 px-5" style="white-space: pre-wrap;">{{ item.food }}</td>
+            </tr>
+            <tr>
+              <td class="body-2 font-weight-medium px-5" style="word-break: normal;"></td>
+              <td class="body-2 short py-2 px-5" style="white-space: pre-wrap; display: flex; flex-direction: row; align-items: center; margin: 1px;">
+                <v-icon class="material-icons-outlined mr-3 mt-n1" x-small>info</v-icon>
+                <p style="padding-top: 10px; font-size: 10px;">
+                  The lunch menu may not always be completely accurate.
+                </p>
+              </td>
+              <td class="body-2 font-weight-medium px-5" style="word-break: normal;"></td>
+            </tr>
           </tbody>
         </v-simple-table>
         <v-card-text v-else>No lunch menu available<br>for this day.</v-card-text>
@@ -269,7 +281,7 @@
       <div class="caption no-select mx-2">
         <span v-show="!io.connected && formattedLastConnected">Last connected: </span>
         <span
-            :class="[{'error--text': time.now-io.lastConnected >= $MS_PER_DAY, 'success--text': io.connected}, 'font-weight-medium']"
+          :class="[{'error--text': time.now-io.lastConnected >= $MS_PER_DAY, 'success--text': io.connected}, 'font-weight-medium']"
         >{{ io.connected ? "Connected" : formattedLastConnected || "Connecting..." }}</span>
       </div>
       <v-spacer></v-spacer>
@@ -283,7 +295,8 @@
       <v-btn v-if="features.beforeInstallPrompt" text @click="showInstallPrompt">Install</v-btn>
       <v-btn v-else text href="https://bell.harker.org/docs/install.html?utm_source=bell&utm_medium=inapp"
              target="_blank" @click="snackbars.offlineReady = false"
-      >Learn More
+      >
+        Learn More
       </v-btn>
     </v-snackbar>
     <v-snackbar v-model="snackbars.pwaUpdated" :timeout="0">
@@ -365,8 +378,8 @@ export default {
         notif: window.Notification ? true : false,
         beforeInstallPrompt: false,
         ios: window.navigator.platform.toLowerCase().includes("ios") ||
-            window.navigator.platform.toLowerCase().includes("iphone") ||
-            window.navigator.platform.toLowerCase().includes("ipad"),
+          window.navigator.platform.toLowerCase().includes("iphone") ||
+          window.navigator.platform.toLowerCase().includes("ipad"),
       },
       longMonths: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -564,7 +577,7 @@ export default {
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
       else if (event.key == "ArrowDown" || event.keyCode == 40 ||
-          event.key == "KeyT" || event.keyCode == 84) this.$router.push("/").catch(() => {
+        event.key == "KeyT" || event.keyCode == 84) this.$router.push("/").catch(() => {
       });
       else if (event.key == "KeyD" || event.keyCode == 68) this.changeMode("day");
       else if (event.key == "KeyW" || event.keyCode == 87) this.changeMode("week");
@@ -592,7 +605,7 @@ export default {
       this.calendar.keepCurrentDate = true;
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (mode == "week" && this.$route.name == "day" &&
-          +this.getSaturday(new Date(+date)) == +this.getSaturday(new Date(+today)))
+        +this.getSaturday(new Date(+date)) == +this.getSaturday(new Date(+today)))
         this.$router.push("/");
       else this.setCalendar(this.$route);
     },
