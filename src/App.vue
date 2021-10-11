@@ -258,10 +258,6 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in schedules[menu.date.toISOString()].lunch" :key="item.place">
-              <td class="body-2 font-weight-medium px-5" style="word-break: normal;">{{ item.place }}</td>
-              <td class="body-2 short py-2 px-5" style="white-space: pre-wrap;">{{ item.food }}</td>
-            </tr>
             <tr>
               <td class="body-2 font-weight-medium px-5" style="word-break: normal;"></td>
               <td class="body-2 short py-2 px-5" style="white-space: pre-wrap; display: flex; flex-direction: row; align-items: center; margin: 1px;">
@@ -271,6 +267,10 @@
                 </p>
               </td>
               <td class="body-2 font-weight-medium px-5" style="word-break: normal;"></td>
+            </tr>
+            <tr v-for="item in schedules[menu.date.toISOString()].lunch" :key="item.place">
+              <td class="body-2 font-weight-medium px-5" style="word-break: normal;">{{ item.place }}</td>
+              <td class="body-2 short py-2 px-5" style="white-space: pre-wrap;">{{ item.food }}</td>
             </tr>
           </tbody>
         </v-simple-table>
