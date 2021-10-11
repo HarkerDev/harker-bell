@@ -218,7 +218,7 @@
                 >What do the event colors mean?</a>
               </p>
               <div>
-                <v-icon class="material-icons-outlined mr-3 mt-n1" x-small>info</v-icon>
+                <v-icon class="material-icons-outlined mr-3 mt-n1" x-small>warning</v-icon>
                 Schedules are only guaranteed to be accurate up to the end of the current month.
               </div>
             </v-col>
@@ -261,7 +261,7 @@
             <tr>
               <td class="body-2 font-weight-medium px-5" style="word-break: normal;"></td>
               <td class="body-2 short py-2 px-5" style="white-space: pre-wrap; display: flex; flex-direction: row; align-items: center; margin: 1px;">
-                <v-icon class="material-icons-outlined mr-3 mt-n1" x-small>info</v-icon>
+                <v-icon class="material-icons-outlined mr-3 mt-n1" x-small>warning</v-icon>
                 <p style="padding-top: 10px; font-size: 10px;">
                   The lunch menu may not always be completely accurate.
                 </p>
