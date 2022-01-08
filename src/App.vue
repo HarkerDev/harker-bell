@@ -551,7 +551,9 @@ export default {
         let now = new Date();
         this.io.lastUpdated = now;
         localStorage.setItem("lastUpdated", now.getTime());
-        localStorage.setItem("scheduleRevision", revision);
+        if(revision != "backup") {
+          localStorage.setItem("scheduleRevision", revision);
+        }
         await this.setCalendar(this.$route);
       }
     });
