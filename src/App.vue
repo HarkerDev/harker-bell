@@ -527,7 +527,7 @@ export default {
     this.time.today = this.getCurrentUTCMidnight();
     //console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://bell.dev.harker.org");
+    this.socket = io("https://bellsocket.harkerdev.org");
     this.socket.on("connect", () => {
       //console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
@@ -551,7 +551,9 @@ export default {
         let now = new Date();
         this.io.lastUpdated = now;
         localStorage.setItem("lastUpdated", now.getTime());
-        localStorage.setItem("scheduleRevision", revision);
+        if(revision != "backup") {
+          localStorage.setItem("scheduleRevision", revision);
+        }
         await this.setCalendar(this.$route);
       }
     });
