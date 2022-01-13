@@ -282,7 +282,7 @@
         <span v-show="!io.connected && formattedLastConnected">Last connected: </span>
         <span
           :class="[{'error--text': time.now-io.lastConnected >= $MS_PER_DAY, 'success--text': io.connected}, 'font-weight-medium']"
-        >{{ io.connected ? "Connected (Backup Mode)" : formattedLastConnected || "Connecting..." }}</span>
+        >{{ io.connected ? "Connected" : formattedLastConnected || "Connecting..." }}</span>
       </div>
       <v-spacer></v-spacer>
       <div class="caption no-select mx-2">
@@ -527,7 +527,7 @@ export default {
     this.time.today = this.getCurrentUTCMidnight();
     //console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://bellsocket.harkerdev.org");
+    this.socket = io("https://bell.dev.harker.org");
     this.socket.on("connect", () => {
       //console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
