@@ -125,6 +125,25 @@
           </v-list-item>
         </v-list>
       </v-menu>
+      <v-menu offset-y min-width="300" content-class="hdev-announcement">
+        <template v-slot:activator="{on: menu}">
+          <v-btn class="hidden-print-only" icon aria-label="All apps" ga-on="click, contextmenu"
+                 ga-event-category="app menu" ga-event-action="click" v-on="{...menu}"
+          >
+            <v-icon color="#005841" size="30" class="material-icons-outlined">campaign</v-icon>
+          </v-btn>
+        </template>
+<!--        <div style="height: max-content; min-height: 50px; background-color: var(&#45;&#45;v-accent-base); align-items: center; padding: 4px;">-->
+          <v-card style="max-width: 300px; padding: 5px;">
+            <p class="text-center heading pa-0">ASB Announcements</p>
+            <v-divider></v-divider>
+            <div id="announcement" class="caption text-center"
+                 v-html="announcement" style="margin: 3px"
+            ></div>
+          </v-card>
+
+<!--        </div>-->
+      </v-menu>
       <v-spacer></v-spacer>
       <v-menu offset-y min-width="300" content-class="hdev-app-menu">
         <template v-slot:activator="{on: menu}">
@@ -340,6 +359,7 @@ export default {
         loading: false,
       },
       message: "",
+      announcement: "",
       datePicker: false,
       arrowAllowed: true,
       menu: {
@@ -543,6 +563,9 @@ export default {
         const el = document.getElementById("message-wrapper");
         if (el) el.style.height = document.getElementById("message").clientHeight + "px";
       });
+    });
+    this.socket.on("update announcement", announcement => {
+      this.announcement = announcement;
     });
     if (this.db) this.socket.on("update schedule", async (schedules, revision) => {
       if (revision) {
