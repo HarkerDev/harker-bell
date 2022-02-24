@@ -359,7 +359,7 @@ export default {
         loading: false,
       },
       message: "",
-      announcement: "Coming Soon",
+      announcement: "",
       datePicker: false,
       arrowAllowed: true,
       menu: {
