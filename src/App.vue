@@ -130,7 +130,7 @@
           <v-btn class="hidden-print-only" icon aria-label="All apps" ga-on="click, contextmenu"
                  ga-event-category="app menu" ga-event-action="click" v-on="{...menu}"
           >
-            <v-icon color="#098060" size="30" class="material-icons-outlined">campaign</v-icon>
+            <v-icon color="#0ebf8f" size="30" class="material-icons-outlined">campaign</v-icon>
           </v-btn>
         </template>
 <!--        <div style="height: max-content; min-height: 50px; background-color: var(&#45;&#45;v-accent-base); align-items: center; padding: 4px;">-->
