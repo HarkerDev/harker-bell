@@ -1,8 +1,8 @@
 {
   "name": "harker-bell",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "private": true,
-  "author": "Bowen Yin",
+  "author": "HarkerDev",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --modern",
