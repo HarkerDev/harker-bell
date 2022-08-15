@@ -2,7 +2,7 @@
   <v-hover v-if="lunch" v-slot:default="{hover}">
     <v-sheet :id="sheetId" class="period lunch caption text-xs-center d-flex" :elevation="open ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile @click.stop="showMenu()" :style="{'z-index': (open || hover) ? 2 : 1}">
       <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
-        <div ref="periodNames">{{period.name}}</div>
+        <div ref="periodNames" v-html="period.name"></div>
         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
         <div v-if="period.start && period.duration >= 30">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
       </v-layout>
@@ -10,7 +10,7 @@
   </v-hover>
   <v-sheet v-else class="period caption text-xs-center d-flex" :height="period.duration+1" tile>
     <v-layout :class="{content: true, short: period.duration <= 50}" column align-center justify-center>
-      <div ref="periodNames">{{period.name}}</div>
+      <div ref="periodNames" v-html="period.name"></div>
       <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
       <div v-if="period.start && period.duration >= 30">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
     </v-layout>
