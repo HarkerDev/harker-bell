@@ -127,7 +127,7 @@
       </v-menu>
       <v-menu offset-y min-width="300" content-class="hdev-announcement">
         <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only" icon aria-label="All apps" ga-on="click, contextmenu"
+          <v-btn class="hidden-print-only" icon aria-label="Announcements" ga-on="click, contextmenu"
                  ga-event-category="app menu" ga-event-action="click" v-on="{...menu}"
           >
             <v-icon color="#0ebf8f" size="30" class="material-icons-outlined">campaign</v-icon>
