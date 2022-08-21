@@ -38,7 +38,7 @@
       </v-btn>
       <transition name="fade" mode="out-in">
         <v-toolbar-title v-if="calendar.titleChanging" key="changing" class="title text-center"
-                         :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '75px'}"
+                         :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '65px'}"
         >
           <template v-if="$vuetify.breakpoint.smAndUp">
             <span v-if="mode == 'week'">{{ shortMonths[calendar.dates[0].getUTCMonth()] }} {{ calendar.dates[0].getUTCDate() }} &ndash; {{ shortMonths[calendar.dates[calendar.dates.length - 1].getUTCMonth()] }} {{ calendar.dates[calendar.dates.length - 1].getUTCDate() }}, {{ calendar.dates[calendar.dates.length - 1].getUTCFullYear() }}</span>
@@ -50,7 +50,7 @@
           </template>
         </v-toolbar-title>
         <v-toolbar-title v-else id="title" key="title" class="headline text-center"
-                         :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '75px'}" ga-on="click"
+                         :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '65px'}" ga-on="click"
                          ga-event-category="title" ga-event-action="click" @click="changeTitle"
         >
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell <span v-if="$vuetify.breakpoint.smAndUp"> Schedule</span>
