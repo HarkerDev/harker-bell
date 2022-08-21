@@ -53,7 +53,7 @@
                          :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '140px'}" ga-on="click"
                          ga-event-category="title" ga-event-action="click" @click="changeTitle"
         >
-          <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell Schedule
+          <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell <span v-if="$vuetify.breakpoint.smAndUp"> Schedule</span>
         </v-toolbar-title>
       </transition>
       <v-menu offset-y min-width="160">
