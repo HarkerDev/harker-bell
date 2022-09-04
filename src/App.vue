@@ -125,42 +125,9 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-menu offset-y min-width="300" content-class="hdev-announcement">
-        <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only" icon aria-label="Announcements" ga-on="click, contextmenu"
-                 ga-event-category="app menu" ga-event-action="click" v-on="{...menu}"
-          >
-            <v-icon color="#0ebf8f" size="30" class="material-icons-outlined">campaign</v-icon>
-          </v-btn>
-        </template>
-<!--        <div style="height: max-content; min-height: 50px; background-color: var(&#45;&#45;v-accent-base); align-items: center; padding: 4px;">-->
-          <v-card style="max-width: 300px; padding: 5px;">
-            <p class="text-center heading pa-0">ASB Announcements</p>
-            <v-divider></v-divider>
-            <div id="announcement" class="caption text-center"
-                 v-html="announcement" style="margin: 3px"
-            ></div>
-          </v-card>
-
-<!--        </div>-->
-      </v-menu>
+      <announcements :announcement="this.announcement"></announcements>
       <v-spacer></v-spacer>
-      <v-menu offset-y min-width="300" content-class="hdev-app-menu">
-        <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only" icon aria-label="All apps" ga-on="click, contextmenu"
-                 ga-event-category="app menu" ga-event-action="click" v-on="{...menu}"
-          >
-            <!--            <v-icon class="material-icons-outlined">apps</v-icon>-->
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24">
-              <path d="M0 0h24v24H0V0z" fill="none"/>
-              <path fill="currentColor"
-                    d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"
-              />
-            </svg>
-          </v-btn>
-        </template>
-        <iframe src="https://harkerdev-menu.netlify.app/?exclude=bell" style="border: none; height: 100%"></iframe>
-      </v-menu>
+      <HMenu></HMenu>
     </v-app-bar>
     <div id="message-wrapper" class="mb-2 hidden-print-only" style="height: 14px;">
       <!-- eslint-disable-next-line vue/no-v-html -->
@@ -331,12 +298,16 @@
 <script>
 import io from "socket.io-client";
 import PeriodSetting from "./components/PeriodSetting";
+import Announcements from "./components/Announcements.vue";
+import Menu from "./components/HDevMenu.vue";
 
 export default {
   name: "App",
   components: {
     PeriodSetting,
-  },
+    Announcements,
+    HMenu
+},
   data() {
     return {
       env: process.env,
