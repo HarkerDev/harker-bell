@@ -18,9 +18,9 @@
 </template>
 
 <script>
-	export default {
-		name: "HMenu"
-	}
+  export default {
+    name: "HMenu"
+  }
 </script>
 
 <style lang="scss" scoped>
