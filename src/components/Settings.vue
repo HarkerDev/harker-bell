@@ -81,14 +81,18 @@
             features: {
                 type: Object,
                 required: true
-            }
+            },
+            changeMode: {
+                type: Function,
+                required: true
+            },
         },
         methods: {
                 /** Prints the current view of the bell schedule. */
                 print() {
-                setTimeout(() => {
-                    window.print();
-                }, 100);
+                    setTimeout(() => {
+                        window.print();
+                    }, 100);
                 },
         }
     }
