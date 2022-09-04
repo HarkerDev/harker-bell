@@ -56,7 +56,11 @@
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell <span v-if="$vuetify.breakpoint.smAndUp"> Schedule</span>
         </v-toolbar-title>
       </transition>
+<<<<<<< HEAD
       <settings :mode="mode" :features="features" :changeMode="this.changeMode"></settings>
+=======
+      <settings :mode="mode" :features="features"></settings>
+>>>>>>> 942f741 (settings)
       <announcements :announcement="this.announcement"></announcements>
       <v-spacer></v-spacer>
       <HMenu></HMenu>
@@ -148,7 +152,10 @@ import io from "socket.io-client";
 import Announcements from "./components/Announcements.vue";
 import HMenu from "./components/HDevMenu.vue";
 import Settings from "./components/Settings.vue";
+<<<<<<< HEAD
 import SettingsDialog from "./components/SettingsDialog.vue";
+=======
+>>>>>>> 942f741 (settings)
 
 export default {
   name: "App",
@@ -156,8 +163,12 @@ export default {
     /*PeriodSetting,*/
     Announcements,
     HMenu,
+<<<<<<< HEAD
     Settings,
     SettingsDialog
+=======
+    Settings
+>>>>>>> 942f741 (settings)
 },
   data() {
     return {
