@@ -66,7 +66,7 @@
                   </v-hover>
                   <!-- REGULAR PERIOD -->
                   <div v-else :key="pIndex" :style="{'text-decoration': 'none'}">
-                    <v-sheet v-if="period.link" class="period regular-period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile :tag="'div'" @mousemove.stop="onMouseMove">
+                    <v-sheet v-if="period.link" class="period regular-period border caption text-center d-flex" :color="getColor(period.name) && getColor(period.name)+' lighten-5'" :height="period.duration+1" tile :tag="period.link ? 'a' : 'div'" :href="period.link || false" target="_blank" @mousemove.stop="onMouseMove">
                       <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}, getColor(period.name) && getColor(period.name)+'--text text--darken-4']" column align-center justify-center>
                         <div ref="periodNames" class="period-name">
                           <span v-html="period.name && settings.periodNames[period.name.substring(1, 2)-1] ? settings.periodNames[period.name.substring(1, 2)-1]+' ('+period.name+')' : period.name"></span>
@@ -75,6 +75,9 @@
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
                         <div v-if="period.name && period.start && period.duration >= 30" :class="['text-no-wrap', {'text--secondary': !getColor(period.name)}]">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
                         <div v-if="period.name && period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
+                        <div class="hovercard font-weight-medium">
+                          Open link <v-icon dark small class="material-icons-outlined hovercard-icon">launch</v-icon>
+                        </div>
                       </v-layout>
                     </v-sheet>
 
