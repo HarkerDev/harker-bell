@@ -22,7 +22,7 @@
   status = 200
 [[redirects]]
   from = "/api/*"
-  to = "https://bell.dev.harker.org/api/:splat"
+  to = "https://bell-dev.harkerdev.com/api/:splat"
   status = 200
 [[redirects]]
   from = "/*"
