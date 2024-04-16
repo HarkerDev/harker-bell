@@ -15,7 +15,6 @@
               <v-spacer></v-spacer>
               <div v-if="schedules[date.toISOString()].variant.includes('chicken') && schedules[date.toISOString()].variant != 'chicken'" class="headline text--primary font-transition">🐔</div>
               <div v-if="schedules[date.toISOString()].variant == 'chicken'" class="headline text--primary font-transition">🐔🐔🐔</div>
-              <div v-if="schedules[date.toISOString()].variant.includes('chicken')" class="headline text--primary font-transition">🐔</div>
               <v-spacer v-if="schedules[date.toISOString()].variant.includes('chicken')"></v-spacer>
               <v-col v-if="schedules[date.toISOString()]" cols="auto">
                 <v-row class="mr-5" align="center" no-gutters>
