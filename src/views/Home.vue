@@ -18,8 +18,8 @@
               <v-spacer v-if="schedules[date.toISOString()].variant.includes('chicken')"></v-spacer>
               <v-col v-if="schedules[date.toISOString()]" cols="auto">
                 <v-row class="mr-5" align="center" no-gutters>
-                  <v-chip v-if="schedules[date.toISOString()].variant" class="font-weight-bold" :color="schedules[date.toISOString()].variant.includes('adj') ? 'warning' : (schedules[date.toISOString()].variant.includes('special') ? 'info' : 'error')" :input-value="true" outlined x-small>
-                    {{schedules[date.toISOString()].variant}}
+                  <v-chip v-if="schedules[date.toISOString()].variant && schedules[date.toISOString()].variant != 'chicken'" class="font-weight-bold" :color="schedules[date.toISOString()].variant.includes('adj') ? 'warning' : (schedules[date.toISOString()].variant.includes('special') ? 'info' : 'error')" :input-value="true" outlined x-small>
+                    {{schedules[date.toISOString()].variant.replace("-chicken", "")}}
                   </v-chip>
                   <div class="display-1 ml-3 text--disabled font-weight-bold font-transition">{{schedules[date.toISOString()].code}}</div>
                 </v-row>
