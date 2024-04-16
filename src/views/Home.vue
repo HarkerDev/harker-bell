@@ -13,9 +13,9 @@
                 <div :class="['headline', 'short', 'date', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{date.getUTCDate()}}</div>
               </v-col>
               <v-spacer></v-spacer>
-              <div v-if="schedules[date.toISOString()].variant && schedules[date.toISOString()].variant.includes('chicken') && schedules[date.toISOString()].variant != 'chicken'" class="headline text--primary font-transition">🐔</div>
-              <div v-if="schedules[date.toISOString()].variant && schedules[date.toISOString()].variant == 'chicken'" class="headline text--primary font-transition">🐔🐔🐔</div>
-              <v-spacer v-if="schedules[date.toISOString()].variant && schedules[date.toISOString()].variant.includes('chicken')"></v-spacer>
+              <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant.includes('chicken') && schedules[date.toISOString()].variant != 'chicken'" class="headline text--primary font-transition">🐔</div>
+              <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant == 'chicken'" class="headline text--primary font-transition">🐔🐔🐔</div>
+              <v-spacer v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant.includes('chicken')"></v-spacer>
               <v-col v-if="schedules[date.toISOString()]" cols="auto">
                 <v-row class="mr-5" align="center" no-gutters>
                   <v-chip v-if="schedules[date.toISOString()].variant && schedules[date.toISOString()].variant != 'chicken'" class="font-weight-bold" :color="schedules[date.toISOString()].variant.includes('adj') ? 'warning' : (schedules[date.toISOString()].variant.includes('special') ? 'info' : 'error')" :input-value="true" outlined x-small>
