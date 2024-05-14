@@ -13,11 +13,11 @@
                 <div :class="['headline', 'short', 'date', !calendar.currentMonth || calendar.currentMonth == date.getUTCMonth() ? 'text--secondary' : 'text--disabled', 'font-weight-bold', 'font-transition', {'blue2--text text--darken-3': time.today.getTime() == date.getTime()}]">{{date.getUTCDate()}}</div>
               </v-col>
               <v-spacer></v-spacer>
-              <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant.startsWith('chicken-')" class="headline text--primary font-transition">🐔</div>
+              <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant.endsWith('-chicken')" class="headline text--primary font-transition">🐔</div>
               <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant == 'chicken'" class="headline text--primary font-transition">🐔🐔🐔</div>
-              <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant.startsWith('laguna-')" class="headline text--primary font-transition">🏖️</div>
+              <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant.endsWith('-laguna')" class="headline text--primary font-transition">🏖️</div>
               <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant == 'laguna'" class="headline text--primary font-transition">🏖️🏖️🏖️</div>
-              <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant.startsWith('grad-')" class="headline text--primary font-transition">🎓</div>
+              <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant.endsWith('-grad')" class="headline text--primary font-transition">🎓</div>
               <div v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && schedules[date.toISOString()].variant == 'grad'" class="headline text--primary font-transition">🎓🎓🎓</div>
               <v-spacer v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && ['chicken', 'laguna', 'grad'].includes(schedules[date.toISOString()].variant.split('-')[schedules[date.toISOString()].variant.split('-').length - 1])"></v-spacer>
               <v-col v-if="schedules[date.toISOString()]" cols="auto">
