@@ -22,7 +22,7 @@
               <v-spacer v-if="schedules[date.toISOString()] && schedules[date.toISOString()].variant && ['chicken', 'laguna', 'grad'].includes(schedules[date.toISOString()].variant.split('-')[schedules[date.toISOString()].variant.split('-').length - 1])"></v-spacer>
               <v-col v-if="schedules[date.toISOString()]" cols="auto">
                 <v-row class="mr-5" align="center" no-gutters>
-                  <v-chip v-if="schedules[date.toISOString()].variant && !['chicken', 'laguna', 'grad'].includes(schedules[date.toISOString()].variant" class="font-weight-bold" :color="schedules[date.toISOString()].variant.includes('adj') ? 'warning' : (schedules[date.toISOString()].variant.includes('special') ? 'info' : 'error')" :input-value="true" outlined x-small>
+                  <v-chip v-if="schedules[date.toISOString()].variant && !['chicken', 'laguna', 'grad'].includes(schedules[date.toISOString()].variant)" class="font-weight-bold" :color="schedules[date.toISOString()].variant.includes('adj') ? 'warning' : (schedules[date.toISOString()].variant.includes('special') ? 'info' : 'error')" :input-value="true" outlined x-small>
                     {{schedules[date.toISOString()].variant.replace("-chicken", "").replace("-laguna", "").replace("-grad", "")}}
                   </v-chip>
                   <div class="display-1 ml-3 text--disabled font-weight-bold font-transition">{{schedules[date.toISOString()].code}}</div>
