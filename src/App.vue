@@ -547,7 +547,7 @@ export default {
     this.time.today = this.getCurrentUTCMidnight();
     //console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io("https://bell.dev.harker.org");
+    this.socket = io(this.$route.query.server || "https://bell.dev.harker.org");
     this.socket.on("connect", () => {
       //console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
