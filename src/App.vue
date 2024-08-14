@@ -547,7 +547,15 @@ export default {
     this.time.today = this.getCurrentUTCMidnight();
     //console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
-    this.socket = io(this.$route.query.server || "https://bell.dev.harker.org");
+    const socketWhitelist = [
+      "127.0.0.1:5000",
+      "127.0.0.1:5001",
+      "127.0.0.1:5002",
+    ];
+    const manualSocket = this.$route.query.server;
+
+    // Silently fall back to main socket if query parameter not whitelisted
+    this.socket = io((manualSocket && socketWhitelist.includes(manualSocket)) ? manualSocket : "https://bell.dev.harker.org");
     this.socket.on("connect", () => {
       //console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
