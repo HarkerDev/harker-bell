@@ -59,7 +59,7 @@
               <v-flex v-for="(column, cIndex) in group" :key="cIndex" class="column">
                 <template v-for="(period, pIndex) in column">
                   <!-- LUNCH PERIOD -->
-                  <v-hover v-if="period.name && period.name.toLowerCase().indexOf('lunch') != -1" :key="pIndex" v-slot:default="{hover}">
+                  <v-hover v-if="(period.name && period.name.toLowerCase().indexOf('lunch') != -1) || period.forceLunch" :key="pIndex" v-slot:default="{hover}">
                     <!-- TODO: Find a way to extract id logic somewhere -->
                     <v-sheet :id="j+'-'+gIndex+'-'+cIndex+'-'+pIndex" class="period border lunch caption text-center d-flex" :elevation="(sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex) ? 4 : (hover ? 2 : 0)" :height="period.duration+1" tile :style="{'z-index': (sheetId == j+'-'+gIndex+'-'+cIndex+'-'+pIndex || hover) ? 2 : 1}" ga-on="click" ga-event-category="lunch menu" ga-event-action="click" @click.stop="showMenu(j+'-'+gIndex+'-'+cIndex+'-'+pIndex, date)" @mousemove.stop="onMouseMove">
                       <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}]" column align-center justify-center>
