@@ -24,6 +24,11 @@ export default new Router({
       component: Home
     },
     {
+      path: "/export",
+      name: "export",
+      component: Home
+    },
+    {
       path: "/:year/:month/:day",
       name: "day",
       component: Home
