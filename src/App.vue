@@ -183,7 +183,7 @@
     >
       <v-card>
         <v-app-bar color="primary" flat>
-          <v-btn icon @click="closeSettings">
+          <v-btn class="ml-xs-n5 ml-md-n4" icon @click="closeSettings">
             <v-icon class="material-icons-outlined">close</v-icon>
           </v-btn>
           <v-toolbar-title class="title font-weight-medium">Settings</v-toolbar-title>
@@ -551,6 +551,9 @@ export default {
       "127.0.0.1:5000",
       "127.0.0.1:5001",
       "127.0.0.1:5002",
+      "http://127.0.0.1:5000",
+      "http://127.0.0.1:5001",
+      "http://127.0.0.1:5002",
     ];
     const manualSocket = this.$route.query.server;
 
