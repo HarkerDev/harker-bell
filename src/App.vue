@@ -805,6 +805,35 @@ export default {
     });
     window.addEventListener("beforeinstallprompt", (e) => this.features.beforeInstallPrompt = e);
     window.addEventListener("appinstalled", () => this.features.beforeInstallPrompt = false);
+    window.addEventListener("storage", (event) => {
+      let key = event.key;
+      if (!key) return;
+
+      this.$nextTick(() => {
+        if (key == 'showPeriodColors') key = 'showColors';
+        if (key == 'periodLinks') key = "links";
+
+        switch (key) {
+        case 'darkTheme': {
+          this.$vuetify.theme.dark = event.newValue === 'true';
+          break;
+        }
+        case 'lastReadAnnouncement': {
+          this.lastReadAnnouncement = event.newValue;
+          break;
+        }
+
+        case 'showColors':
+        case 'links':
+        case 'autoDark':
+        case 'periodColors':
+        case 'periodNames':
+          console.log(event.key, key, event.newValue, JSON.parse(event.newValue))
+          this.settings[key] = JSON.parse(event.newValue);
+          break;
+        }
+      });
+    })
     this.time.today = this.getCurrentUTCMidnight();
     //console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
