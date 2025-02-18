@@ -1277,9 +1277,45 @@ export default {
   animation: blink 1.25s step-start infinite;
 }
 
+.blink2 {
+  animation: blink2 1.25s step-start infinite;
+}
+
+.blink.collapse {
+  animation: blink-collapse 1.25s step-start infinite;
+}
+
+.blink2.collapse {
+  animation: blink2-collapse 1.25s step-start infinite;
+}
+
 @keyframes blink {
   50% {
     opacity: 0;
+  }
+}
+
+@keyframes blink2 {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes blink-collapse {
+  50% {
+    display: none;
+  }
+}
+
+@keyframes blink2-collapse {
+  0%, 100% {
+    display: none;
+  }
+  50% {
+    display: unset;
   }
 }
 
