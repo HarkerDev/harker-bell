@@ -114,6 +114,14 @@
               <v-list-item-title class="list-item-text font-weight-medium">Install app</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item @click="$router.push('/export')">
+            <v-list-item-icon class="list-item-icon">
+              <v-icon class="material-symbols-outlined">calendar_add_on</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="list-item-text">Export to Calendar</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item ga-on="click" ga-event-category="print" ga-event-action="click" @click="print">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">print</v-icon>
@@ -183,7 +191,7 @@
     >
       <v-card>
         <v-app-bar color="primary" flat>
-          <v-btn icon @click="closeSettings">
+          <v-btn class="ml-xs-n5 ml-md-n4" icon @click="closeSettings">
             <v-icon class="material-icons-outlined">close</v-icon>
           </v-btn>
           <v-toolbar-title class="title font-weight-medium">Settings</v-toolbar-title>
@@ -243,6 +251,181 @@
             </v-col>
           </v-row>
         </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions class="caption">
+          <v-row>
+            <v-col class="text-center short px-6 pb-0">
+              <p>
+                <a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp" target="_blank">API
+                  Docs</a> • <a href="https://github.com/HarkerDev/harker-bell" target="_blank">GitHub</a> • <a
+                  href="https://bell.harker.org/docs?utm_source=bell&utm_medium=inapp" target="_blank"
+                >Help</a> • <a href="https://github.com/HarkerDev/harker-bell/releases" target="_blank">Release Notes</a>
+              </p>
+              <p class="overline">
+                Made with
+                <v-icon class="material-icons-outlined mt-n1" color="grey2" small>code</v-icon>
+                by <a href="https://dev.harker.org/?utm_source=bell&utm_medium=hdev" target="_blank">HarkerDev</a>
+              </p>
+            </v-col>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="settings.exportDialog" :fullscreen="$vuetify.breakpoint.xsOnly"
+              :transition="$vuetify.breakpoint.xsOnly ? 'dialog-bottom-transition' : 'dialog-transition'" width="850"
+              @input="closeExport"
+    >
+      <v-card>
+        <v-app-bar color="primary" flat>
+          <v-btn icon class="ml-xs-n5 ml-md-n4" @click="closeExport">
+            <v-icon class="material-icons-outlined">close</v-icon>
+          </v-btn>
+          <v-toolbar-title class="title font-weight-medium">Export</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <div class="overline">Version {{ env.VUE_APP_VERSION }}</div>
+        </v-app-bar>
+
+        <v-card-text>
+          <v-tooltip color="success" bottom>
+            <template v-slot:activator="{on, attrs}">
+              <v-row>
+                <v-text-field
+                  id="export-url"
+                  hide-details 
+                  outlined 
+                  dense 
+                  rounded 
+                  readonly
+                  color="accent" 
+                  placeholder="https://bell.dev.harker.org/api/ical/..." 
+                  label="Calendar Subscription URL"
+                  :value="exportUrl"
+                  v-bind="attrs" v-on="on"
+                  @click="copyToClipboard"
+                  @tap="copyToClipboard"
+                ></v-text-field>
+                
+                <v-btn
+                  class="hidden-print-only ml-6 pa-10"
+                  align-self="center"
+                  icon aria-label="Open Export URL" 
+                  ga-on="click" 
+                  ga-event-category="open_export_url"
+                  ga-event-action="click" 
+                  @click="openExportUrl"
+                >
+                  <v-icon class="material-symbols-outlined">open_in_new</v-icon>
+                </v-btn>
+              </v-row>
+            </template>
+            <b @touchstart="copyToClipboard">Click to copy URL!</b>
+          </v-tooltip>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-text class="py-2">
+          <v-row>
+            <v-col cols="12" md="5"> <!-- style="margin-bottom: 4em;" -->
+              <v-sheet class="pa-2">
+                <v-row>
+                  <v-card-text class="pa-6">
+                    <h2 class="text-h6 mb-2">
+                      Choose Periods
+                    </h2>
+                    <v-card-text>
+                      <period-setting v-for="i in 7" :key="i" :num="i" :settings="settings" :disable-text-field="!exportSettings.exportCustomNames/* || !exportSettings.includePeriods[i-1]*/">
+                        <v-checkbox v-model="exportSettings.includePeriods[i-1]" class="ml-8 my-2" color="accent" dense hide-details></v-checkbox>
+                      </period-setting>
+                    </v-card-text>
+                  </v-card-text>
+                </v-row>
+                <v-row>
+                  <v-card-text class="py-0">
+                    <v-checkbox 
+                      v-model="exportSettings.exportCustomNames" 
+                      class="ml-8 my-2" 
+                      label="Export Custom Period Names" 
+                      color="accent" 
+                      :disabled="exportSettings.includePeriods.every(period => !period)"
+                      dense hide-details
+                    ></v-checkbox>
+                  </v-card-text>
+                </v-row>
+              </v-sheet>
+            </v-col>
+
+            <v-col cols="12" md="7">
+              <v-sheet class="pa-2">
+                <v-card-text class="pa-6 pb-0">
+                  <h2 class="text-h6 mb-2">
+                    Extra Periods
+                  </h2>
+                  <v-card-text>
+                    <v-chip-group
+                      v-model="exportSettings.selectedExtraPeriods"
+                      column
+                      multiple
+                      class="chip-group"
+                    >
+                      <v-chip
+                        v-for="event in exportSettings.extraPeriods"
+                        :key="event.name"
+                        :value="event.id"
+                        
+                        filter
+                        outlined
+                      >
+                        {{ event.name }}
+                      </v-chip>
+                    </v-chip-group>
+                  </v-card-text>
+
+                  <h2 class="text-h6 mb-2">
+                    Extra Events
+                  </h2>
+                  <v-card-text class="pb-0">
+                    <v-chip-group
+                      v-model="exportSettings.selectedExtraEvents"
+                      column
+                      multiple
+                      class="chip-group"
+                    >
+                      <v-chip
+                        v-for="event in exportSettings.extraEvents"
+                        :key="event.name"
+                        :value="event.id"
+                        :color="event.color"
+                        filter
+                        outlined
+                      >
+                        {{ event.name }}
+                      </v-chip>
+                    </v-chip-group>
+                  </v-card-text>
+                </v-card-text>
+              </v-sheet>
+            </v-col>
+          </v-row>
+        </v-card-text>
+
+        <v-card-text>
+          <v-row>
+            <v-col class="caption text-center short px-6 pb-0">
+              <p>
+                <a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp#event-categories" target="_blank">
+                  What do the event colors mean?</a> • <a
+                  :href="`https://www.google.com/calendar/r?cid=${ encodeURIComponent(exportUrl.replace(/^https?:/, 'webcal:')) }`" target="_blank"
+                >Use Google Calendar?</a>
+              </p>
+              <div>
+                <v-icon class="material-icons-outlined mr-3 mt-n1" x-small>warning</v-icon>
+                Schedules are only guaranteed to be accurate up to the end of the current month.
+              </div>
+            </v-col>
+          </v-row>
+        </v-card-text>
+
         <v-divider></v-divider>
         <v-card-actions class="caption">
           <v-row>
@@ -372,6 +555,7 @@ export default {
       },
       settings: {
         dialog: false,
+        exportDialog: false,
         autoDark: localStorage.getItem("autoDark") == "true",
         enableBells: localStorage.getItem("virtualBells") != "false",
         enableNotifications: localStorage.getItem("enableNotifications") == "true",
@@ -381,6 +565,37 @@ export default {
         links: JSON.parse(localStorage.getItem("periodLinks")) || {},
         tempLinks: JSON.parse(localStorage.getItem("periodLinks")) || {},
         colors: ["red2", "deeporange2", "orange2", "yellow2", "lightgreen2", "green2", "teal2", "lightblue2", "blue2", "indigo2", "purple2", "pink2", "bluegrey2", "grey2"],
+      },
+      exportSettings: {
+        includePeriods: new Array(7).fill(true),
+        exportCustomNames: true,
+        selectedExtraPeriods: [ "School Meeting", "Advisory", "Office Hours", "Club Leadership", "No School" ],
+        extraPeriods: [
+          { id: "Lunch", name: "Lunch" },
+          { id: "School Meeting", name: "School Mtg." },
+          { id: "Advisory", name: "Advisory" },
+          { id: "Club Leadership", name: "Club Leadership" },
+          { id: "Office Hours", name: "Office Hours" },
+          { id: "Faculty Meeting", name: "Faculty Meeting" },
+          { id: "No School", name: "No School" },
+          { id: "Frosh Mtg.", name: "Frosh Mtg." },
+          { id: "Soph Mtg.", name: "Soph Mtg." },
+          { id: "Junior Mtg.", name: "Junior Mtg." },
+          { id: "Senior Mtg.", name: "Senior Mtg." },
+        ],
+        selectedExtraEvents: ["schoolwide", "academics", "important", "athspirit", "info"],
+        extraEvents: [
+          { id: "schoolwide", name: "Schoolwide", color: "yellow2" },
+          { id: "academics", name: "Academics", color: "red2" },
+          { id: "important", name: "Important Events", color: "orange2" },
+          { id: "athspirit", name: "Athletics & Spirit", color: "green2" },
+          // { id: "extra", name: "Other Departments/Extracurriculars", color: "teal2" },
+          { id: "perfarts", name: "Performing Arts", color: "blue2" },
+          // { id: "clubs", name: "Club Events", color: "purple2" },
+          { id: "special", name: "Special Events", color: "pink2" },
+          { id: "info", name: "Schedule Info", color: "bluegrey2" },
+          { id: "extra,clubs,other", name: "All Other", color: "brown" },
+        ],
       },
       time: {
         now: new Date(),
@@ -436,12 +651,48 @@ export default {
       for (const schedule of this.rawSchedules) obj[schedule.date] = schedule;
       return obj;
     },
+    /** Gets events' IDs excluded from export */
+    excludedPeriods() {
+      // Find unselected chips and return array of respective IDs
+      return this.exportSettings.extraPeriods
+        .filter(period => !this.exportSettings.selectedExtraPeriods.includes(period.id))
+        .map(period => period.id);
+    },
+    /** Generates iCal feed url for selected periods and events */
+    exportUrl() {
+      const url = new URL('https://bell.dev.harker.org/api/ical/feed');
+      const { selectedExtraEvents, extraEvents, selectedExtraPeriods, includePeriods, exportCustomNames } = this.exportSettings;
+      const includeSchedule = selectedExtraPeriods.length > 0 || !includePeriods.every(e => !e);
+      const includeEvents = selectedExtraEvents.length > 0;
+      if (includeSchedule) {
+        const excluded = [];
+        excluded.push(...this.excludedPeriods)
+        includePeriods.map((period, index) => {if (!period) excluded.push(`P${index+1}`)})
+        if (excluded.length > 0) url.searchParams.append('exclude', excluded.join(','))
+        url.searchParams.append('includeSchedule', '');
+      }
+
+      if (includeEvents) {
+        if (selectedExtraEvents.length == extraEvents.length) {
+          url.searchParams.append('includeEvents', 'all')
+        } else {
+          url.searchParams.append('includeEvents', selectedExtraEvents.join(','))
+        }
+      }
+
+      url.searchParams.append("t", (new Date).getTime());
+      url.searchParams.append("v", process.env.VUE_APP_VERSION);
+
+      if (exportCustomNames && includeSchedule && !this.settings.periodNames.every(item => !item)) url.searchParams.append('periodNames', btoa(this.settings.periodNames))
+      return url.toString();
+    }
   },
   watch: {
     /** Responds to route changes. */
     $route(route, prevRoute) {
       this.prevRoute = prevRoute;
       this.settings.dialog = route.name == "settings";
+      this.settings.exportDialog = route.name == "export";
       if (["home", "day"].includes(route.name)) this.setCalendar(route);
       this.changeTitle();
     },
@@ -551,6 +802,9 @@ export default {
       "127.0.0.1:5000",
       "127.0.0.1:5001",
       "127.0.0.1:5002",
+      "http://127.0.0.1:5000",
+      "http://127.0.0.1:5001",
+      "http://127.0.0.1:5002",
     ];
     const manualSocket = this.$route.query.server;
 
@@ -606,7 +860,8 @@ export default {
       if (!document.hidden) this.updateTime();
     });
     window.addEventListener("keydown", event => {
-      if (this.settings.dialog) return;
+      if (this.settings.dialog || this.settings.exportDialog) return;
+
       if (event.key == "ArrowRight" || event.keyCode == 39) this.nextOrPrevious(true);
       else if (event.key == "ArrowLeft" || event.keyCode == 37) this.nextOrPrevious(false);
       else if (event.key == "ArrowDown" || event.keyCode == 40 ||
@@ -615,9 +870,11 @@ export default {
       else if (event.key == "KeyD" || event.keyCode == 68) this.changeMode("day");
       else if (event.key == "KeyW" || event.keyCode == 87) this.changeMode("week");
       else if (event.key == "KeyR" || event.keyCode == 82) this.updateTime();
+      else if (event.key == "KeyE" || event.keyCode == 69) this.$router.push("/export").catch(() => {});
     });
     // TODO: FIX DIALOG NOT SHOWING UP ON PAGE LOAD (SETTINGS ROUTE)
     setTimeout(() => this.settings.dialog = this.$route.name == "settings", 250); // TEMPORARY FIX
+    setTimeout(() => this.settings.exportDialog = this.$route.name == "export", 250);
   },
   methods: {
     /**
@@ -656,6 +913,22 @@ export default {
     closeSettings() {
       if (this.prevRoute) this.$router.back();
       else this.$router.push("/");
+    },
+    /** Closes the export dialog by either navigating back in history or going to the home page. */
+    closeExport() {
+      if (this.prevRoute) this.$router.back();
+      else this.$router.push("/");
+    },
+    /** Copies the export url to user's clipboard */
+    copyToClipboard() {
+      navigator.clipboard.writeText(this.exportUrl).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    },
+    /** Opens the export url in any installed calendar app */
+    openExportUrl() {
+      window.location.href = this.exportUrl.replace(/^https?:/, 'webcal:')
+      // window.open(this.exportUrl.replace(/^https?:/, 'webcal:'), '_blank');
     },
     /**
      * Formats a date into a human-readable representation. Can optionally omit the time portion.
@@ -919,6 +1192,22 @@ export default {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+#export-url {
+  /* Not Working on Export URL Field :( */
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+
+  color: #BDC1C6; 
+}
+
+.chip-group div {
+  touch-action: manipulation;
 }
 
 .v-list-item__icon:first-child {

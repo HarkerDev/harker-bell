@@ -22,3 +22,5 @@ yarn-error.log*
 *.sln
 *.sw?
 .sentryclirc
+
+start_dev.sh

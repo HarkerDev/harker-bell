@@ -3,6 +3,7 @@ process.env.VUE_APP_VERSION = require("./package.json").version;
 module.exports = {
   devServer: {
     disableHostCheck: true,
+    public: '127.0.0.1:8080'
   },
   productionSourceMap: true,
   transpileDependencies: [],

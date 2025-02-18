@@ -60,6 +60,6 @@ export default new Vuetify({
     },
   },
   icons: {
-    iconfont: "md"
+    iconfont: "mdiSvg"
   },
 });
