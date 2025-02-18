@@ -133,12 +133,14 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-menu offset-y min-width="300" content-class="hdev-announcement">
+      <v-menu v-model="announcementsOpen" offset-y min-width="300" content-class="hdev-announcement">
         <template v-slot:activator="{on: menu}">
           <v-btn class="hidden-print-only" icon aria-label="Announcements" ga-on="click, contextmenu"
-                 ga-event-category="app menu" ga-event-action="click" v-on="{...menu}"
+                 ga-event-category="app menu" ga-event-action="click" v-on="{...menu, click: [menu.click, toggleAnnouncements]}"
           >
+            <v-badge :value="hasUnreadAnnouncement" dot color="red2">
             <v-icon size="30" class="material-icons-outlined">campaign</v-icon>
+            </v-badge>
           </v-btn>
         </template>
 <!--        <div style="height: max-content; min-height: 50px; background-color: var(&#45;&#45;v-accent-base); align-items: center; padding: 4px;">-->
@@ -543,6 +545,8 @@ export default {
       },
       message: "",
       announcement: "",
+      lastReadAnnouncement: localStorage.getItem("lastReadAnnouncement") || "",
+      announcementsOpen: false,
       datePicker: false,
       arrowAllowed: true,
       menu: {
@@ -685,6 +689,9 @@ export default {
 
       if (exportCustomNames && includeSchedule && !this.settings.periodNames.every(item => !item)) url.searchParams.append('periodNames', btoa(this.settings.periodNames))
       return url.toString();
+    },
+    hasUnreadAnnouncement() {
+      return this.announcement != this.lastReadAnnouncement && this.announcement != "";
     }
   },
   watch: {
@@ -776,6 +783,9 @@ export default {
       else
         Notification.requestPermission(permission => handlePermission(permission, this));
     },
+    "lastReadAnnouncement"(lastReadAnnouncement) {
+      localStorage.setItem("lastReadAnnouncement", lastReadAnnouncement)
+    }
   },
   async created() {
     //console.log(new Date-abcd);
@@ -826,8 +836,9 @@ export default {
         if (el) el.style.height = document.getElementById("message").clientHeight + "px";
       });
     });
-    this.socket.on("update announcement", announcement => {
+    this.socket.on("update announcement", (announcement, noBadge) => {
       this.announcement = announcement;
+      if (noBadge || this.announcementsOpen) this.lastReadAnnouncement = announcement;
     });
     if (this.db) this.socket.on("update schedule", async (schedules, revision) => {
       if (revision) {
@@ -950,6 +961,13 @@ export default {
         hour: "numeric",
         minute: "2-digit"
       });
+    },
+    /** Runs when user opens announcement menu */
+    toggleAnnouncements() {
+      this.$nextTick(() => {
+        if (!this.announcementsOpen) return; // Don't mark as read if closing announcements menu
+        this.lastReadAnnouncement = this.announcement;
+      })
     },
     /**
      * Retrives local schedules from IndexedDB if available.
