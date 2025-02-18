@@ -23,11 +23,11 @@ export default new Router({
       name: "settings",
       component: Home
     },
-    {
-      path: "/export",
-      name: "export",
-      component: Home
-    },
+    // {
+    //   path: "/export",
+    //   name: "export",
+    //   component: Home
+    // },
     {
       path: "/:year/:month/:day",
       name: "day",

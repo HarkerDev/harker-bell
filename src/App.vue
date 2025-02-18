@@ -114,14 +114,14 @@
               <v-list-item-title class="list-item-text font-weight-medium">Install app</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="$router.push('/export')">
+          <!-- <v-list-item @click="$router.push('/export')">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-symbols-outlined">calendar_add_on</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="list-item-text">Export to Calendar</v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
           <v-list-item ga-on="click" ga-event-category="print" ga-event-action="click" @click="print">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">print</v-icon>
@@ -913,7 +913,7 @@ export default {
       else if (event.key == "KeyD" || event.keyCode == 68) this.changeMode("day");
       else if (event.key == "KeyW" || event.keyCode == 87) this.changeMode("week");
       else if (event.key == "KeyR" || event.keyCode == 82) this.updateTime();
-      else if (event.key == "KeyE" || event.keyCode == 69) this.$router.push("/export").catch(() => {});
+      // else if (event.key == "KeyE" || event.keyCode == 69) this.$router.push("/export").catch(() => {});
     });
     // TODO: FIX DIALOG NOT SHOWING UP ON PAGE LOAD (SETTINGS ROUTE)
     setTimeout(() => this.settings.dialog = this.$route.name == "settings", 250); // TEMPORARY FIX
