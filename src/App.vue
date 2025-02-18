@@ -169,7 +169,7 @@
             </svg>
           </v-btn>
         </template>
-        <iframe src="https://harkerdev-menu.netlify.app/?exclude=bell" style="border: none; height: 100%"></iframe>
+        <iframe id="hdev-project-menu" :src="`https://harkerdev-menu.netlify.app/?exclude=bell${$vuetify.theme.dark ? '&theme=dark' : ''}`" style="border: none; height: 100%"></iframe>
       </v-menu>
     </v-app-bar>
     <div id="message-wrapper" class="mb-2 hidden-print-only" style="height: 14px;">
@@ -716,6 +716,9 @@ export default {
       localStorage.setItem("darkTheme", dark.toString());
       if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content", "#202124");
       else document.querySelector('meta[name="theme-color"]').setAttribute("content", "#FFFFFF");
+
+      if (document.getElementById('hdev-project-menu')) document.getElementById('hdev-project-menu').contentWindow.location.reload();
+
       if (window.ga) window.ga("set", "dimension1", dark.toString());
     },
     /** Handles changes to the automatic dark mode setting. */
@@ -1306,7 +1309,7 @@ body {
   overflow: hidden;
   height: 312px;
   padding-top: 4px;
-  background-color: #FFFFFF;
+  /* background-color: #FFFFFF; */
 }
 
 .v-btn.v-date-picker-table__current.v-btn--disabled .v-btn__content {
