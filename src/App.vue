@@ -133,12 +133,14 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-menu offset-y min-width="300" content-class="hdev-announcement">
+      <v-menu v-model="announcementsOpen" offset-y min-width="300" content-class="hdev-announcement">
         <template v-slot:activator="{on: menu}">
           <v-btn class="hidden-print-only" icon aria-label="Announcements" ga-on="click, contextmenu"
-                 ga-event-category="app menu" ga-event-action="click" v-on="{...menu}"
+                 ga-event-category="app menu" ga-event-action="click" v-on="{...menu, click: [menu.click, toggleAnnouncements]}"
           >
+            <v-badge :value="hasUnreadAnnouncement" dot color="red2">
             <v-icon size="30" class="material-icons-outlined">campaign</v-icon>
+            </v-badge>
           </v-btn>
         </template>
 <!--        <div style="height: max-content; min-height: 50px; background-color: var(&#45;&#45;v-accent-base); align-items: center; padding: 4px;">-->
@@ -167,7 +169,7 @@
             </svg>
           </v-btn>
         </template>
-        <iframe src="https://harkerdev-menu.netlify.app/?exclude=bell" style="border: none; height: 100%"></iframe>
+        <iframe id="hdev-project-menu" :src="`https://harkerdev-menu.netlify.app/?exclude=bell${$vuetify.theme.dark ? '&theme=dark' : ''}`" style="border: none; height: 100%"></iframe>
       </v-menu>
     </v-app-bar>
     <div id="message-wrapper" class="mb-2 hidden-print-only" style="height: 14px;">
@@ -543,6 +545,8 @@ export default {
       },
       message: "",
       announcement: "",
+      lastReadAnnouncement: localStorage.getItem("lastReadAnnouncement") || "",
+      announcementsOpen: false,
       datePicker: false,
       arrowAllowed: true,
       menu: {
@@ -685,6 +689,9 @@ export default {
 
       if (exportCustomNames && includeSchedule && !this.settings.periodNames.every(item => !item)) url.searchParams.append('periodNames', btoa(this.settings.periodNames))
       return url.toString();
+    },
+    hasUnreadAnnouncement() {
+      return this.announcement != this.lastReadAnnouncement && this.announcement != "";
     }
   },
   watch: {
@@ -709,6 +716,9 @@ export default {
       localStorage.setItem("darkTheme", dark.toString());
       if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content", "#202124");
       else document.querySelector('meta[name="theme-color"]').setAttribute("content", "#FFFFFF");
+
+      if (document.getElementById('hdev-project-menu')) document.getElementById('hdev-project-menu').contentWindow.location.reload();
+
       if (window.ga) window.ga("set", "dimension1", dark.toString());
     },
     /** Handles changes to the automatic dark mode setting. */
@@ -776,6 +786,9 @@ export default {
       else
         Notification.requestPermission(permission => handlePermission(permission, this));
     },
+    "lastReadAnnouncement"(lastReadAnnouncement) {
+      localStorage.setItem("lastReadAnnouncement", lastReadAnnouncement)
+    }
   },
   async created() {
     //console.log(new Date-abcd);
@@ -795,6 +808,35 @@ export default {
     });
     window.addEventListener("beforeinstallprompt", (e) => this.features.beforeInstallPrompt = e);
     window.addEventListener("appinstalled", () => this.features.beforeInstallPrompt = false);
+    window.addEventListener("storage", (event) => {
+      let key = event.key;
+      if (!key) return;
+
+      this.$nextTick(() => {
+        if (key == 'showPeriodColors') key = 'showColors';
+        if (key == 'periodLinks') key = "links";
+
+        switch (key) {
+        case 'darkTheme': {
+          this.$vuetify.theme.dark = event.newValue === 'true';
+          break;
+        }
+        case 'lastReadAnnouncement': {
+          this.lastReadAnnouncement = event.newValue;
+          break;
+        }
+
+        case 'showColors':
+        case 'links':
+        case 'autoDark':
+        case 'periodColors':
+        case 'periodNames':
+          console.log(event.key, key, event.newValue, JSON.parse(event.newValue))
+          this.settings[key] = JSON.parse(event.newValue);
+          break;
+        }
+      });
+    })
     this.time.today = this.getCurrentUTCMidnight();
     //console.log("STARTING:\t", new Date-abcd);
     await this.setCalendar(this.$route);
@@ -826,8 +868,9 @@ export default {
         if (el) el.style.height = document.getElementById("message").clientHeight + "px";
       });
     });
-    this.socket.on("update announcement", announcement => {
+    this.socket.on("update announcement", (announcement, noBadge) => {
       this.announcement = announcement;
+      if (noBadge || this.announcementsOpen) this.lastReadAnnouncement = announcement;
     });
     if (this.db) this.socket.on("update schedule", async (schedules, revision) => {
       if (revision) {
@@ -950,6 +993,13 @@ export default {
         hour: "numeric",
         minute: "2-digit"
       });
+    },
+    /** Runs when user opens announcement menu */
+    toggleAnnouncements() {
+      this.$nextTick(() => {
+        if (!this.announcementsOpen) return; // Don't mark as read if closing announcements menu
+        this.lastReadAnnouncement = this.announcement;
+      })
     },
     /**
      * Retrives local schedules from IndexedDB if available.
@@ -1227,9 +1277,45 @@ export default {
   animation: blink 1.25s step-start infinite;
 }
 
+.blink2 {
+  animation: blink2 1.25s step-start infinite;
+}
+
+.blink.collapse {
+  animation: blink-collapse 1.25s step-start infinite;
+}
+
+.blink2.collapse {
+  animation: blink2-collapse 1.25s step-start infinite;
+}
+
 @keyframes blink {
   50% {
     opacity: 0;
+  }
+}
+
+@keyframes blink2 {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes blink-collapse {
+  50% {
+    display: none;
+  }
+}
+
+@keyframes blink2-collapse {
+  0%, 100% {
+    display: none;
+  }
+  50% {
+    display: unset;
   }
 }
 
@@ -1259,7 +1345,7 @@ body {
   overflow: hidden;
   height: 312px;
   padding-top: 4px;
-  background-color: #FFFFFF;
+  /* background-color: #FFFFFF; */
 }
 
 .v-btn.v-date-picker-table__current.v-btn--disabled .v-btn__content {
