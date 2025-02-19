@@ -110,7 +110,7 @@
         </v-sheet>
         <v-timeline v-if="schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick hidden-print-only" align-top dense>
           <v-timeline-item v-for="event in schedules[date.toISOString()].events" :key="event.name" class="caption short" :color="colors[event.category]" fill-dot small>
-            <span class="text-bottom">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span>
+            <template v-if="!isAllDayEvent(event)"><span class="text-bottom">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span></template>
             <span class="event-name text-bottom text--secondary">{{event.name}}</span>
           </v-timeline-item>
         </v-timeline>
@@ -295,6 +295,21 @@ export default {
     indicatorTop(now, date) {
       //console.log("INDICTOP: "+(now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN)
       return (now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN;
+    },
+    /**
+     * Checks if start and end date are both 00:00
+     */
+    isAllDayEvent(event) {
+      const start = new Date(event.start);
+      const end = new Date(event.end);
+      
+      return (
+        start.getUTCHours() === 0 &&
+        start.getUTCMinutes() === 0
+      ) && (
+        end.getUTCHours() === 0 &&
+        end.getUTCMinutes() === 0
+      );
     },
   }
 };
