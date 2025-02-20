@@ -543,7 +543,7 @@ export default {
         titleTimeout: null,
         loading: false,
       },
-      message: "",
+      message: localStorage.getItem("message") || "",
       announcement: "",
       lastReadAnnouncement: localStorage.getItem("lastReadAnnouncement") || "",
       announcementsOpen: false,
@@ -788,6 +788,9 @@ export default {
     },
     "lastReadAnnouncement"(lastReadAnnouncement) {
       localStorage.setItem("lastReadAnnouncement", lastReadAnnouncement)
+    },
+    "message"(msg) {
+      localStorage.setItem("message", msg)
     }
   },
   async created() {
