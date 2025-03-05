@@ -73,14 +73,14 @@
               <v-list-item-title class="list-item-text">Settings</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <!-- <v-list-item href="https://bell.harker.org/submitevent" target="_blank">
+          <v-list-item href="https://bell.harker.org/submitevent" target="_blank">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">open_in_new</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="list-item-text">Submit an event</v-list-item-title>
             </v-list-item-content>
-          </v-list-item> -->
+          </v-list-item>
         </v-list>
         <v-divider></v-divider>
         <v-list dense subheader>
