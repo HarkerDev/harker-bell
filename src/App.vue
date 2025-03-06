@@ -222,6 +222,14 @@
             </v-list-item-action>
           </v-list-item>
         </v-list>
+        <v-list subheader>
+          <v-list-item>
+            <v-list-item-content>Use 24-hour time</v-list-item-content>
+            <v-list-item-action>
+              <v-switch v-model="settings.twentyFourHourClock" color="accent" :inset="features.ios"></v-switch>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
         <v-divider></v-divider>
         <v-divider></v-divider>
         <v-divider></v-divider>
@@ -560,6 +568,7 @@ export default {
       settings: {
         dialog: false,
         exportDialog: false,
+        twentyFourHourClock: localStorage.getItem("twentyFourHourClock") == "true",
         autoDark: localStorage.getItem("autoDark") == "true",
         enableBells: localStorage.getItem("virtualBells") != "false",
         enableNotifications: localStorage.getItem("enableNotifications") == "true",
@@ -731,6 +740,10 @@ export default {
         else this.$vuetify.theme.dark = false;
       }
     },
+    /** Handles changes to the 24-hour time setting. */
+    "settings.twentyFourHourClock"(twentyFourHourClock) {
+      localStorage.setItem("twentyFourHourClock", twentyFourHourClock.toString());
+    },
     /** Handles changes to the period colors toggle setting. */
     "settings.showColors"(showColors) {
       localStorage.setItem("showPeriodColors", showColors.toString());
@@ -832,6 +845,7 @@ export default {
         case 'showColors':
         case 'links':
         case 'autoDark':
+        case 'twentyFourHourClock':
         case 'periodColors':
         case 'periodNames':
           console.log(event.key, key, event.newValue, JSON.parse(event.newValue))
