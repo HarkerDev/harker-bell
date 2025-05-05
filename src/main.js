@@ -15,7 +15,7 @@ import {getFCP, getLCP, getFID, getCLS, getTTFB} from "web-vitals";
 import "./scripts/sun";
 
 Sentry.init({
-  dsn: "https://2774d8d5d9c3402fb93dd9e702e39470@sentry.dev.harker.org/11",
+  dsn: "https://74f7b85b2e13edde2c1935d20e3623e1@o4508111680176128.ingest.us.sentry.io/4509268934918144",
   integrations: [new Integrations.Vue({Vue, attachProps: true, logErrors: true})],
   release: "harker-bell@"+process.env.VUE_APP_VERSION,
 });
