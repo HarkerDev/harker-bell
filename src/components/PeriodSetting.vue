@@ -6,11 +6,11 @@
     <v-col>
       <v-row no-gutters>
         <v-col>
-          <v-text-field v-model="settings.periodNames[num-1]" :disabled="disableTextField" color="accent" dense counter="25" maxlength="25" placeholder="Custom Name" ga-on="focus" :ga-event-category="'period '+num+' name'" ga-event-action="input" @blur="changeName" @focus="$event.target.select()"></v-text-field>
+          <v-text-field v-model="settings.periodNames[num-1]" :disabled="disableTextField" color="accent" dense counter="25" maxlength="25" placeholder="Custom Name" @blur="changeName" @focus="$event.target.select()" @change="$root.sendAnalyticsHit(`P${num}`, 'settings_change', 'periodNameSetting')"></v-text-field>
         </v-col>
         <slot>
           <v-col cols="auto">
-            <v-select v-model="settings.periodColors[num-1]" class="mx-8" color="accent" dense :disabled="!settings.showColors" hide-details :items="settings.colors" :menu-props="{'max-width': 56}" style="width: 52px;" @input="changeColors">
+            <v-select v-model="settings.periodColors[num-1]" class="mx-8" color="accent" dense :disabled="!settings.showColors" hide-details :items="settings.colors" :menu-props="{'max-width': 56}" style="width: 52px;" @input="changeColors" @change="$root.sendAnalyticsHit(`P${num}`, 'settings_change', 'periodColorSetting')">
               <template v-slot:item="{item}">
                 <v-avatar size="24" :color="item+' lighten-5'" :class="[item+'--text', 'text--darken-4', 'caption']">
                   {{colorNames[item]}}
