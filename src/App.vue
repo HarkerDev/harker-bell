@@ -2,9 +2,7 @@
   <v-app v-if="calendar.dates.length != 0">
     <v-app-bar app color="primary" elevate-on-scroll style="overflow-x: auto; opacity: 0.9;">
       <v-spacer></v-spacer>
-      <v-btn class="hidden-print-only" icon aria-label="Previous" ga-on="click" ga-event-category="previous"
-             ga-event-action="click" @click="nextOrPrevious(false)"
-      >
+      <v-btn class="hidden-print-only" icon aria-label="Previous" @click="nextOrPrevious(false)">
         <!--        <v-icon class="material-icons-outlined">chevron_left</v-icon>-->
         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
           <path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/>
@@ -12,9 +10,7 @@
       </v-btn>
       <v-menu v-model="datePicker" :close-on-content-click="false" offset-y>
         <template v-slot:activator="{on}">
-          <v-btn class="hidden-print-only" icon aria-label="Choose a date" ga-on="click, contextmenu"
-                 ga-event-category="date picker icon" ga-event-action="click" v-on="on"
-          >
+          <v-btn class="hidden-print-only" icon aria-label="Choose a date" @click="$root.sendAnalyticsHit(datePicker, 'click', 'date picker icon')" v-on="on">
             <v-icon class="material-icons-outlined">event</v-icon>
           </v-btn>
         </template>
@@ -28,9 +24,7 @@
           <v-spacer></v-spacer>
         </v-date-picker>
       </v-menu>
-      <v-btn class="hidden-print-only mr-2" icon aria-label="Next" ga-on="click" ga-event-category="next"
-             ga-event-action="click" @click="nextOrPrevious(true)"
-      >
+      <v-btn class="hidden-print-only mr-2" icon aria-label="Next" @click="nextOrPrevious(true)">
         <!--        <v-icon class="material-icons-outlined">chevron_right</v-icon>-->
         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
           <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
@@ -50,22 +44,21 @@
           </template>
         </v-toolbar-title>
         <v-toolbar-title v-else id="title" key="title" class="headline text-center"
-                         :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '65px'}" ga-on="click"
-                         ga-event-category="title" ga-event-action="click" @click="changeTitle"
+                         :style="{minWidth: $vuetify.breakpoint.smAndUp ? '205px' : '65px'}" @click="[$root.sendAnalyticsHit(undefined, 'click', 'changeTitle'), changeTitle()]"
         >
           <span v-if="$vuetify.breakpoint.smAndUp">Harker </span>Bell <span v-if="$vuetify.breakpoint.smAndUp"> Schedule</span>
         </v-toolbar-title>
       </transition>
       <v-menu offset-y min-width="160">
         <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only ml-2" icon aria-label="Settings" ga-on="click, contextmenu"
-                 ga-event-category="settings icon" ga-event-action="click" v-on="{...menu}"
+          <v-btn class="hidden-print-only ml-2" icon aria-label="Settings" v-on="{...menu}" 
+                 @click="$root.sendAnalyticsHit(undefined, 'click', 'settings icon')"
           >
             <v-icon class="material-icons-outlined">settings</v-icon>
           </v-btn>
         </template>
         <v-list>
-          <v-list-item @click="$router.push('/settings')">
+          <v-list-item @click="[$root.sendAnalyticsHit(undefined, 'click', 'settings'), $router.push('/settings')]">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">tune</v-icon>
             </v-list-item-icon>
@@ -73,7 +66,9 @@
               <v-list-item-title class="list-item-text">Settings</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item href="https://bell.harker.org/submitevent" target="_blank">
+          <v-list-item href="https://bell.harker.org/submitevent" target="_blank"
+                       @click="$root.sendAnalyticsHit(undefined, 'click', 'submitevent')"
+          >
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">open_in_new</v-icon>
             </v-list-item-icon>
@@ -85,7 +80,7 @@
         <v-divider></v-divider>
         <v-list dense subheader>
           <v-subheader>Change view</v-subheader>
-          <v-list-item ga-on="click" ga-event-category="day" ga-event-action="click" @click="changeMode('day')">
+          <v-list-item @click="changeMode('day')">
             <v-list-item-icon>
               <v-icon v-if="mode == 'day'" class="material-icons-outlined">check</v-icon>
             </v-list-item-icon>
@@ -93,7 +88,7 @@
               <v-list-item-title>Day</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item ga-on="click" ga-event-category="week" ga-event-action="click" @click="changeMode('week')">
+          <v-list-item @click="changeMode('week')">
             <v-list-item-icon>
               <v-icon v-if="mode == 'week'" class="material-icons-outlined">check</v-icon>
             </v-list-item-icon>
@@ -104,9 +99,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list>
-          <v-list-item v-if="features.beforeInstallPrompt" color="accent" :input-value="true" ga-on="click"
-                       ga-event-category="install" ga-event-action="click" @click="showInstallPrompt"
-          >
+          <v-list-item v-if="features.beforeInstallPrompt" color="accent" :input-value="true" @click="[$root.sendAnalyticsHit('settings_dropdown', 'click', 'install'), showInstallPrompt()]">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">get_app</v-icon>
             </v-list-item-icon>
@@ -114,7 +107,7 @@
               <v-list-item-title class="list-item-text font-weight-medium">Install app</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="$router.push('/export')">
+          <v-list-item @click="[$root.sendAnalyticsHit(undefined, 'click', 'export'), $router.push('/export')]">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-symbols-outlined">calendar_add_on</v-icon>
             </v-list-item-icon>
@@ -122,7 +115,7 @@
               <v-list-item-title class="list-item-text">Export to Calendar</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item ga-on="click" ga-event-category="print" ga-event-action="click" @click="print">
+          <v-list-item @click="[$root.sendAnalyticsHit(undefined, 'click', 'print'), print()]">
             <v-list-item-icon class="list-item-icon">
               <v-icon class="material-icons-outlined">print</v-icon>
             </v-list-item-icon>
@@ -135,11 +128,9 @@
       </v-menu>
       <v-menu v-model="announcementsOpen" :close-on-content-click="false" offset-y min-width="300" content-class="hdev-announcement">
         <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only" icon aria-label="Announcements" ga-on="click, contextmenu"
-                 ga-event-category="app menu" ga-event-action="click" v-on="{...menu, click: [menu.click, toggleAnnouncements]}"
-          >
+          <v-btn class="hidden-print-only" icon aria-label="Announcements" v-on="{...menu, click: [menu.click, toggleAnnouncements]}">
             <v-badge :value="hasUnreadAnnouncement" dot color="red2">
-            <v-icon size="30" class="material-icons-outlined">campaign</v-icon>
+              <v-icon size="30" class="material-icons-outlined">campaign</v-icon>
             </v-badge>
           </v-btn>
         </template>
@@ -157,9 +148,7 @@
       <v-spacer></v-spacer>
       <v-menu offset-y min-width="300" content-class="hdev-app-menu">
         <template v-slot:activator="{on: menu}">
-          <v-btn class="hidden-print-only" icon aria-label="All apps" ga-on="click, contextmenu"
-                 ga-event-category="app menu" ga-event-action="click" v-on="{...menu}"
-          >
+          <v-btn class="hidden-print-only" icon aria-label="All apps" @click="$root.sendAnalyticsHit(undefined, 'click', 'app_menu')" v-on="{...menu}">
             <!--            <v-icon class="material-icons-outlined">apps</v-icon>-->
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24">
               <path d="M0 0h24v24H0V0z" fill="none"/>
@@ -205,7 +194,7 @@
             <v-list-item-content :class="{'text--disabled': settings.autoDark}">Use dark mode</v-list-item-content>
             <v-list-item-action>
               <v-switch v-model="$vuetify.theme.dark" color="accent" :disabled="settings.autoDark"
-                        :inset="features.ios"
+                        :inset="features.ios" @change="$root.sendAnalyticsHit($event, 'settings_change', 'darkModeSetting')"
               ></v-switch>
             </v-list-item-action>
           </v-list-item>
@@ -218,7 +207,7 @@
               <v-list-item-subtitle>Turns on from sunset to sunrise</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="settings.autoDark" color="accent" :inset="features.ios"></v-switch>
+              <v-switch v-model="settings.autoDark" color="accent" :inset="features.ios" @change="$root.sendAnalyticsHit($event, 'settings_change', 'autoDarkModeSetting')"></v-switch>
             </v-list-item-action>
           </v-list-item>
         </v-list>
@@ -226,7 +215,7 @@
           <v-list-item>
             <v-list-item-content>Use 24-hour time</v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="settings.twentyFourHourClock" color="accent" :inset="features.ios"></v-switch>
+              <v-switch v-model="settings.twentyFourHourClock" color="accent" :inset="features.ios" @change="$root.sendAnalyticsHit($event, 'settings_change', 'twentyFourHourClockSetting')"></v-switch>
             </v-list-item-action>
           </v-list-item>
         </v-list>
@@ -237,7 +226,7 @@
           <v-list-item>
             <v-list-item-content>Show period colors</v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="settings.showColors" color="accent" :inset="features.ios"></v-switch>
+              <v-switch v-model="settings.showColors" color="accent" :inset="features.ios" @change="$root.sendAnalyticsHit($event, 'settings_change', 'showPeriodColorsSetting')"></v-switch>
             </v-list-item-action>
           </v-list-item>
         </v-list>
@@ -251,7 +240,7 @@
             <v-col class="caption text-center short px-6 pb-0">
               <p>
                 <a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp#event-categories"
-                   target="_blank"
+                   target="_blank" @click="$root.sendAnalyticsHit('settings', 'link', 'event_categories_help')"
                 >What do the event colors mean?</a>
               </p>
               <div>
@@ -311,18 +300,15 @@
                   label="Calendar Subscription URL"
                   :value="exportUrl"
                   v-bind="attrs" v-on="on"
-                  @click="copyToClipboard"
-                  @tap="copyToClipboard"
+                  @click="[$root.sendAnalyticsHit('click', 'click', 'copy_export_url'), copyToClipboard()]"
+                  @tap="[$root.sendAnalyticsHit('tap', 'click', 'copy_export_url'), copyToClipboard()]"
                 ></v-text-field>
                 
                 <v-btn
                   class="hidden-print-only ml-6 pa-10"
                   align-self="center"
                   icon aria-label="Open Export URL" 
-                  ga-on="click" 
-                  ga-event-category="open_export_url"
-                  ga-event-action="click" 
-                  @click="openExportUrl"
+                  @click="[$root.sendAnalyticsHit(undefined, 'click', 'open_export_url'), openExportUrl()]"
                 >
                   <v-icon class="material-symbols-outlined">open_in_new</v-icon>
                 </v-btn>
@@ -423,9 +409,9 @@
           <v-row>
             <v-col class="caption text-center short px-6 pb-0">
               <p>
-                <a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp#event-categories" target="_blank">
+                <a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp#event-categories" target="_blank" @click="$root.sendAnalyticsHit('export', 'link', 'event_categories_help')">
                   What do the event colors mean?</a> • <a
-                  :href="`https://www.google.com/calendar/r?cid=${ encodeURIComponent(exportUrl.replace(/^https?:/, 'webcal:')) }`" target="_blank"
+                  :href="`https://www.google.com/calendar/r?cid=${ encodeURIComponent(exportUrl.replace(/^https?:/, 'webcal:')) }`" target="_blank" @click="$root.sendAnalyticsHit('export', 'link', 'export_google_calendar')"
                 >Use Google Calendar?</a>
               </p>
               <div>
@@ -504,7 +490,7 @@
     </v-footer>
     <v-snackbar v-model="snackbars.offlineReady" :timeout="30000">
       {{ features.beforeInstallPrompt ? 'Install this app in one click for quick and easy access.' : 'Install this app onto your home screen for quick and easy access.' }}
-      <v-btn v-if="features.beforeInstallPrompt" text @click="showInstallPrompt">Install</v-btn>
+      <v-btn v-if="features.beforeInstallPrompt" text @click="[$root.sendAnalyticsHit('snackbar', 'click', 'install'), showInstallPrompt()]">Install</v-btn>
       <v-btn v-else text href="https://bell.harker.org/docs/install.html?utm_source=bell&utm_medium=inapp"
              target="_blank" @click="snackbars.offlineReady = false"
       >
@@ -728,12 +714,12 @@ export default {
 
       if (document.getElementById('hdev-project-menu')) document.getElementById('hdev-project-menu').contentWindow.location.reload();
 
-      if (window.ga) window.ga("set", "dimension1", dark.toString());
+      if (window.gtag) window.gtag('set', 'user_properties', { 'darkTheme': dark.toString() });
     },
     /** Handles changes to the automatic dark mode setting. */
     "settings.autoDark"(autoDark) {
       localStorage.setItem("autoDark", autoDark.toString());
-      if (window.ga) window.ga("set", "dimension13", autoDark.toString());
+      if (window.gtag) window.gtag('set', 'user_properties', { 'autoDark': autoDark.toString() });
       if (autoDark) {
         window.initializeAutoDark();
         if (localStorage.getItem("darkTheme") == "true") this.$vuetify.theme.dark = true;
@@ -747,19 +733,19 @@ export default {
     /** Handles changes to the period colors toggle setting. */
     "settings.showColors"(showColors) {
       localStorage.setItem("showPeriodColors", showColors.toString());
-      if (window.ga) window.ga("set", "dimension2", showColors.toString());
+      if (window.gtag) window.gtag('set', 'user_properties', { 'showPeriodColors': showColors.toString() });
     },
     /** Handles changes to the virtual bells toggle setting. */
     "settings.enableBells"(enabled) {
       localStorage.setItem("virtualBells", enabled.toString());
-      if (window.ga) window.ga("set", "dimension8", enabled.toString());
+      if (window.gtag) window.gtag('set', 'user_properties', { 'virtualBells': enabled.toString() });
     },
     "settings.enableNotifications"(enabled) {
       if (!window.Notification) return;
 
       function setVars() {
         localStorage.setItem("enableNotifications", enabled.toString());
-        if (window.ga) window.ga("set", "dimension9", enabled.toString());
+        if (window.gtag) window.gtag('set', 'user_properties', { 'enableNotifications': enabled.toString() });
       }
 
       function notifPromise() {
@@ -848,7 +834,6 @@ export default {
         case 'twentyFourHourClock':
         case 'periodColors':
         case 'periodNames':
-          console.log(event.key, key, event.newValue, JSON.parse(event.newValue))
           this.settings[key] = JSON.parse(event.newValue);
           break;
         }
@@ -952,6 +937,7 @@ export default {
      */
     changeMode(mode) {
       this.saveMode(this.mode = mode);
+      this.$root.sendAnalyticsHit(mode, 'click', 'change_mode')
       this.calendar.keepCurrentDate = true;
       let today = this.getCurrentUTCMidnight(), date = new Date(+this.calendar.currentDate);
       if (mode == "week" && this.$route.name == "day" &&
@@ -1014,7 +1000,12 @@ export default {
     /** Runs when user opens announcement menu */
     toggleAnnouncements() {
       this.$nextTick(() => {
+        this.$root.sendAnalyticsHit(this.announcementsOpen, 'click', 'announcement')
+        
         if (!this.announcementsOpen) return; // Don't mark as read if closing announcements menu
+
+        if (this.announcement && this.lastReadAnnouncement != this.announcement) 
+          this.$root.sendAnalyticsHit(this.announcement, 'click', 'readUnreadAnnouncement')
         this.lastReadAnnouncement = this.announcement;
       })
     },
@@ -1097,10 +1088,16 @@ export default {
         date.setUTCDate(date.getUTCDate() + sign * 3);
       else // day mode
         date.setUTCDate(date.getUTCDate() + sign * 1);
+
+      let newRoute;
       if (+date == +today || this.mode == "week" && +this.getSaturday(date) == +this.getSaturday(today))
-        this.$router.push("/");
+        newRoute = "/";
       else
-        this.$router.push(`/${date.getUTCFullYear()}/${date.getUTCMonth() + 1}/${date.getUTCDate()}`);
+        newRoute = `/${date.getUTCFullYear()}/${date.getUTCMonth() + 1}/${date.getUTCDate()}`;
+
+      this.$router.push(newRoute);
+      this.$root.sendAnalyticsHit(newRoute, 'click', isNext ? 'next' : 'previous')
+
       this.arrowAllowed = true;
     },
     /** Prints the current view of the bell schedule. */
@@ -1115,7 +1112,7 @@ export default {
      */
     saveMode(mode) {
       localStorage.setItem("calendarMode", mode);
-      if (window.ga) window.ga("set", "dimension3", mode);
+      if (window.gtag) window.gtag('set', 'user_properties', { 'calendarMode': mode });
     },
     /**
      * Sets the calendar dates that will be displayed to the user based on the current view setting
@@ -1197,6 +1194,15 @@ export default {
       this.$nextTick(() => {
         this.menu.open = true;
       });
+
+      let daysEarly = Math.round((
+        new Date(date.toDateString()) - 
+        new Date(new Date().toDateString())
+      ) / this.$MS_PER_DAY) + 1;
+      let hoursEarly = (new Date(date.toDateString()).getTime()-Date.now()+this.$MS_PER_DAY)/(60000*60);
+      let hasLunch = this.schedules[date.toISOString()] && this.schedules[date.toISOString()].lunch.length > 0;
+
+      this.$root.sendAnalyticsHit(hasLunch, 'lunch', 'lunchMenu', { daysEarly, hoursEarly, 'lunch_date': date.toISOString() })
     },
     /** Handler that runs every minute and on page focus. */
     updateTime() {

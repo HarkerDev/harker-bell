@@ -24,12 +24,11 @@ window.onload = () => {
 };
 
 function saveWebVitals({name, delta, id}) {
-  if (window.ga) ga("send", "event", {
-    eventCategory: "Web Vitals",
-    eventAction: name,
-    eventValue: Math.round(name == "CLS" ? delta*1000 : delta),
-    eventLabel: id,
-    nonInteraction: true,
+  if (window.gtag) gtag('event', name, {
+    event_category: 'Web Vitals',
+    event_label: id,
+    value: Math.round(name === 'CLS' ? delta * 1000 : delta),
+    non_interaction: true
   });
 }
 getFCP(saveWebVitals);
@@ -83,15 +82,41 @@ function initVue() {
   new Vue({
     router,
     vuetify,
-    render: h => h(App)
+    methods: {
+      /** Sends a basic event to GA */
+      sendAnalyticsHit: function(actionValue, type, category, additionalData) {     
+        // console.log(actionValue, type, category)
+  
+        if (window.gtag) window.gtag('event', category, {
+          'value': actionValue,
+          'hit_type': type,
+          'hit_time': new Date().getTime(),
+          'timestamp_minutes': Math.floor(new Date().getTime() / 60000) * 60000,
+          'clock': new Intl.DateTimeFormat('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          }).format(new Date()),
+          'branch': window.nf_branch,
+
+          ...additionalData
+        });
+      }
+    },
+    render: h => h(App),
   }).$mount("#app");
 }
 localStorage.setItem("appVersion", process.env.VUE_APP_VERSION);
-ga("set", "dimension5", process.env.VUE_APP_VERSION || "not set");
+
+gtag('set', 'user_properties', { 'appVersion': process.env.VUE_APP_VERSION || "not set" }); // dimension5
+if (window.GA_MEASUREMENT_ID) gtag('get', window.GA_MEASUREMENT_ID, 'client_id', function(clientId) {
+  Sentry.setTag("clientId", clientId)
+});
+
 ga("require", "eventTracker", {events: ["click", "contextmenu", "focus"]});
 ga("require", "outboundLinkTracker", {
   events: ["click", "contextmenu", "auxclick"],
   shouldTrackOutboundLink: () => true});
 ga("require", "pageVisibilityTracker", {visibleThreshold: 500, visibleMetricIndex: 1});
 ga("require", "urlChangeTracker");
-ga(trk => Sentry.setTag("clientId", trk.get("clientId")));
