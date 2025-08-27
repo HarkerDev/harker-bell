@@ -18,6 +18,7 @@ Sentry.init({
   dsn: "https://74f7b85b2e13edde2c1935d20e3623e1@o4508111680176128.ingest.us.sentry.io/4509268934918144",
   integrations: [new Integrations.Vue({Vue, attachProps: true, logErrors: true})],
   release: "harker-bell@"+process.env.VUE_APP_VERSION,
+  environment: process.env.NODE_ENV
 });
 window.onload = () => {
   setTimeout(() => Sentry.setTag("nodes", document.getElementsByTagName("*").length), 2000);
