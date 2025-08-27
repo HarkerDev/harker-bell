@@ -65,7 +65,7 @@
                       <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}]" column align-center justify-center>
                         <div ref="periodNames" class="period-name" v-html="period.name"></div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
-                        <div v-if="period.start && period.duration >= 30" class="text-no-wrap text--secondary">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+                        <div v-if="period.start && period.duration >= 30" class="text-no-wrap text--secondary">{{period.start|formatTime(settings.twentyFourHourClock)}}&ndash;{{period.end|formatTime(settings.twentyFourHourClock)}}</div>
                         <div v-if="period.duration >= 45 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                         <div class="hovercard font-weight-medium">View menu</div>
                       </v-layout>
@@ -77,10 +77,10 @@
                       <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}, getColor(period.name) && getColor(period.name)+'--text text--darken-4']" column align-center justify-center>
                         <div ref="periodNames" class="period-name">
                           <span v-html="period.name && settings.periodNames[period.name.substring(1, 2)-1] ? settings.periodNames[period.name.substring(1, 2)-1]+' ('+period.name+')' : period.name"></span>
-                          <span v-if="period.name && period.start && period.duration < 30 && column.length <= 1" class="text-no-wrap text--secondary"> {{period.start|formatTime}}&ndash;{{period.end|formatTime}}</span>
+                          <span v-if="period.name && period.start && period.duration < 30 && column.length <= 1" class="text-no-wrap text--secondary"> {{period.start|formatTime(settings.twentyFourHourClock)}}&ndash;{{period.end|formatTime(settings.twentyFourHourClock)}}</span>
                         </div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
-                        <div v-if="period.name && period.start && period.duration >= 30" :class="['text-no-wrap', {'text--secondary': !getColor(period.name)}]">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+                        <div v-if="period.name && period.start && period.duration >= 30" :class="['text-no-wrap', {'text--secondary': !getColor(period.name)}]">{{period.start|formatTime(settings.twentyFourHourClock)}}&ndash;{{period.end|formatTime(settings.twentyFourHourClock)}}</div>
                         <div v-if="period.name && period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                         <div class="hovercard font-weight-medium">
                           Open link <v-icon dark small class="material-icons-outlined hovercard-icon">launch</v-icon>
@@ -92,10 +92,10 @@
                       <v-layout :class="['content', {short: period.duration <= 50 || group.length > 1}, getColor(period.name) && getColor(period.name)+'--text text--darken-4']" column align-center justify-center>
                         <div ref="periodNames" class="period-name">
                           <span v-html="period.name && settings.periodNames[period.name.substring(1, 2)-1] && period.name.startsWith('P') ? settings.periodNames[period.name.substring(1, 2)-1]+' ('+period.name+')' : period.name"></span>
-                          <span v-if="period.name && period.start && period.duration < 30 && column.length <= 1" class="text-no-wrap text--secondary"> {{period.start|formatTime}}&ndash;{{period.end|formatTime}}</span>
+                          <span v-if="period.name && period.start && period.duration < 30 && column.length <= 1" class="text-no-wrap text--secondary"> {{period.start|formatTime(settings.twentyFourHourClock)}}&ndash;{{period.end|formatTime(settings.twentyFourHourClock)}}</span>
                         </div>
                         <!-- Part of v-if for text height: && $refs.periodNames[gIndex+cIndex+pIndex].offsetHeight < 28 -->
-                        <div v-if="period.name && period.start && period.duration >= 30" :class="['text-no-wrap', {'text--secondary': !getColor(period.name)}]">{{period.start|formatTime}}&ndash;{{period.end|formatTime}}</div>
+                        <div v-if="period.name && period.start && period.duration >= 30" :class="['text-no-wrap', {'text--secondary': !getColor(period.name)}]">{{period.start|formatTime(settings.twentyFourHourClock)}}&ndash;{{period.end|formatTime(settings.twentyFourHourClock)}}</div>
                         <div v-if="period.name && period.duration >= 50 && time.utcNow >= period.start && time.utcNow <= period.end" class="hidden-print-only time-remain overline font-weight-medium">{{Math.ceil((period.end-time.utcNow)/$MS_PER_MIN)}} min. left</div>
                       </v-layout>
                     </v-sheet>
@@ -110,7 +110,7 @@
         </v-sheet>
         <v-timeline v-if="schedules[date.toISOString()] && schedules[date.toISOString()].events.length > 0" class="events border-thick hidden-print-only" align-top dense>
           <v-timeline-item v-for="event in schedules[date.toISOString()].events" :key="event.name" class="caption short" :color="colors[event.category]" fill-dot small>
-            <span class="text-bottom">{{event.start|formatTime}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime}}</span> • </span>
+            <template v-if="!isAllDayEvent(event)"><span class="text-bottom">{{event.start|formatTime(settings.twentyFourHourClock)}}<span v-if="event.start != event.end">&ndash;{{event.end|formatTime(settings.twentyFourHourClock)}}</span> • </span></template>
             <span class="event-name text-bottom text--secondary">{{event.name}}</span>
           </v-timeline-item>
         </v-timeline>
@@ -127,13 +127,19 @@ export default {
   },
   filters: {
     /**
-     * Returns a human-readable time from a Date object in H:MM format.
-     * @return {String} 12-hour time without AM/PM
+     * Returns a human-readable time from a Date object in H:MM or HH:MM format depending on `settings.twentyFourHourClock`.
+     * @return {String} 12-hour time without AM/PM or 24-hour time depending on `settings.twentyFourHourClock`
      */
-    formatTime(date) {
+    formatTime(date, use24Hour) {
       if (typeof date == "string") date = new Date(date);
-      return (date.getUTCHours()+11)%12+1+":"+ // convert hours to 12-hour time
-        ("0"+date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
+
+      if (use24Hour) {
+        return date.getUTCHours() + ":" + // 24-hour time format
+          ("0" + date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
+      } else {
+        let hours = (date.getUTCHours() + 11) % 12 + 1; // convert hours to 12-hour time
+        return hours + ":" + ("0" + date.getUTCMinutes()).slice(-2); // pad minutes with a 0 if necessary
+      }
     },
   },
   props: {
@@ -167,6 +173,10 @@ export default {
       type: Object,
       required: true
     },
+    // twentyFourHourClock: {
+    //   type: Boolean,
+    //   required: true
+    // }
   },
   data() {
     return {
@@ -295,6 +305,21 @@ export default {
     indicatorTop(now, date) {
       //console.log("INDICTOP: "+(now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN)
       return (now-this.schedules[date.toISOString()].schedule[0].start)/this.$MS_PER_MIN;
+    },
+    /**
+     * Checks if start and end date are both 00:00
+     */
+    isAllDayEvent(event) {
+      const start = new Date(event.start);
+      const end = new Date(event.end);
+      
+      return (
+        start.getUTCHours() === 0 &&
+        start.getUTCMinutes() === 0
+      ) && (
+        end.getUTCHours() === 0 &&
+        end.getUTCMinutes() === 0
+      );
     },
   }
 };

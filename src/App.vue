@@ -66,7 +66,7 @@
               <v-list-item-title class="list-item-text">Settings</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <!-- <v-list-item href="https://bell.harker.org/submitevent" target="_blank"
+          <v-list-item href="https://bell.harker.org/submitevent" target="_blank"
                        @click="$root.sendAnalyticsHit(undefined, 'click', 'submitevent')"
           >
             <v-list-item-icon class="list-item-icon">
@@ -75,7 +75,7 @@
             <v-list-item-content>
               <v-list-item-title class="list-item-text">Submit an event</v-list-item-title>
             </v-list-item-content>
-          </v-list-item> -->
+          </v-list-item>
         </v-list>
         <v-divider></v-divider>
         <v-list dense subheader>
@@ -126,7 +126,7 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-menu v-model="announcementsOpen" offset-y min-width="300" content-class="hdev-announcement">
+      <v-menu v-model="announcementsOpen" :close-on-content-click="false" offset-y min-width="300" content-class="hdev-announcement">
         <template v-slot:activator="{on: menu}">
           <v-btn class="hidden-print-only" icon aria-label="Announcements" v-on="{...menu, click: [menu.click, toggleAnnouncements]}">
             <v-badge :value="hasUnreadAnnouncement" dot color="red2">
@@ -211,6 +211,14 @@
             </v-list-item-action>
           </v-list-item>
         </v-list>
+        <v-list subheader>
+          <v-list-item>
+            <v-list-item-content>Use 24-hour time</v-list-item-content>
+            <v-list-item-action>
+              <v-switch v-model="settings.twentyFourHourClock" color="accent" :inset="features.ios" @change="$root.sendAnalyticsHit($event, 'settings_change', 'twentyFourHourClockSetting')"></v-switch>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
         <v-divider></v-divider>
         <v-divider></v-divider>
         <v-divider></v-divider>
@@ -232,7 +240,7 @@
             <v-col class="caption text-center short px-6 pb-0">
               <p>
                 <a href="https://bell.harker.org/docs/api.html?utm_source=bell&utm_medium=inapp#event-categories"
-                   target="_blank" @click="$root.sendAnalyticsHit('settings', 'link', 'event_categories_help')"
+                   target="_blank"
                 >What do the event colors mean?</a>
               </p>
               <div>
@@ -529,7 +537,7 @@ export default {
         titleTimeout: null,
         loading: false,
       },
-      message: "",
+      message: localStorage.getItem("message") || "",
       announcement: "",
       lastReadAnnouncement: localStorage.getItem("lastReadAnnouncement") || "",
       announcementsOpen: false,
@@ -546,6 +554,7 @@ export default {
       settings: {
         dialog: false,
         exportDialog: false,
+        twentyFourHourClock: localStorage.getItem("twentyFourHourClock") == "true",
         autoDark: localStorage.getItem("autoDark") == "true",
         enableBells: localStorage.getItem("virtualBells") != "false",
         enableNotifications: localStorage.getItem("enableNotifications") == "true",
@@ -673,7 +682,16 @@ export default {
       url.searchParams.append("t", (new Date).getTime());
       url.searchParams.append("v", process.env.VUE_APP_VERSION);
 
-      if (exportCustomNames && includeSchedule && !this.settings.periodNames.every(item => !item)) url.searchParams.append('periodNames', btoa(this.settings.periodNames))
+      try {
+        if (exportCustomNames && includeSchedule && !this.settings.periodNames.every(item => !item)) 
+          url.searchParams.append(
+            'periodNames', 
+            Buffer.from(String(this.settings.periodNames), 'utf-8').toString('base64')
+          )
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn("Could not encode custom period names for export URL! Custom period names will not be included in the export URL.\n\n", this.settings.periodNames, '\n', e);
+      }
       return url.toString();
     },
     hasUnreadAnnouncement() {
@@ -716,6 +734,10 @@ export default {
         if (localStorage.getItem("darkTheme") == "true") this.$vuetify.theme.dark = true;
         else this.$vuetify.theme.dark = false;
       }
+    },
+    /** Handles changes to the 24-hour time setting. */
+    "settings.twentyFourHourClock"(twentyFourHourClock) {
+      localStorage.setItem("twentyFourHourClock", twentyFourHourClock.toString());
     },
     /** Handles changes to the period colors toggle setting. */
     "settings.showColors"(showColors) {
@@ -774,6 +796,9 @@ export default {
     },
     "lastReadAnnouncement"(lastReadAnnouncement) {
       localStorage.setItem("lastReadAnnouncement", lastReadAnnouncement)
+    },
+    "message"(msg) {
+      localStorage.setItem("message", msg)
     }
   },
   async created() {
@@ -815,6 +840,7 @@ export default {
         case 'showColors':
         case 'links':
         case 'autoDark':
+        case 'twentyFourHourClock':
         case 'periodColors':
         case 'periodNames':
           this.settings[key] = JSON.parse(event.newValue);
@@ -969,7 +995,7 @@ export default {
       if (!timestamp) return null;
       let date = new Date(+timestamp);
       if (new Date().setHours(0, 0, 0, 0) == new Date(+timestamp).setHours(0, 0, 0, 0))
-        return date.toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
+        return date.toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit", hour12: !this.settings.twentyFourHourClock});
       if (!showTime)
         return date.toLocaleDateString(undefined, {month: "numeric", day: "numeric", year: "2-digit"});
       return date.toLocaleDateString(undefined, {
@@ -977,7 +1003,8 @@ export default {
         day: "numeric",
         year: "2-digit",
         hour: "numeric",
-        minute: "2-digit"
+        minute: "2-digit",
+        hour12: !this.settings.twentyFourHourClock
       });
     },
     /** Runs when user opens announcement menu */
