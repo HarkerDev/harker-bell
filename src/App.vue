@@ -682,7 +682,16 @@ export default {
       url.searchParams.append("t", (new Date).getTime());
       url.searchParams.append("v", process.env.VUE_APP_VERSION);
 
-      if (exportCustomNames && includeSchedule && !this.settings.periodNames.every(item => !item)) url.searchParams.append('periodNames', btoa(this.settings.periodNames))
+      try {
+        if (exportCustomNames && includeSchedule && !this.settings.periodNames.every(item => !item)) 
+          url.searchParams.append(
+            'periodNames', 
+            Buffer.from(String(this.settings.periodNames), 'utf-8').toString('base64')
+          )
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn("Could not encode custom period names for export URL! Custom period names will not be included in the export URL.\n\n", this.settings.periodNames, '\n', e);
+      }
       return url.toString();
     },
     hasUnreadAnnouncement() {
