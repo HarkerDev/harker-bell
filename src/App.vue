@@ -686,7 +686,7 @@ export default {
         if (exportCustomNames && includeSchedule && !this.settings.periodNames.every(item => !item)) 
           url.searchParams.append(
             'periodNames', 
-            Buffer.from(String(this.settings.periodNames), 'utf-8').toString('base64')
+            Buffer.from(this.settings.periodNames.join('\n'), 'utf-8').toString('base64')
           )
       } catch (e) {
         // eslint-disable-next-line no-console
