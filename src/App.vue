@@ -862,7 +862,7 @@ export default {
     const manualSocket = this.$route.query.server;
 
     // Silently fall back to main socket if query parameter not whitelisted
-    this.socket = io((manualSocket && socketWhitelist.includes(manualSocket)) ? manualSocket : "https://bell.dev.harker.org");
+    this.socket = io((manualSocket && socketWhitelist.includes(manualSocket)) ? manualSocket : "https://bell.dev.harker.org", {reconnectionDelayMax: 30000});
     this.socket.on("connect", () => {
       //console.log("SOCK CONN:\t", new Date-abcd);
       this.io.connected = true;
